@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import {
   getGuideRaw,
   getGuideImagePath,
+  parseFrontmatter,
   getAllGuideRefs,
   isValidGuide,
   isCategory,
@@ -47,6 +48,7 @@ export default async function GuidePage({ params }: Props) {
   const entry = guidesByCategory[cat].find((g) => g.slug === slug);
   const imageUrl = getGuideImagePath(cat, slug);
   const title = entry?.title[locale] ?? slug.replace(/-/g, " ");
+  const { author, authorLink } = parseFrontmatter(raw);
 
   return (
     <div className="mx-auto max-w-content px-6 pb-24 pt-10 md:px-10 md:pt-14">
@@ -60,17 +62,37 @@ export default async function GuidePage({ params }: Props) {
         />
       </div>
 
-      {/* Hero image — full container width, h-64 mobile / aspect-video desktop */}
+      {/* Hero image + optional photo credit */}
       {imageUrl && (
-        <div className="relative mt-8 h-64 w-full overflow-hidden rounded-2xl shadow-lg md:aspect-video md:h-auto">
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 1152px"
-            className="object-cover object-center"
-          />
+        <div className="mt-8">
+          <div className="relative h-64 w-full overflow-hidden rounded-2xl shadow-lg md:aspect-video md:h-auto">
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1152px"
+              className="object-cover object-center"
+            />
+          </div>
+
+          {/* Photo credit — visible only when author is defined */}
+          {author && (
+            <p className="mt-1 flex justify-end text-[11px] italic text-slate-400">
+              {authorLink ? (
+                <a
+                  href={authorLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-mare"
+                >
+                  📷 Foto di {author}
+                </a>
+              ) : (
+                <span>📷 Foto di {author}</span>
+              )}
+            </p>
+          )}
         </div>
       )}
 

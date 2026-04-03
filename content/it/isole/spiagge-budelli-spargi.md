@@ -1,3 +1,10 @@
+---
+title: "Spiaggia dei Due Mari"
+image: "/images/isole/spiaggge-budelli-spargi.webp"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+---
+
 # Budelli e Spargi: le isole da raggiungere
 
 ## Due isole, due caratteri opposti

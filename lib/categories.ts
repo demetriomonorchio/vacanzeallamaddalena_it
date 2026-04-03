@@ -81,6 +81,10 @@ export type GuideEntry = {
   excerpt: Record<Locale, string>;
   /** Populated server-side via getGuideImagePath(); undefined on the client. */
   image?: string;
+  /** Photo author name, parsed from markdown frontmatter (server-only). */
+  author?: string;
+  /** URL to the author's portfolio/profile, parsed from markdown frontmatter. */
+  authorLink?: string;
 };
 
 export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {

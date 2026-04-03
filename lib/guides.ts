@@ -56,6 +56,41 @@ export {
   getCategoryForSlug,
 } from "./categories";
 
+// ─── Frontmatter parser (server-only) ────────────────────────────────────────
+
+type PhotoCredit = {
+  author?: string;
+  authorLink?: string;
+};
+
+/**
+ * Extracts `author` and `authorLink` from YAML frontmatter.
+ *
+ * Supports both quoted and unquoted values, e.g.:
+ *   author: "Mario Rossi"
+ *   authorLink: https://unsplash.com/@mariorossi
+ */
+export function parseFrontmatter(raw: string): PhotoCredit {
+  const lines = raw.split(/\r?\n/);
+  if (lines[0]?.trim() !== "---") return {};
+
+  const closingIdx = lines.findIndex((l, i) => i > 0 && l.trim() === "---");
+  if (closingIdx === -1) return {};
+
+  const block = lines.slice(1, closingIdx);
+  const result: PhotoCredit = {};
+
+  for (const line of block) {
+    const match = line.match(/^(\w+)\s*:\s*"?([^"]*)"?\s*$/);
+    if (!match) continue;
+    const [, key, value] = match;
+    if (key === "author") result.author = value.trim();
+    if (key === "authorLink") result.authorLink = value.trim();
+  }
+
+  return result;
+}
+
 // ─── Content reader (server-only) ─────────────────────────────────────────────
 
 export const getGuideRaw = cache(
