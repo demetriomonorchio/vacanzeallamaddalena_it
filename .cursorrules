@@ -1,0 +1,20 @@
+# --- CONTROLLO OPERATIVO E RISPARMIO TOKEN ---
+
+- NON passare mai alla modalità "Agent" o "Ricerca Automatica" senza chiedermi esplicitamente il permesso.
+- Prima di eseguire modifiche su più di 2 file contemporaneamente, descrivi brevemente il piano d'azione e attendi il mio "OK".
+- Se una richiesta richiede troppi passaggi logici, fermati dopo il primo step e chiedimi se procedere (per evitare loop infiniti di token).
+- Mantieni sempre la modalità "Plan" o "Ask" come predefinita per le risposte.
+
+# REGOLE DI RISPOSTA (RISPARMIO TOKEN)
+
+- Sii estremamente conciso. Non fare introduzioni o conclusioni di cortesia.
+- Se la modifica è piccola, mostra solo lo snippet di codice, non l'intero file.
+- Non spiegare il codice riga per riga a meno che non venga richiesto.
+- Usa l'italiano per i commenti e le spiegazioni.
+
+# PREFERENZE TECNICHE (NODE/NEXT)
+
+- Usa TypeScript e App Router (se applicabile).
+- Preferisci componenti funzionali e Tailwind CSS.
+- Non suggerire installazioni di nuovi pacchetti npm se esiste una soluzione nativa.
+- Se vedi errori di importazione, controlla prima i path alias (@/\*).

@@ -1,0 +1,69 @@
+# ================================
+# .cursorignore ottimizzato
+# ================================
+
+# --- Dipendenze ---
+node_modules/
+**/node_modules/**
+bower_components/
+vendor/
+.pnpm-store/
+.yarn/
+venv/
+.venv/
+bin/
+obj/
+
+# --- Build / cache / output ---
+.next/
+**/.next/**
+dist/
+build/
+out/
+publish/
+coverage/
+.turbo/
+.cache/
+tmp/
+temp/
+Debug/
+Release/
+*.tsbuildinfo
+
+# --- Artefatti runtime ---
+*.log
+*.tmp
+*.temp
+*.pid
+
+# --- Binari ---
+*.exe
+*.dll
+*.pdb
+*.nupkg
+*.apk
+*.aar
+*.ap_
+*.dex
+*.class
+
+# --- IDE / tooling ---
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# --- VCS / sistema ---
+.git/
+.svn/
+.DS_Store
+Thumbs.db
+
+# --- Dati grandi o sensibili (facoltativo) ---
+# Se ti serve cercare nei JSON, commenta la riga sotto.
+*.csv
+*.sql
+*.sqlite
