@@ -52,13 +52,13 @@ export function Navbar({ locale }: NavbarProps) {
     >
       {/* Primary row — logo + CTA + lang switch */}
       <div className="mx-auto flex max-w-content items-center justify-between px-6 py-3 md:px-10 md:py-4">
-        <Link href={`/${locale}`} className="flex items-center">
+        <Link href={`/${locale}`} className="mr-6 flex items-center md:mr-8">
           <Image
             src="/images/home/logo.webp"
             alt="Vacanze alla Maddalena - Logo"
-            width={160}
-            height={45}
-            className="h-[35px] w-auto object-contain sm:h-[45px]"
+            width={200}
+            height={70}
+            className="h-[45px] w-auto object-contain md:h-[65px]"
             priority
           />
         </Link>
