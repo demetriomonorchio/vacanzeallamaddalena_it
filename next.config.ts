@@ -11,6 +11,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // CDN-level redirect: / → /it (permanent, handled before any server code)
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/it",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
