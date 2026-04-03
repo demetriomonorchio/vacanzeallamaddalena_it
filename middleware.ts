@@ -1,16 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { defaultLocale, isLocale } from "./lib/i18n";
+
+// Inlined to avoid any Edge Runtime module-resolution issues with relative imports.
+const LOCALES = ["it", "en"] as const;
+const DEFAULT_LOCALE = "it";
+
+function isLocale(s: string): boolean {
+  return (LOCALES as readonly string[]).includes(s);
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const segments = pathname.split("/").filter(Boolean);
-  const first = segments[0];
+  const first = pathname.split("/").filter(Boolean)[0] ?? "";
 
-  if (!first || !isLocale(first)) {
+  if (!isLocale(first)) {
     const destination =
-      pathname === "/" ? `/${defaultLocale}` : `/${defaultLocale}${pathname}`;
+      pathname === "/" ? `/${DEFAULT_LOCALE}` : `/${DEFAULT_LOCALE}${pathname}`;
     return NextResponse.redirect(new URL(destination, request.url));
   }
 
@@ -21,11 +27,10 @@ export const config = {
   matcher: [
     /*
      * Match all paths EXCEPT:
-     * - _next/static  (static assets)
-     * - _next/image   (image optimisation)
-     * - images/       (public/images/)
-     * - api/          (API routes, if any)
-     * - files with an extension (.ico, .webp, .png, .xml, .txt …)
+     * - _next/static | _next/image  (Next.js internals)
+     * - images/                     (public/images/ static assets)
+     * - api/                        (API routes)
+     * - any path ending with a file extension (.ico, .webp, .xml …)
      */
     "/((?!_next/static|_next/image|images/|api/|[^/]+\\.[^/]+$).*)",
   ],
