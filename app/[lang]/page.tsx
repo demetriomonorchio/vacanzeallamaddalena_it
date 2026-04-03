@@ -2,6 +2,7 @@ import { Compass, Map, UtensilsCrossed } from "lucide-react";
 import { Hero } from "@/components/ui/Hero";
 import { Card } from "@/components/ui/Card";
 import { getHomeCopy } from "@/lib/home-copy";
+import { apartments } from "@/lib/categories";
 import { getCategoryForSlug } from "@/lib/guides";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
@@ -90,13 +91,13 @@ export default async function HomePage({
             </p>
           </div>
           <ul className="mt-14 grid gap-8 md:grid-cols-3">
-            {copy.stays.map((s) => (
-              <li key={s.name}>
+            {apartments.map((apt) => (
+              <li key={apt.slug}>
                 <Card
-                  href={s.href}
-                  title={s.name}
-                  excerpt={s.tagline}
-                  external
+                  href={`/${locale}/appartamenti/${apt.slug}`}
+                  title={apt.title[locale]}
+                  excerpt={apt.excerpt[locale]}
+                  image={apt.image}
                   cta={copy.cta.partner}
                 />
               </li>

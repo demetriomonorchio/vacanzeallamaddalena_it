@@ -1,8 +1,11 @@
 import fs from "fs";
 import path from "path";
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MarkdownArticle } from "@/components/ui/MarkdownArticle";
+import { apartments } from "@/lib/categories";
 import { locales, isLocale, defaultLocale } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { siteUrl, siteName } from "@/lib/metadata";
@@ -85,6 +88,11 @@ export async function generateMetadata({
 
 type Props = { params: Promise<{ lang: string }> };
 
+const ctaLabel: Record<Locale, string> = {
+  it: "Scopri l'appartamento",
+  en: "Discover the apartment",
+};
+
 export default async function AppartamentiPage({ params }: Props) {
   const { lang } = await params;
   const locale: Locale = isLocale(lang) ? lang : defaultLocale;
@@ -93,7 +101,46 @@ export default async function AppartamentiPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-content px-6 py-16 md:px-10 md:py-24">
-      <MarkdownArticle source={raw} />
+      {/* Intro text from markdown */}
+      <div className="max-w-prose">
+        <MarkdownArticle source={raw} />
+      </div>
+
+      {/* Apartment cards with hero images */}
+      <ul className="mt-14 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+        {apartments.map((apt) => (
+          <li key={apt.slug}>
+            <Link
+              href={`/${locale}/appartamenti/${apt.slug}`}
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-mare/15 bg-sabbia shadow-sm transition-shadow duration-300 hover:shadow-md"
+            >
+              {/* Hero image */}
+              <div className="relative h-52 w-full shrink-0 overflow-hidden">
+                <Image
+                  src={apt.image}
+                  alt={apt.title[locale]}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Text */}
+              <div className="flex flex-1 flex-col p-6">
+                <h2 className="font-serif text-xl font-semibold text-mare">
+                  {apt.title[locale]}
+                </h2>
+                <p className="mt-2 flex-1 font-sans text-sm leading-relaxed text-slate/80">
+                  {apt.excerpt[locale]}
+                </p>
+                <span className="mt-5 font-sans text-xs font-bold uppercase tracking-wider text-mare underline-offset-4 group-hover:underline">
+                  {ctaLabel[locale]}
+                </span>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

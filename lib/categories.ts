@@ -250,6 +250,91 @@ export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {
   ],
 };
 
+// ─── Apartment entries ────────────────────────────────────────────────────────
+
+export type ApartmentEntry = {
+  slug: string;
+  title: Record<Locale, string>;
+  excerpt: Record<Locale, string>;
+  /** Hero cover image shown at the top of the detail page. */
+  image: string;
+  /** Ordered gallery images shown below the article text. */
+  gallery: readonly string[];
+};
+
+export const apartments: readonly ApartmentEntry[] = [
+  {
+    slug: "isola",
+    title: {
+      it: "Appartamento Isola",
+      en: "Isola Apartment",
+    },
+    excerpt: {
+      it: "Tra calette e silenzio — la base giusta per chi vuole l'arcipelago tutto per sé.",
+      en: "Between coves and quiet — the right base for those who want the archipelago to themselves.",
+    },
+    image: "/images/appartamenti/isola/hero.jpg",
+    gallery: [
+      "/images/appartamenti/isola/isola-1.jpg",
+      "/images/appartamenti/isola/isola-2.jpg",
+      "/images/appartamenti/isola/isola-3.jpg",
+      "/images/appartamenti/isola/isola-4.jpg",
+      "/images/appartamenti/isola/isola-5.jpg",
+      "/images/appartamenti/isola/isola-6.jpg",
+      "/images/appartamenti/isola/isola-7.jpg",
+      "/images/appartamenti/isola/isola-8.jpg",
+    ],
+  },
+  {
+    slug: "madda",
+    title: {
+      it: "Appartamento Madda",
+      en: "Madda Apartment",
+    },
+    excerpt: {
+      it: "Al centro del borgo, a pochi minuti dal porto e dal mercato del mattino.",
+      en: "In the village centre, minutes from the port and the morning market.",
+    },
+    image: "/images/appartamenti/madda/hero.jpg",
+    gallery: [
+      "/images/appartamenti/madda/madda-1.jpg",
+      "/images/appartamenti/madda/madda-2.jpg",
+      "/images/appartamenti/madda/madda-3.jpg",
+      "/images/appartamenti/madda/madda-4.jpg",
+      "/images/appartamenti/madda/madda-5.jpg",
+      "/images/appartamenti/madda/madda-6.jpg",
+      "/images/appartamenti/madda/madda-7.jpg",
+      "/images/appartamenti/madda/madda-8.jpg",
+    ],
+  },
+  {
+    slug: "lena",
+    title: {
+      it: "Appartamento Lena",
+      en: "Lena Apartment",
+    },
+    excerpt: {
+      it: "Luminosa, essenziale. Con la vista che dice tutto il resto.",
+      en: "Light-filled, essential. With a view that says the rest.",
+    },
+    image: "/images/appartamenti/lena/hero.jpg",
+    gallery: [
+      "/images/appartamenti/lena/lena-1.jpg",
+      "/images/appartamenti/lena/lena-2.jpg",
+      "/images/appartamenti/lena/lena-3.jpg",
+      "/images/appartamenti/lena/lena-4.jpg",
+      "/images/appartamenti/lena/lena-5.jpg",
+      "/images/appartamenti/lena/lena-6.jpg",
+      "/images/appartamenti/lena/lena-7.jpg",
+      "/images/appartamenti/lena/lena-8.jpg",
+    ],
+  },
+];
+
+export function getApartment(slug: string): ApartmentEntry | null {
+  return apartments.find((a) => a.slug === slug) ?? null;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export function getAllGuideRefs(): { category: Category; slug: string }[] {
