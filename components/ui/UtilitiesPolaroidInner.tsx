@@ -239,7 +239,7 @@ export function UtilitiesPolaroidInner({
       className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className}`}
       style={{ transform: `rotate(${rotationDeg}deg)` }}
     >
-      <div className="relative isolate inline-block w-full max-w-full overflow-visible">
+      <div className="relative isolate block w-full max-w-full overflow-visible">
         {/* Macchia parete: bordi frastagliati (clip-path), spostata verso il margine per non coprire il testo */}
         <div
           className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[138%] md:w-[144%]"
@@ -271,8 +271,8 @@ export function UtilitiesPolaroidInner({
               />
             ))}
 
-            <div className="relative rounded-sm bg-white px-4 pb-6 pt-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
-              <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-slate-100 ring-1 ring-slate-200/40">
+            <div className="relative max-w-full rounded-sm bg-white px-4 pb-6 pt-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
+              <div className="relative w-full overflow-hidden rounded-sm bg-slate-100 pb-[100%] ring-1 ring-slate-200/40">
                 {src ? (
                   <Image
                     src={src}
@@ -282,7 +282,7 @@ export function UtilitiesPolaroidInner({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
                     <p className="font-sans text-[10px] font-medium uppercase tracking-wide text-slate/50">
                       {missingLabel}
                     </p>
