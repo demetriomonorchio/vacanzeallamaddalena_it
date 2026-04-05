@@ -58,19 +58,21 @@ export {
 
 // ─── Frontmatter parser (server-only) ────────────────────────────────────────
 
-type PhotoCredit = {
+type FrontmatterData = {
   author?: string;
   authorLink?: string;
+  googleMapsUrl?: string;
 };
 
 /**
- * Extracts `author` and `authorLink` from YAML frontmatter.
+ * Extracts `author`, `authorLink` and `googleMapsUrl` from YAML frontmatter.
  *
  * Supports both quoted and unquoted values, e.g.:
  *   author: "Mario Rossi"
  *   authorLink: https://unsplash.com/@mariorossi
+ *   googleMapsUrl: https://maps.google.com/?q=...
  */
-export function parseFrontmatter(raw: string): PhotoCredit {
+export function parseFrontmatter(raw: string): FrontmatterData {
   const lines = raw.split(/\r?\n/);
   if (lines[0]?.trim() !== "---") return {};
 
@@ -78,7 +80,7 @@ export function parseFrontmatter(raw: string): PhotoCredit {
   if (closingIdx === -1) return {};
 
   const block = lines.slice(1, closingIdx);
-  const result: PhotoCredit = {};
+  const result: FrontmatterData = {};
 
   for (const line of block) {
     const match = line.match(/^(\w+)\s*:\s*"?([^"]*)"?\s*$/);
@@ -86,6 +88,7 @@ export function parseFrontmatter(raw: string): PhotoCredit {
     const [, key, value] = match;
     if (key === "author") result.author = value.trim();
     if (key === "authorLink") result.authorLink = value.trim();
+    if (key === "googleMapsUrl") result.googleMapsUrl = value.trim();
   }
 
   return result;

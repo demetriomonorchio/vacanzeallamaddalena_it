@@ -15,6 +15,7 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-serif)", "Georgia", "serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        handwriting: ["var(--font-handwriting)", "cursive"],
       },
       maxWidth: {
         prose: "42rem",

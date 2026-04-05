@@ -85,6 +85,8 @@ export type GuideEntry = {
   author?: string;
   /** URL to the author's portfolio/profile, parsed from markdown frontmatter. */
   authorLink?: string;
+  /** Google Maps URL, parsed from markdown frontmatter (server-only). */
+  googleMapsUrl?: string;
 };
 
 export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {

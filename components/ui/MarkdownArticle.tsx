@@ -14,7 +14,7 @@ function stripFrontmatter(source: string): string {
 
 const INLINE_RE = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
 
-function renderInline(text: string): ReactNode[] {
+export function renderInline(text: string): ReactNode[] {
   const parts = text.split(INLINE_RE);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -46,17 +46,17 @@ function renderInline(text: string): ReactNode[] {
 
 // ─── Block parser ─────────────────────────────────────────────────────────────
 
-type Block =
+export type MarkdownBlock =
   | { kind: "h1"; text: string }
   | { kind: "h2"; text: string }
   | { kind: "h3"; text: string }
   | { kind: "p"; text: string }
   | { kind: "blockquote"; text: string };
 
-function parseBlocks(source: string): Block[] {
+export function parseBlocks(source: string): MarkdownBlock[] {
   const clean = stripFrontmatter(source).trim();
   const lines = clean.split(/\r?\n/);
-  const blocks: Block[] = [];
+  const blocks: MarkdownBlock[] = [];
   let buf: string[] = [];
   let quoteBuf: string[] = [];
 
@@ -112,6 +112,19 @@ function parseBlocks(source: string): Block[] {
   flushParagraph();
   flushQuote();
   return blocks;
+}
+
+/** Blocchi markdown dopo aver omesso il primo titolo `#` (già mostrato come h1 di pagina). */
+export function parseBlocksOmitFirstH1(source: string): MarkdownBlock[] {
+  const allBlocks = parseBlocks(source);
+  let skipped = false;
+  return allBlocks.filter((b) => {
+    if (!skipped && b.kind === "h1") {
+      skipped = true;
+      return false;
+    }
+    return true;
+  });
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────

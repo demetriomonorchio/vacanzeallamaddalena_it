@@ -1,21 +1,34 @@
 # Tavola di porto
 
-## Non è gastronomia: è abitudine
+## Non è solo gastronomia: è lo stile di vita maddalenino
 
-Mangiare all'arcipelago di La Maddalena non è un atto gastronomico nel senso moderno del termine. È un rituale orario, geografico, sociale. Il pesce del mercato del mattino, la granita alle undici, il pasto lungo a mezzogiorno con il vento che alza i tovaglioli. La qualità non si annuncia: è data per scontata.
+Mangiare nell'arcipelago di La Maddalena significa seguire il ritmo delle barche che rientrano in porto. Non aspettatevi menu turistici standardizzati: qui l'esperienza è legata al territorio. Dalla sosta in gelateria in **Piazza Comando** alla cena vista mare, ogni pasto riflette l'identità dell'isola. La vera qualità non si trova nelle insegne luminose, ma nella freschezza della materia prima gallurese.
 
-## Il pesce
+## Il pesce: dal mare alla tavola
 
-La rete è il menu. Aragoste, dentici, polpo, ricci quando la stagione lo permette. I locali non ordinano: chiedono cos'è arrivato quel mattino. La stessa logica vale per il viaggiatore che vuole mangiare davvero. Le trattorie storiche del borgo — quelle con i tavoli di plastica e i prezzi senza decimali — sono spesso migliori delle insegne illuminate sul lungomare.
+A La Maddalena è il mare a decidere il menu. Se cercate l'autenticità, evitate i locali troppo patinati e addentratevi tra i vicoli del centro storico.
 
-## La granita
+- **Cosa chiedere:** Non limitatevi ai soliti piatti. Chiedete il pescato del giorno: **dentice, ricciola o il polpo locale**.
+- **Consiglio da insider:** Le trattorie storiche offrono piatti imbattibili come gli spaghetti alla bottarga o la fregola ai frutti di mare. Se il menu è scritto a mano, siete nel posto giusto.
 
-La granita di La Maddalena è un'istituzione. Non è sorbetto: è granita. Ghiaccio grattato, sciroppo vero, servita in bicchiere con la panna solo se si chiede. Il rito è mattutino: prima del bagno o dopo una camminata sui sentieri di Caprera. I bar storici del centro la servono tutto il giorno, ma sa meglio alle nove.
+## Il gelato artigianale: il rito del dopocena
 
-## Il vino sardo
+A differenza di altre zone, a La Maddalena il vero rito del passeggio è legato a un ottimo gelato artigianale. Le gelaterie del centro sono un'istituzione e rappresentano la sosta obbligatoria dopo una giornata in barca o durante la passeggiata serale in **Via Garibaldi**.
 
-Vermentino freddo come punto di partenza. Il Cannonau è per la sera, per le grigliate sugli scogli, per i tavoli dopo il tramonto. Non cercare etichette internazionali: l'isola ha già tutto.
+- **I gusti del territorio:** Cercate le varianti ispirate alla Sardegna, come il gelato al **mirto**, al **miele di corbezzolo** o con mandorle tostate.
+- **Il momento ideale:** La sera, quando il borgo si anima e l'aria rinfresca. È il modo perfetto per concludere una giornata trascorsa tra le calette di Caprera.
 
-## Il mercato del mattino
+## Il vino sardo: Vermentino e Cannonau
 
-La piazza centrale di La Maddalena, nelle prime ore del mattino, è il posto dove si capisce il territorio meglio di qualsiasi guida. Frutta, pesce, formaggi, qualche produttore di campagna. Un'ora spesa lì vale un itinerario.
+La Sardegna vanta una tradizione vitivinicola d'eccellenza che si sposa perfettamente con il clima dell'arcipelago.
+
+- **Il Vermentino di Gallura DOCG:** È il re indiscusso. Bianco, sapido e profumato, va servito ghiacciato con i piatti di pesce.
+- **Il Cannonau:** Ideale per le cene serali a base di carni locali o formaggi stagionati come il pecorino sardo DOP.
+- **Suggerimento:** Chiedete sempre un vino delle cantine della Gallura: la vicinanza al mare regala ai bianchi una nota salina inconfondibile.
+
+## Il mercato del mattino: il cuore pulsante
+
+Per capire davvero l'isola, bisogna visitare il mercato comunale nelle prime ore del giorno. Situato vicino al porto, è qui che i residenti si riforniscono.
+
+- **Cosa comprare:** Bottarga di muggine, formaggi dei pastori dell'entroterra e frutta di stagione.
+- **Perché andarci:** È il posto migliore per osservare la vita quotidiana dei maddalenini e carpire qualche consiglio dai pescatori su quale isola sia la più riparata dal vento della giornata (fondamentale per decidere se puntare su Spargi o su Caprera in base al **Maestrale** o allo **Scirocco**).

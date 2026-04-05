@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { MapPin } from "lucide-react";
 import { notFound } from "next/navigation";
-import { MarkdownArticle } from "@/components/ui/MarkdownArticle";
+import {
+  MarkdownArticle,
+  parseBlocksOmitFirstH1,
+  type MarkdownBlock,
+} from "@/components/ui/MarkdownArticle";
+import { UtilitiesDiaryArticle } from "@/components/ui/UtilitiesDiaryArticle";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import {
   getGuideRaw,
@@ -13,6 +19,7 @@ import {
   guidesByCategory,
   type Category,
 } from "@/lib/guides";
+import { isPolaroidDiaryCategory } from "@/lib/polaroidDiaryCategories";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { guideMetadata } from "@/lib/metadata";
 
@@ -48,7 +55,72 @@ export default async function GuidePage({ params }: Props) {
   const entry = guidesByCategory[cat].find((g) => g.slug === slug);
   const imageUrl = getGuideImagePath(cat, slug);
   const title = entry?.title[locale] ?? slug.replace(/-/g, " ");
-  const { author, authorLink } = parseFrontmatter(raw);
+  const { author, authorLink, googleMapsUrl } = parseFrontmatter(raw);
+
+  const mapsLabel =
+    locale === "it" ? "Vedi posizione su Google Maps" : "View on Google Maps";
+  const mapsHint =
+    locale === "it"
+      ? "Vuoi sapere dove si trova esattamente?"
+      : "Want to know exactly where this is?";
+
+  if (isPolaroidDiaryCategory(cat)) {
+    const blocks = parseBlocksOmitFirstH1(raw);
+
+    let polaroidKeyBlocks: MarkdownBlock[] | undefined;
+    if (locale === "en") {
+      const rawIt = getGuideRaw("it", cat, slug);
+      if (rawIt) polaroidKeyBlocks = parseBlocksOmitFirstH1(rawIt);
+    }
+
+    return (
+      <div className="mx-auto max-w-content px-6 pb-24 pt-28 md:px-10 md:pt-36">
+        <div className="mx-auto max-w-3xl">
+          <Breadcrumbs
+            locale={locale}
+            category={cat}
+            slug={slug}
+            slugLabel={entry?.title[locale]}
+          />
+
+          <h1 className="mt-8 text-left font-serif text-4xl font-bold text-mare md:text-5xl">
+            {title}
+          </h1>
+
+          {entry?.excerpt[locale] ? (
+            <p className="mt-4 text-pretty font-sans text-lg leading-relaxed text-slate/80 md:text-xl">
+              {entry.excerpt[locale]}
+            </p>
+          ) : null}
+
+          <div className="mt-10">
+            <UtilitiesDiaryArticle
+              category={cat}
+              blocks={blocks}
+              polaroidKeyBlocks={polaroidKeyBlocks}
+              pageSlug={slug}
+              locale={locale}
+            />
+          </div>
+
+          {googleMapsUrl && (
+            <div className="mt-12 rounded-2xl bg-slate-50 p-6 shadow-sm">
+              <p className="mb-4 font-sans text-sm text-slate-500">{mapsHint}</p>
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-800 px-6 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-mare"
+              >
+                <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+                {mapsLabel}
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-content px-6 pb-24 pt-10 md:px-10 md:pt-14">
@@ -106,6 +178,22 @@ export default async function GuidePage({ params }: Props) {
         <div className="mt-4">
           <MarkdownArticle source={raw} suppressFirstH1 />
         </div>
+
+        {/* Google Maps CTA — shown only when googleMapsUrl is set in frontmatter */}
+        {googleMapsUrl && (
+          <div className="mt-12 rounded-2xl bg-slate-50 p-6 shadow-sm">
+            <p className="mb-4 font-sans text-sm text-slate-500">{mapsHint}</p>
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-800 px-6 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-mare"
+            >
+              <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+              {mapsLabel}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

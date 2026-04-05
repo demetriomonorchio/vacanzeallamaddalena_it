@@ -21,6 +21,11 @@ const appartamentiLabel: Record<Locale, string> = {
   en: "Apartments",
 };
 
+const serviziLabel: Record<Locale, string> = {
+  it: "Servizi",
+  en: "Services",
+};
+
 export function Navbar({ locale }: NavbarProps) {
   const other: Locale = locale === "it" ? "en" : "it";
   const pathname = usePathname();
@@ -111,6 +116,26 @@ export function Navbar({ locale }: NavbarProps) {
               </Link>
             </li>
           ))}
+
+          {/* Divider + Servizi — practical section separated from editorial categories */}
+          <li
+            aria-hidden
+            className={`my-auto mx-2 h-3.5 w-px shrink-0 ${
+              isSolid ? "bg-mare/20" : "bg-white/20"
+            }`}
+          />
+          <li>
+            <Link
+              href={`/${locale}/servizi`}
+              className={`inline-block whitespace-nowrap px-3 py-2.5 font-sans text-xs font-bold uppercase tracking-widest transition-colors duration-300 ${
+                isSolid
+                  ? "text-mare/70 hover:text-mare"
+                  : "text-white drop-shadow-md hover:text-sabbia"
+              }`}
+            >
+              {serviziLabel[locale]}
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
