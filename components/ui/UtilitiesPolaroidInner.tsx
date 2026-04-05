@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import type { Category } from "@/lib/categories";
 
 type Props = {
@@ -13,6 +13,11 @@ type Props = {
   captionTitle: string;
   rotationDeg: number;
   missingLabel: string;
+  /**
+   * Sposta la macchia colorata verso il margine pagina così non invade il testo a capo.
+   * Allineato al float: `margin-right` se la card è float-right, altrimenti `margin-left`.
+   */
+  paintBleedToward: "margin-right" | "margin-left";
   className?: string;
 };
 
@@ -22,49 +27,176 @@ function hashString(s: string): number {
   return Math.abs(h);
 }
 
-/** Scotch su angolo: resta sul bordo / bacheca, non sulla foto. */
-function ScotchCorner({ variant }: { variant: number }) {
-  const isLeft = variant % 2 === 0;
+function mulberry32(seed: number) {
+  return () => {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Bordo irregolare tipo pennellata non finita (clip-path deterministico). */
+function paintBrushClipPath(seed: number): string {
+  const rnd = mulberry32(seed);
+  const j = () => (rnd() - 0.5) * 4.2;
+  const n = 7;
+  const pts: [number, number][] = [];
+
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    pts.push([t * 100 + j(), 0 + j()]);
+  }
+  for (let i = 1; i <= n; i++) {
+    const t = i / n;
+    pts.push([100 + j(), t * 100 + j()]);
+  }
+  for (let i = 1; i <= n; i++) {
+    const t = 1 - i / n;
+    pts.push([t * 100 + j(), 100 + j()]);
+  }
+  for (let i = 1; i < n; i++) {
+    const t = 1 - i / n;
+    pts.push([0 + j(), t * 100 + j()]);
+  }
+
+  return `polygon(${pts.map(([x, y]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`).join(",")})`;
+}
+
+/**
+ * Quadrato “parete dipinta”, colori più brillanti + leggere variazioni tipo pennello.
+ * (Rosa / marrone / azzurro / verde acqua — toni vivaci ma non neon.)
+ */
+const PAINTED_WALL_BASE: readonly string[] = [
+  `radial-gradient(ellipse 85% 70% at 25% 30%, rgb(255 195 200 / 0.55) 0%, transparent 55%),
+   radial-gradient(ellipse 60% 80% at 80% 75%, rgb(230 120 140 / 0.4) 0%, transparent 50%),
+   linear-gradient(152deg, rgb(248 130 150) 0%, rgb(255 175 185) 42%, rgb(235 105 130) 100%)`,
+  `radial-gradient(ellipse 80% 65% at 70% 25%, rgb(255 200 150 / 0.45) 0%, transparent 50%),
+   radial-gradient(ellipse 55% 70% at 20% 80%, rgb(200 120 70 / 0.35) 0%, transparent 48%),
+   linear-gradient(148deg, rgb(210 140 85) 0%, rgb(235 175 110) 45%, rgb(185 110 60) 100%)`,
+  `radial-gradient(ellipse 75% 75% at 30% 70%, rgb(180 230 255 / 0.5) 0%, transparent 52%),
+   radial-gradient(ellipse 65% 60% at 85% 30%, rgb(120 195 245 / 0.4) 0%, transparent 50%),
+   linear-gradient(145deg, rgb(95 175 235) 0%, rgb(140 210 255) 48%, rgb(70 155 220) 100%)`,
+  `radial-gradient(ellipse 70% 80% at 75% 65%, rgb(160 245 225 / 0.45) 0%, transparent 52%),
+   radial-gradient(ellipse 80% 55% at 15% 25%, rgb(100 210 190 / 0.38) 0%, transparent 48%),
+   linear-gradient(140deg, rgb(65 195 175) 0%, rgb(120 225 205) 46%, rgb(45 175 155) 100%)`,
+];
+
+/** Nastro orizzontale: lati corti sinistro e destro seghettati (SVG). */
+function SerratedTape({
+  className,
+  rotationDeg,
+  gradId,
+}: {
+  className?: string;
+  rotationDeg: number;
+  gradId: string;
+}) {
   return (
     <div
-      className={`pointer-events-none absolute z-30 h-9 w-14 shadow-md ${
-        isLeft
-          ? "-left-1 top-1 origin-top-left -rotate-[32deg]"
-          : "-right-1 top-1 origin-top-right rotate-[28deg]"
-      }`}
+      className={`pointer-events-none absolute z-30 ${className}`}
+      style={{
+        transform: `rotate(${rotationDeg}deg)`,
+        transformOrigin: "center center",
+      }}
       aria-hidden
     >
-      <div
-        className="h-full w-full rounded-[2px] bg-gradient-to-br from-amber-50/95 via-amber-200/85 to-amber-300/75 opacity-95 ring-1 ring-amber-900/25 backdrop-blur-[1px]"
-        style={{
-          boxShadow:
-            "inset 0 1px 0 rgb(255 255 255 / 0.5), 0 2px 4px rgb(0 0 0 / 0.12)",
-        }}
-      />
+      <svg
+        width="36"
+        height="10"
+        viewBox="0 0 48 12"
+        className="h-2.5 w-[2.35rem] drop-shadow-[0_1px_2px_rgba(0,0,0,0.14)] md:h-3 md:w-[2.75rem]"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgb(255 252 245)" stopOpacity="0.88" />
+            <stop offset="50%" stopColor="rgb(248 238 220)" stopOpacity="0.72" />
+            <stop offset="100%" stopColor="rgb(232 218 195)" stopOpacity="0.68" />
+          </linearGradient>
+        </defs>
+        <path
+          fill={`url(#${gradId})`}
+          d="M 0,12 L 1.4,10.5 L 0,9 L 1.4,7.5 L 0,6 L 1.4,4.5 L 0,3 L 1.4,1.5 L 0,0 L 48,0 L 48,1.5 L 46.6,3 L 48,4.5 L 46.6,6 L 48,7.5 L 46.6,9 L 48,10.5 L 46.6,12 L 0,12 Z"
+        />
+        <path
+          d="M 0,12 L 1.4,10.5 L 0,9 L 1.4,7.5 L 0,6 L 1.4,4.5 L 0,3 L 1.4,1.5 L 0,0 L 48,0 L 48,1.5 L 46.6,3 L 48,4.5 L 46.6,6 L 48,7.5 L 46.6,9 L 48,10.5 L 46.6,12 L 0,12 Z"
+          fill="none"
+          stroke="rgb(180 160 130 / 0.35)"
+          strokeWidth="0.35"
+        />
+      </svg>
     </div>
   );
 }
 
-/** Puntina da bacheca (testa + ago). */
-function PushPin({ variant }: { variant: number }) {
-  const pos =
-    variant % 3 === 0
-      ? "left-[14%] -translate-x-1/2"
-      : variant % 3 === 1
-        ? "left-1/2 -translate-x-1/2"
-        : "left-[86%] -translate-x-1/2";
+type TapeSpec = { className: string; rotation: number; gradSuffix: string };
 
-  return (
-    <div
-      className={`pointer-events-none absolute -top-2 z-30 ${pos}`}
-      aria-hidden
-    >
-      <div className="flex flex-col items-center">
-        <div className="h-3.5 w-3.5 rounded-full bg-gradient-to-br from-red-400 via-red-600 to-red-900 shadow-[0_2px_3px_rgba(0,0,0,0.35)] ring-1 ring-red-950/30" />
-        <div className="-mt-px h-2.5 w-px rounded-full bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 shadow-sm" />
-      </div>
-    </div>
-  );
+/**
+ * Nastri centrati sull’angolo della cornice bianca (diagonale sulla bisettrice).
+ */
+function buildTapeLayout(h: number): { tapes: TapeSpec[] } {
+  const two = (h >> 5) % 2 === 1;
+  const opposite = (h >> 7) % 2 === 0;
+
+  if (!two) {
+    const corner = h % 4;
+    const corners: TapeSpec[] = [
+      {
+        className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
+        rotation: -41,
+        gradSuffix: "a",
+      },
+      {
+        className: "right-0 top-0 translate-x-[32%] -translate-y-[42%]",
+        rotation: 41,
+        gradSuffix: "a",
+      },
+      {
+        className: "left-0 bottom-[5.35rem] -translate-x-[32%] translate-y-[42%]",
+        rotation: -48,
+        gradSuffix: "a",
+      },
+      {
+        className: "right-0 bottom-[5.35rem] translate-x-[32%] translate-y-[42%]",
+        rotation: 48,
+        gradSuffix: "a",
+      },
+    ];
+    return { tapes: [corners[corner]!] };
+  }
+
+  if (opposite) {
+    return {
+      tapes: [
+        {
+          className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
+          rotation: -41,
+          gradSuffix: "a",
+        },
+        {
+          className: "right-0 bottom-[5.35rem] translate-x-[32%] translate-y-[42%]",
+          rotation: 139,
+          gradSuffix: "b",
+        },
+      ],
+    };
+  }
+
+  return {
+    tapes: [
+      {
+        className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
+        rotation: -40,
+        gradSuffix: "a",
+      },
+      {
+        className: "right-0 top-0 translate-x-[32%] -translate-y-[42%]",
+        rotation: 40,
+        gradSuffix: "b",
+      },
+    ],
+  };
 }
 
 export function UtilitiesPolaroidInner({
@@ -75,68 +207,102 @@ export function UtilitiesPolaroidInner({
   captionTitle,
   rotationDeg,
   missingLabel,
+  paintBleedToward,
   className = "",
 }: Props) {
+  const reactId = useId().replace(/:/g, "");
   const relativePath = `images/${category}/${pageSlug}/${expectedBasename}.png`;
 
-  const attachment = useMemo(() => {
+  const decor = useMemo(() => {
     const h = hashString(`${category}/${pageSlug}:${expectedBasename}`);
+    const wallIdx = h % PAINTED_WALL_BASE.length;
+    const gradBase = `${reactId}-${h % 10000}`;
+    const { tapes } = buildTapeLayout(h);
+    const clipPath = paintBrushClipPath(h ^ 0x9e3779b9);
+    const shiftX =
+      paintBleedToward === "margin-right"
+        ? "clamp(10px, 5vw, 22px)"
+        : "clamp(-22px, -5vw, -10px)";
     return {
-      mode: h % 2 === 0 ? ("tape" as const) : ("pin" as const),
-      variant: Math.floor(h / 3) % 8,
+      wallBackground: PAINTED_WALL_BASE[wallIdx],
+      clipPath,
+      shiftX,
+      tapes: tapes.map((t) => ({
+        ...t,
+        gradId: `${gradBase}-${t.gradSuffix}`,
+      })),
     };
-  }, [category, pageSlug, expectedBasename]);
+  }, [category, pageSlug, expectedBasename, reactId, paintBleedToward]);
 
   return (
     <div
-      className={`relative shrink-0 rounded-lg bg-gradient-to-br from-[#d4b896] via-[#c4a574] to-[#a67c52] p-2.5 shadow-[inset_0_2px_4px_rgb(255_255_255_/_0.25),inset_0_-3px_6px_rgb(0_0_0_/_0.12)] ring-1 ring-amber-950/15 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className}`}
-      style={{
-        transform: `rotate(${rotationDeg}deg)`,
-        backgroundImage: `
-          radial-gradient(ellipse at 20% 30%, rgb(255 255 255 / 0.12) 0%, transparent 45%),
-          radial-gradient(ellipse at 80% 70%, rgb(0 0 0 / 0.06) 0%, transparent 40%)
-        `,
-      }}
+      className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className}`}
+      style={{ transform: `rotate(${rotationDeg}deg)` }}
     >
-      <figure className="relative m-0" aria-label={captionTitle}>
-        <div className="relative">
-          {attachment.mode === "tape" ? (
-            <ScotchCorner variant={attachment.variant} />
-          ) : (
-            <PushPin variant={attachment.variant} />
-          )}
+      <div className="relative isolate inline-block w-full max-w-full overflow-visible">
+        {/* Macchia parete: bordi frastagliati (clip-path), spostata verso il margine per non coprire il testo */}
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[138%] md:w-[144%]"
+          style={{
+            background: decor.wallBackground,
+            clipPath: decor.clipPath,
+            WebkitClipPath: decor.clipPath,
+            transform: `translate(calc(-50% + ${decor.shiftX}), -50%)`,
+            boxShadow: `
+              inset 0 0 0 1px rgb(255 255 255 / 0.22),
+              inset 0 0 50px rgb(255 255 255 / 0.14),
+              inset 0 -28px 55px rgb(0 0 0 / 0.08),
+              0 10px 36px rgb(0 0 0 / 0.11)
+            `,
+            filter:
+              "saturate(1.05) drop-shadow(0 3px 10px rgb(0 0 0 / 0.1)) drop-shadow(0 0 1px rgb(255 255 255 / 0.35))",
+          }}
+          aria-hidden
+        />
 
-          <div className="relative rounded-md bg-white px-5 pb-4 pt-5 shadow-2xl ring-1 ring-slate-200/60">
-            <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-slate-100 ring-1 ring-slate-200/40">
-              {src ? (
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  sizes="(max-width: 768px) 176px, 208px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
-                  <p className="font-sans text-[10px] font-medium uppercase tracking-wide text-slate/50">
-                    {missingLabel}
-                  </p>
-                  <p className="break-all font-mono text-[11px] leading-snug text-mare">
-                    {expectedBasename}.png
-                  </p>
-                  <p className="break-all font-mono text-[9px] leading-tight text-slate/60">
-                    public/{relativePath}
-                  </p>
-                </div>
-              )}
+        <figure className="relative z-10 m-0" aria-label={captionTitle}>
+          <div className="relative">
+            {decor.tapes.map((tape, i) => (
+              <SerratedTape
+                key={i}
+                className={tape.className}
+                rotationDeg={tape.rotation}
+                gradId={tape.gradId}
+              />
+            ))}
+
+            <div className="relative rounded-sm bg-white px-4 pb-6 pt-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
+              <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-slate-100 ring-1 ring-slate-200/40">
+                {src ? (
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 176px, 208px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
+                    <p className="font-sans text-[10px] font-medium uppercase tracking-wide text-slate/50">
+                      {missingLabel}
+                    </p>
+                    <p className="break-all font-mono text-[11px] leading-snug text-mare">
+                      {expectedBasename}.png
+                    </p>
+                    <p className="break-all font-mono text-[9px] leading-tight text-slate/60">
+                      public/{relativePath}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <figcaption className="mt-3 min-h-[2.5rem] px-1 text-center font-handwriting text-xl font-semibold leading-tight text-mare md:text-2xl">
+                {captionTitle}
+              </figcaption>
             </div>
-
-            <figcaption className="mt-3 min-h-[2.5rem] px-1 text-center font-handwriting text-xl font-semibold leading-tight text-mare md:text-2xl">
-              {captionTitle}
-            </figcaption>
           </div>
-        </div>
-      </figure>
+        </figure>
+      </div>
     </div>
   );
 }

@@ -50,8 +50,8 @@ export function UtilitiesImageCard({
   const rotationDeg = polaroidRotationDeg(`${category}/${slug}:${basename}`);
   const sideRight = index % 2 === 0;
   const floatClass = sideRight
-    ? "float-right ml-6 mb-4"
-    : "float-left mr-6 mb-4";
+    ? "float-right mb-4 ml-8 md:ml-10"
+    : "float-left mb-4 mr-8 md:mr-10";
 
   const missingLabel =
     locale === "it" ? "Immagine assente" : "Image missing";
@@ -65,6 +65,7 @@ export function UtilitiesImageCard({
       captionTitle={title}
       rotationDeg={rotationDeg}
       missingLabel={missingLabel}
+      paintBleedToward={sideRight ? "margin-right" : "margin-left"}
       className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}
     />
   );
