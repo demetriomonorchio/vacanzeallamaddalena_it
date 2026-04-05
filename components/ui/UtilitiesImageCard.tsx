@@ -9,7 +9,7 @@ import type { Locale } from "@/lib/i18n";
 
 type Props = {
   category: Category;
-  /** Titolo mostrato in didascalia (senza suffisso `| img`) — lingua corrente. */
+  /** Titolo sezione (senza `| img`): basename PNG, testo alternativo immagine, aria sulla figura. */
   title: string;
   /**
    * Titolo (tipicamente IT) usato solo per basename / prime 3 parole.
@@ -50,8 +50,8 @@ export function UtilitiesImageCard({
   const rotationDeg = polaroidRotationDeg(`${category}/${slug}:${basename}`);
   const sideRight = index % 2 === 0;
   const floatClass = sideRight
-    ? "float-right mb-4 ml-8 md:ml-10"
-    : "float-left mb-4 mr-8 md:mr-10";
+    ? "float-right mb-4 ml-10 md:ml-12"
+    : "float-left mb-4 mr-10 md:mr-12";
 
   const missingLabel =
     locale === "it" ? "Immagine assente" : "Image missing";
@@ -62,10 +62,8 @@ export function UtilitiesImageCard({
       expectedBasename={basename}
       category={category}
       pageSlug={slug}
-      captionTitle={title}
       rotationDeg={rotationDeg}
       missingLabel={missingLabel}
-      paintBleedToward={sideRight ? "margin-right" : "margin-left"}
       className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}
     />
   );

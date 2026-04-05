@@ -10,14 +10,8 @@ type Props = {
   expectedBasename: string;
   category: Category;
   pageSlug: string;
-  captionTitle: string;
   rotationDeg: number;
   missingLabel: string;
-  /**
-   * Sposta la macchia colorata verso il margine pagina così non invade il testo a capo.
-   * Allineato al float: `margin-right` se la card è float-right, altrimenti `margin-left`.
-   */
-  paintBleedToward: "margin-right" | "margin-left";
   className?: string;
 };
 
@@ -39,7 +33,7 @@ function mulberry32(seed: number) {
 /** Bordo irregolare tipo pennellata non finita (clip-path deterministico). */
 function paintBrushClipPath(seed: number): string {
   const rnd = mulberry32(seed);
-  const j = () => (rnd() - 0.5) * 4.2;
+  const j = () => (rnd() - 0.5) * 2.5;
   const n = 7;
   const pts: [number, number][] = [];
 
@@ -84,30 +78,30 @@ const PAINTED_WALL_BASE: readonly string[] = [
 
 /** Nastro orizzontale: lati corti sinistro e destro seghettati (SVG). */
 function SerratedTape({
-  className,
+  wrapperClassName,
   rotationDeg,
   gradId,
 }: {
-  className?: string;
+  wrapperClassName: string;
   rotationDeg: number;
   gradId: string;
 }) {
   return (
     <div
-      className={`pointer-events-none absolute z-30 ${className}`}
-      style={{
-        transform: `rotate(${rotationDeg}deg)`,
-        transformOrigin: "center center",
-      }}
+      className={`pointer-events-none absolute z-30 ${wrapperClassName}`}
       aria-hidden
     >
-      <svg
-        width="36"
-        height="10"
-        viewBox="0 0 48 12"
-        className="h-2.5 w-[2.35rem] drop-shadow-[0_1px_2px_rgba(0,0,0,0.14)] md:h-3 md:w-[2.75rem]"
-        preserveAspectRatio="none"
+      <div
+        className="origin-center"
+        style={{ transform: `rotate(${rotationDeg}deg)` }}
       >
+        <svg
+          width="36"
+          height="10"
+          viewBox="0 0 48 12"
+          className="h-2.5 w-[2.85rem] drop-shadow-[0_1px_2px_rgba(0,0,0,0.14)] md:h-3.5 md:w-[3.15rem]"
+          preserveAspectRatio="none"
+        >
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgb(255 252 245)" stopOpacity="0.88" />
@@ -125,74 +119,94 @@ function SerratedTape({
           stroke="rgb(180 160 130 / 0.35)"
           strokeWidth="0.35"
         />
-      </svg>
+        </svg>
+      </div>
     </div>
   );
 }
 
-type TapeSpec = { className: string; rotation: number; gradSuffix: string };
+type TapeSpec = { wrapperClassName: string; rotation: number; gradSuffix: string };
 
 /**
- * Nastri centrati sull’angolo della cornice bianca (diagonale sulla bisettrice).
+ * Nastri sugli angoli della cornice bianca.
+ * Regole: 1 nastro → solo angoli alti. 2 nastri → mai entrambi solo in basso (serve sempre almeno uno in alto).
  */
 function buildTapeLayout(h: number): { tapes: TapeSpec[] } {
   const two = (h >> 5) % 2 === 1;
   const opposite = (h >> 7) % 2 === 0;
 
   if (!two) {
-    const corner = h % 4;
-    const corners: TapeSpec[] = [
+    /** Un solo nastro: solo in alto (sinistro o destro). */
+    const topOnly = h % 2;
+    const topCorners: TapeSpec[] = [
       {
-        className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
-        rotation: -41,
+        wrapperClassName:
+          "left-0 top-0 -translate-x-[14%] -translate-y-[32%]",
+        rotation: -43,
         gradSuffix: "a",
       },
       {
-        className: "right-0 top-0 translate-x-[32%] -translate-y-[42%]",
-        rotation: 41,
-        gradSuffix: "a",
-      },
-      {
-        className: "left-0 bottom-[5.35rem] -translate-x-[32%] translate-y-[42%]",
-        rotation: -48,
-        gradSuffix: "a",
-      },
-      {
-        className: "right-0 bottom-[5.35rem] translate-x-[32%] translate-y-[42%]",
-        rotation: 48,
+        wrapperClassName:
+          "right-0 top-0 translate-x-[14%] -translate-y-[32%]",
+        rotation: 43,
         gradSuffix: "a",
       },
     ];
-    return { tapes: [corners[corner]!] };
+    return { tapes: [topCorners[topOnly]!] };
   }
 
   if (opposite) {
+    /** Due nastri in diagonale: sempre uno in alto + uno in basso (mai due solo sotto). */
+    const flip = h % 2 === 1;
+    if (flip) {
+      return {
+        tapes: [
+          {
+            wrapperClassName:
+              "right-0 top-0 translate-x-[14%] -translate-y-[32%]",
+            rotation: 43,
+            gradSuffix: "a",
+          },
+          {
+            wrapperClassName:
+              "bottom-0 left-0 -translate-x-[14%] translate-y-[32%]",
+            rotation: 43,
+            gradSuffix: "b",
+          },
+        ],
+      };
+    }
     return {
       tapes: [
         {
-          className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
-          rotation: -41,
+          wrapperClassName:
+            "left-0 top-0 -translate-x-[14%] -translate-y-[32%]",
+          rotation: -43,
           gradSuffix: "a",
         },
         {
-          className: "right-0 bottom-[5.35rem] translate-x-[32%] translate-y-[42%]",
-          rotation: 139,
+          wrapperClassName:
+            "bottom-0 right-0 translate-x-[14%] translate-y-[32%]",
+          rotation: 136,
           gradSuffix: "b",
         },
       ],
     };
   }
 
+  /** Due nastri entrambi in alto (sinistro + destro). */
   return {
     tapes: [
       {
-        className: "left-0 top-0 -translate-x-[32%] -translate-y-[42%]",
-        rotation: -40,
+        wrapperClassName:
+          "left-0 top-0 -translate-x-[14%] -translate-y-[32%]",
+        rotation: -42,
         gradSuffix: "a",
       },
       {
-        className: "right-0 top-0 translate-x-[32%] -translate-y-[42%]",
-        rotation: 40,
+        wrapperClassName:
+          "right-0 top-0 translate-x-[14%] -translate-y-[32%]",
+        rotation: 42,
         gradSuffix: "b",
       },
     ],
@@ -204,10 +218,8 @@ export function UtilitiesPolaroidInner({
   expectedBasename,
   category,
   pageSlug,
-  captionTitle,
   rotationDeg,
   missingLabel,
-  paintBleedToward,
   className = "",
 }: Props) {
   const reactId = useId().replace(/:/g, "");
@@ -219,20 +231,15 @@ export function UtilitiesPolaroidInner({
     const gradBase = `${reactId}-${h % 10000}`;
     const { tapes } = buildTapeLayout(h);
     const clipPath = paintBrushClipPath(h ^ 0x9e3779b9);
-    const shiftX =
-      paintBleedToward === "margin-right"
-        ? "clamp(10px, 5vw, 22px)"
-        : "clamp(-22px, -5vw, -10px)";
     return {
       wallBackground: PAINTED_WALL_BASE[wallIdx],
       clipPath,
-      shiftX,
       tapes: tapes.map((t) => ({
         ...t,
         gradId: `${gradBase}-${t.gradSuffix}`,
       })),
     };
-  }, [category, pageSlug, expectedBasename, reactId, paintBleedToward]);
+  }, [category, pageSlug, expectedBasename, reactId]);
 
   return (
     <div
@@ -240,38 +247,37 @@ export function UtilitiesPolaroidInner({
       style={{ transform: `rotate(${rotationDeg}deg)` }}
     >
       <div className="relative isolate block w-full max-w-full overflow-visible">
-        {/* Macchia parete: bordi frastagliati (clip-path), spostata verso il margine per non coprire il testo */}
+        {/* Macchia parete: centrata sulla polaroid, abbastanza grande da restare sotto tutta la cornice. */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[138%] md:w-[144%]"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[128%] md:w-[132%]"
           style={{
             background: decor.wallBackground,
             clipPath: decor.clipPath,
             WebkitClipPath: decor.clipPath,
-            transform: `translate(calc(-50% + ${decor.shiftX}), -50%)`,
+            transform: "translate(-50%, -50%)",
             boxShadow: `
               inset 0 0 0 1px rgb(255 255 255 / 0.22),
-              inset 0 0 50px rgb(255 255 255 / 0.14),
-              inset 0 -28px 55px rgb(0 0 0 / 0.08),
-              0 10px 36px rgb(0 0 0 / 0.11)
+              inset 0 0 40px rgb(255 255 255 / 0.12),
+              inset 0 -20px 40px rgb(0 0 0 / 0.06),
+              0 5px 18px rgb(0 0 0 / 0.08)
             `,
-            filter:
-              "saturate(1.05) drop-shadow(0 3px 10px rgb(0 0 0 / 0.1)) drop-shadow(0 0 1px rgb(255 255 255 / 0.35))",
+            filter: "saturate(1.05) drop-shadow(0 2px 6px rgb(0 0 0 / 0.07))",
           }}
           aria-hidden
         />
 
-        <figure className="relative z-10 m-0" aria-label={captionTitle}>
+        <figure className="relative z-10 m-0">
           <div className="relative">
             {decor.tapes.map((tape, i) => (
               <SerratedTape
                 key={i}
-                className={tape.className}
+                wrapperClassName={tape.wrapperClassName}
                 rotationDeg={tape.rotation}
                 gradId={tape.gradId}
               />
             ))}
 
-            <div className="relative max-w-full rounded-sm bg-white px-4 pb-6 pt-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
+            <div className="relative max-w-full rounded-sm bg-white p-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
               <div className="relative w-full overflow-hidden rounded-sm bg-slate-100 pb-[100%] ring-1 ring-slate-200/40">
                 {src ? (
                   <Image
@@ -295,10 +301,6 @@ export function UtilitiesPolaroidInner({
                   </div>
                 )}
               </div>
-
-              <figcaption className="mt-3 min-h-[2.5rem] px-1 text-center font-handwriting text-xl font-semibold leading-tight text-mare md:text-2xl">
-                {captionTitle}
-              </figcaption>
             </div>
           </div>
         </figure>
