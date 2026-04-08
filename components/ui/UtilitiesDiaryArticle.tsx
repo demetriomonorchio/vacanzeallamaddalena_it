@@ -5,7 +5,10 @@ import {
 import { UtilitiesImageCard } from "@/components/ui/UtilitiesImageCard";
 import type { Category } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
-import { parseUtilitiesH2Heading } from "@/lib/utilitiesImageSlug";
+import {
+  parseUtilitiesH2Heading,
+  polaroidImageBasename,
+} from "@/lib/utilitiesImageSlug";
 
 type DiarySection = {
   displayTitle: string;
@@ -101,6 +104,12 @@ type Props = {
   polaroidKeyBlocks?: MarkdownBlock[];
   pageSlug: string;
   locale: Locale;
+  defaultPhotoAuthor?: string;
+  defaultPhotoAuthorLink?: string;
+  photoCreditsByBasename?: Record<
+    string,
+    { author?: string; authorLink?: string }
+  >;
 };
 
 export function UtilitiesDiaryArticle({
@@ -109,6 +118,9 @@ export function UtilitiesDiaryArticle({
   polaroidKeyBlocks,
   pageSlug,
   locale,
+  defaultPhotoAuthor,
+  defaultPhotoAuthorLink,
+  photoCreditsByBasename,
 }: Props) {
   const { orphan, sections } = groupH2Sections(blocks);
   const itGrouped = polaroidKeyBlocks
@@ -129,6 +141,11 @@ export function UtilitiesDiaryArticle({
         const itSec = itGrouped?.sections[si];
         const mergedImgName = section.imgName ?? itSec?.imgName;
         const basenameSourceTitle = itSec?.displayTitle ?? section.displayTitle;
+        const basename = polaroidImageBasename(
+          basenameSourceTitle,
+          mergedImgName
+        );
+        const credit = photoCreditsByBasename?.[basename];
 
         return (
         <section
@@ -144,6 +161,8 @@ export function UtilitiesDiaryArticle({
               index={si}
               imgName={mergedImgName}
               locale={locale}
+              photoAuthor={credit?.author ?? defaultPhotoAuthor}
+              photoAuthorLink={credit?.authorLink ?? defaultPhotoAuthorLink}
             />
             <h2
               className={`font-serif text-2xl font-semibold text-mare ${

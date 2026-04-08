@@ -6,7 +6,7 @@ Most tourists spend in La Maddalena only the hours needed to catch a ferry or bo
 
 ## How to arrive
 
-The main connection is by ferry from Palau, on the Gallura coast. The crossing takes around 20 minutes; services are frequent from June to September (every 30–60 minutes) and thinner for the rest of the year. The main operators are Delcomar and Blu Navy — updated timetables and fares on their respective sites.
+The main connection is by ferry from Palau, on the Gallura coast. The crossing takes around 20 minutes; services are frequent from June to September (every 30–60 minutes) and thinner for the rest of the year. The main operators are Delcomar and Maddalena Lines — updated timetables and fares on their respective sites.
 
 From Olbia (Olbia Costa Smeralda airport): around 45 minutes by car to Palau. From Alghero (Riviera del Corallo airport): around 2 hours.
 
@@ -60,4 +60,4 @@ Polizia di Stato: 0789 737000
 
 Delcomar (Palau–La Maddalena ferries): delcomar.it
 
-Blu Navy (Palau–La Maddalena ferries): blunavysardegna.com
+Maddalena Lines (Palau–La Maddalena ferries): blunavysardegna.com

@@ -1,3 +1,20 @@
+---
+title: "Tavola di porto"
+category: "guida"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.non-e-solo: "Mauro Cercignani"
+polaroidAuthorLink.non-e-solo: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-pesce-dal: "Mauro Cercignani"
+polaroidAuthorLink.il-pesce-dal: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-gelato-artigianale: "Mauro Cercignani"
+polaroidAuthorLink.il-gelato-artigianale: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-vino-sardo: "Mauro Cercignani"
+polaroidAuthorLink.il-vino-sardo: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-mercato-del: "Mauro Cercignani"
+polaroidAuthorLink.il-mercato-del: "https://www.facebook.com/mauro.cercignani/"
+---
+
 # Tavola di porto
 
 ## Non è solo gastronomia: è lo stile di vita maddalenino

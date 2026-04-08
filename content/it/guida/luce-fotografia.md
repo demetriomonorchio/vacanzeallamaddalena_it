@@ -3,6 +3,22 @@ title: "Luce e fotografia a La Maddalena — dove e quando trovare la luce migli
 description: "Il granito diafano di Punta Tegge all'alba, i riflessi di Cala Coticcio alle dieci del mattino, il tramonto verso la Corsica da Guardia Vecchia: guida alla luce dell'arcipelago."
 excerpt: "Il granito diafano all'alba di Punta Tegge, i riflessi di Cala Coticcio alle dieci del mattino, il tramonto verso la Corsica da Guardia Vecchia: dove e quando trovare la luce migliore dell'arcipelago."
 category: "guida"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-soggetto-e: "Mauro Cercignani"
+polaroidAuthorLink.il-soggetto-e: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.punta-tegge-il: "Mauro Cercignani"
+polaroidAuthorLink.punta-tegge-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.cala-coticcio-la: "Mauro Cercignani"
+polaroidAuthorLink.cala-coticcio-la: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.guardia-vecchia-il: "Mauro Cercignani"
+polaroidAuthorLink.guardia-vecchia-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.la-punta-rossa: "Mauro Cercignani"
+polaroidAuthorLink.la-punta-rossa: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-porto-di: "Mauro Cercignani"
+polaroidAuthorLink.il-porto-di: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.note-tecniche: "Mauro Cercignani"
+polaroidAuthorLink.note-tecniche: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Luce e fotografia nell'arcipelago

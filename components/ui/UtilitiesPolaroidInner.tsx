@@ -278,14 +278,14 @@ export function UtilitiesPolaroidInner({
             ))}
 
             <div className="relative max-w-full rounded-sm bg-white p-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
-              <div className="relative w-full overflow-hidden rounded-sm bg-slate-100 pb-[100%] ring-1 ring-slate-200/40">
+              <div className="relative w-full overflow-hidden rounded-sm bg-slate-100 pb-[100%]">
                 {src ? (
                   <Image
                     src={src}
                     alt=""
                     fill
                     sizes="(max-width: 768px) 176px, 208px"
-                    className="object-cover"
+                    className="object-contain"
                   />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">

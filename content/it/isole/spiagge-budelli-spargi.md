@@ -1,8 +1,16 @@
 ---
 title: "Spiaggia dei Due Mari"
-image: "/images/isole/spiaggge-budelli-spargi.webp"
+image: "/images/isole/spiagge-budelli-spargi/due-isole-due.webp"
 author: "Mauro Cercignani"
 authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.due-isole-due: "Mauro Cercignani"
+polaroidAuthorLink.due-isole-due: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.isola-di-budelli: "Mauro Cercignani"
+polaroidAuthorLink.isola-di-budelli: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.isola-di-spargi: "Mauro Cercignani"
+polaroidAuthorLink.isola-di-spargi: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.come-organizzare-la: "Mauro Cercignani"
+polaroidAuthorLink.come-organizzare-la: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Budelli e Spargi: le isole da raggiungere
@@ -39,4 +47,4 @@ I tour guidati delle isole partono da La Maddalena ogni mattina, in genere tra l
 
 In alternativa, con un noleggio barca (patente richiesta per natanti sopra i 40 cv) si può costruire un itinerario autonomo: Spargi e Budelli nella mattina, rientro a La Maddalena nel tardo pomeriggio, dopo aver pianificato la giornata in base alla direzione del vento.
 
-Da Isola, Madda o Lena al porto di Cala Gavetta: meno di cinque minuti a piedi.
+Da Isola o Lena al porto di Cala Gavetta 5 minuti in macchina. Madda meno di tre minuti a piedi.

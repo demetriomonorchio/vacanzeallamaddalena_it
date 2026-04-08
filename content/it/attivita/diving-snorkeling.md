@@ -3,6 +3,20 @@ title: "Diving e snorkeling nell'arcipelago di La Maddalena"
 description: "Gorgonie rosse, cernie adulte, il relitto romano del II sec. a.C. e una visibilità di 25 metri: guida ai diving center e ai migliori siti subacquei dell'arcipelago."
 excerpt: "La Secca di Mezzo, il relitto romano di Spargi e una visibilità di 25 metri: i fondali dell'arcipelago per chi vuole capirli davvero."
 category: "attivita"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.lacqua-come-premessa: "Mauro Cercignani"
+polaroidAuthorLink.lacqua-come-premessa: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.la-secca-di: "Mauro Cercignani"
+polaroidAuthorLink.la-secca-di: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-relitto-di: "Mauro Cercignani"
+polaroidAuthorLink.il-relitto-di: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.i-centri-diving: "Mauro Cercignani"
+polaroidAuthorLink.i-centri-diving: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.i-permessi-parco: "Mauro Cercignani"
+polaroidAuthorLink.i-permessi-parco: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.snorkeling-da-riva: "Mauro Cercignani"
+polaroidAuthorLink.snorkeling-da-riva: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Diving e snorkeling nell'arcipelago
@@ -13,7 +27,7 @@ Prima di parlare di fondali, va detto una cosa sull'acqua. La visibilità del ma
 
 ## La Secca di Mezzo
 
-La Secca di Mezzo è il sito di immersione più noto dell'arcipelago, non per facilità ma per densità biologica. Una struttura rocciosa che sale dai 40 metri ai 18, coperta di gorgonie rosse — *Paramuricea clavata* — in colonie di dimensioni rare nel Mediterraneo. Sul fondo, cernie brune di taglia adulta che hanno smesso di spostarsi: non sono abituate alla discrezione quanto basterebbe per la timidezza. Aragoste nelle fessure, murene nelle spaccature dei massi, banchi di barracuda nelle ore centrali della giornata.
+La Secca di Mezzo è il sito di immersione più noto dell'arcipelago, non per facilità ma per densità biologica. Una struttura rocciosa che sale dai 40 metri ai 18, coperta di gorgonie rosse — _Paramuricea clavata_ — in colonie di dimensioni rare nel Mediterraneo. Sul fondo, cernie brune di taglia adulta che hanno smesso di spostarsi: non sono abituate alla discrezione quanto basterebbe per la timidezza. Aragoste nelle fessure, murene nelle spaccature dei massi, banchi di barracuda nelle ore centrali della giornata.
 
 Il percorso standard tocca la sommità della secca (18 m) e scende lungo la parete est fino ai 35-38 metri, dove le gorgonie sono più sviluppate e la luce cambia qualità. Non è un sito per principianti — le correnti possono essere impegnative — ma non richiede brevetti tecnici avanzati. Richiede un briefing attento e una lettura delle condizioni che si impara in loco.
 
@@ -37,4 +51,4 @@ Le immersioni nelle zone regolamentate del Parco Nazionale richiedono un permess
 
 Non serve una barca e non serve un brevetto. Le calette del versante nordest di Caprera — Cala Coticcio, Cala Brigantina, Cala Serena — hanno fondali bassi e rocciosi accessibili in pinne e maschera direttamente dalla riva. La Secca di Tahiti, vicino a Cala Portese, è uno dei siti di snorkeling più ricchi dell'arcipelago: il fondo scende da uno a dieci metri con una densità di fauna che in altri mari richiederebbe un gommone. Bastano maschera, pinne e la voglia di tuffarsi.
 
-> **Consiglio di Giusy** — Dopo ore nel blu — le gorgonie della Secca di Mezzo, le anfore di Spargi, la luce che cambia colore a ogni metro di profondità — tornare nel calore dell'appartamento Madda, a due passi dal porto di Cala Gavetta, è il rito finale perfetto. L'attrezzatura si asciuga fuori; dentro, il pranzo è già pronto. [Scopri l'appartamento Madda su vacanzemaddalena.com](https://vacanzemaddalena.com)
+> **Consiglio di Giusy** — Dopo ore nel blu — le gorgonie della Secca di Mezzo, le anfore di Spargi, la luce che cambia colore a ogni metro di profondità — tornare nel calore dell'appartamento Madda, a due passi dal porto di Cala Gavetta, è il rito finale perfetto. L'attrezzatura si asciuga fuori; dentro, il pranzo è già pronto. [Scopri l'appartamento Lena su vacanzemaddalena.com](https://www.vacanzemaddalena.com/it/appartamenti/lena/)

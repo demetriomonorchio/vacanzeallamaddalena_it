@@ -25,11 +25,9 @@ In Via XX Settembre c'è un secondo supermercato di dimensioni minori, utile per
 
 **Farmacia Dr Max** Piazza Santa Maria Maddalena, 5/B aperta tutti i giorni con orario continuato in estate. Il turno notturno e domenicale viene gestito a rotazione tra le farmacie dell'isola — il turno attivo è esposto sull'uscio di ogni farmacia e consultabile anche su turnofarmacie.it inserendo il CAP (07024).
 
-
-
 ## Ospedale e pronto soccorso
 
-L'**Ospedale Paolo Merlo** si trova in  Via Ammiraglio Magnaghi,, a circa 700 metri dal centro. Ha un reparto di pronto soccorso operativo tutto l'anno, con potenziamento del personale in estate. Per urgenze non gravi, il punto di primo intervento è sufficiente per la grande maggioranza delle situazioni comuni a un soggiorno balneare (tagli, punture, disidratazione, problemi digestivi).
+L'**Ospedale Paolo Merlo** si trova in Via Ammiraglio Magnaghi,, a circa 700 metri dal centro. Ha un reparto di pronto soccorso operativo tutto l'anno, con potenziamento del personale in estate. Per urgenze non gravi, il punto di primo intervento è sufficiente per la grande maggioranza delle situazioni comuni a un soggiorno balneare (tagli, punture, disidratazione, problemi digestivi).
 
 Per emergenze maggiori il protocollo prevede il trasferimento via elicottero all'ospedale di Olbia (Giovanni Paolo II): la procedura è consolidata e funziona. Non è necessario sapere altro in anticipo, se non che il numero del pronto soccorso locale è il **118** e che chiamare prima di spostarsi è sempre la scelta giusta.
 
@@ -38,6 +36,7 @@ Per emergenze maggiori il protocollo prevede il trasferimento via elicottero all
 ## Bancomat e pagamenti
 
 La Maddalena ha diversi sportelli ATM funzionanti:
+
 - **Banca di Sassari** in Via Amendola (il più centrale, vicino al porto)
 - **Poste Italiane** in Piazza Umberto I
 - **Banco di Sardegna** in Via XX Settembre
@@ -46,9 +45,9 @@ I prelievi con carte di credito e debito internazionali funzionano su tutti gli 
 
 ## Connettività: telefono e WiFi
 
-La copertura 4G di TIM, Vodafone e WindTre è buona su tutta l'isola principale e nel centro di Caprera. In alcune calette isolate di Caprera e nelle isole minori (Santo Stefano, Spargi, Budelli) la connessione può essere assente o limitata — che in vacanza è spesso un vantaggio, non un problema.
+La copertura 5G sull'Isola di La Maddalena è in fase di espansione, tipica delle aree costiere e turistiche sarde. Sebbene la connettività 4G sia ampiamente diffusa, la copertura 5G specifica può essere parziale e concentrata principalmente nel centro urbano e nelle zone portuali, con variazioni a seconda dell'operatore
 
-Il WiFi degli appartamenti Isola, Madda e Lena è incluso nel soggiorno. Per chi lavora da remoto: la connessione è ottimo per videochiamate e uso professionale. In agosto, in alcune fasce orarie serali, la rete cellulare locale può rallentare per il carico: per call importanti, il WiFi dell'appartamento è più affidabile della rete mobile.
+Il WiFi degli appartamenti Isola, Madda e Lena è incluso nel soggiorno. Per chi lavora da remoto: la connessione è ottima per videochiamate e uso professionale. In agosto, in alcune fasce orarie serali, la rete cellulare locale può rallentare per il carico: per call importanti, il WiFi dell'appartamento è più affidabile della rete mobile.
 
 ## Numeri utili da salvare
 

@@ -237,16 +237,16 @@ export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {
       slug: "come-arrivare",
       title: { it: "Come arrivare", en: "Getting here" },
       excerpt: {
-        it: "Il traghetto da Palau (Delcomar o Blu Navy), come prenotare in agosto senza code, e come muoversi sull'isola: auto, scooter o bici elettrica.",
-        en: "The ferry from Palau (Delcomar or Blu Navy), how to book in August without queuing, and how to get around the island: car, scooter or e-bike.",
+        it: "Il traghetto da Palau (Delcomar o Maddalena Lines), come prenotare in agosto senza code, e come muoversi sull'isola: auto, scooter o bici elettrica.",
+        en: "The ferry from Palau (Delcomar or Maddalena Lines), how to book in August without queuing, and how to get around the island: car, scooter or e-bike.",
       },
     },
     {
       slug: "servizi",
       title: { it: "Servizi sull'isola", en: "Island services" },
       excerpt: {
-        it: "Supermercati, farmacie di turno, bancomat, ospedale Paolo Merlo e WiFi: tutto quello che serve sapere per soggiornare in appartamento senza sorprese.",
-        en: "Supermarkets, duty pharmacies, ATMs, Paolo Merlo hospital and WiFi: everything you need for a self-catering stay without surprises.",
+        it: "Supermercati, farmacie di turno, bancomat, numeri utili e WiFi: tutto quello che serve sapere per soggiornare in appartamento senza sorprese.",
+        en: "Supermarkets, duty pharmacies, ATMs, emergency contacts and WiFi: everything you need for a self-catering stay without surprises.",
       },
     },
   ],

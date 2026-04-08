@@ -62,10 +62,11 @@ type FrontmatterData = {
   author?: string;
   authorLink?: string;
   googleMapsUrl?: string;
+  polaroidCredits?: Record<string, { author?: string; authorLink?: string }>;
 };
 
 /**
- * Extracts `author`, `authorLink` and `googleMapsUrl` from YAML frontmatter.
+ * Extracts `author`, `authorLink`, `googleMapsUrl` and optional per-polaroid credits.
  *
  * Supports both quoted and unquoted values, e.g.:
  *   author: "Mario Rossi"
@@ -73,22 +74,50 @@ type FrontmatterData = {
  *   googleMapsUrl: https://maps.google.com/?q=...
  */
 export function parseFrontmatter(raw: string): FrontmatterData {
-  const lines = raw.split(/\r?\n/);
-  if (lines[0]?.trim() !== "---") return {};
+  const lines = raw.replace(/^\uFEFF/, "").split(/\r?\n/);
+  const openingIdx = lines.findIndex((l) => l.trim().length > 0);
+  if (openingIdx === -1 || lines[openingIdx]?.trim() !== "---") return {};
 
-  const closingIdx = lines.findIndex((l, i) => i > 0 && l.trim() === "---");
+  const closingIdx = lines.findIndex(
+    (l, i) => i > openingIdx && l.trim() === "---"
+  );
   if (closingIdx === -1) return {};
 
-  const block = lines.slice(1, closingIdx);
+  const block = lines.slice(openingIdx + 1, closingIdx);
   const result: FrontmatterData = {};
+  const perPolaroid: Record<string, { author?: string; authorLink?: string }> =
+    {};
 
   for (const line of block) {
-    const match = line.match(/^(\w+)\s*:\s*"?([^"]*)"?\s*$/);
+    const match = line.match(
+      /^([a-zA-Z0-9_.-]+)\s*:\s*(?:"([^"]*)"|'([^']*)'|(.*))\s*$/
+    );
     if (!match) continue;
-    const [, key, value] = match;
+    const key = match[1];
+    const value = (match[2] ?? match[3] ?? match[4] ?? "").trim();
     if (key === "author") result.author = value.trim();
     if (key === "authorLink") result.authorLink = value.trim();
     if (key === "googleMapsUrl") result.googleMapsUrl = value.trim();
+
+    if (key.startsWith("polaroidAuthor.")) {
+      const basename = key.slice("polaroidAuthor.".length).trim().toLowerCase();
+      if (!basename) continue;
+      perPolaroid[basename] ??= {};
+      perPolaroid[basename].author = value;
+    }
+    if (key.startsWith("polaroidAuthorLink.")) {
+      const basename = key
+        .slice("polaroidAuthorLink.".length)
+        .trim()
+        .toLowerCase();
+      if (!basename) continue;
+      perPolaroid[basename] ??= {};
+      perPolaroid[basename].authorLink = value;
+    }
+  }
+
+  if (Object.keys(perPolaroid).length > 0) {
+    result.polaroidCredits = perPolaroid;
   }
 
   return result;

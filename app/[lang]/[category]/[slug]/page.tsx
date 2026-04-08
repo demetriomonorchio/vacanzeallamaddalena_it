@@ -55,7 +55,12 @@ export default async function GuidePage({ params }: Props) {
   const entry = guidesByCategory[cat].find((g) => g.slug === slug);
   const imageUrl = getGuideImagePath(cat, slug);
   const title = entry?.title[locale] ?? slug.replace(/-/g, " ");
-  const { author, authorLink, googleMapsUrl } = parseFrontmatter(raw);
+  const {
+    author: localAuthor,
+    authorLink: localAuthorLink,
+    googleMapsUrl: localGoogleMapsUrl,
+    polaroidCredits: localPolaroidCredits,
+  } = parseFrontmatter(raw);
 
   const mapsLabel =
     locale === "it" ? "Vedi posizione su Google Maps" : "View on Google Maps";
@@ -63,6 +68,22 @@ export default async function GuidePage({ params }: Props) {
     locale === "it"
       ? "Vuoi sapere dove si trova esattamente?"
       : "Want to know exactly where this is?";
+  let fallbackAuthor: string | undefined;
+  let fallbackAuthorLink: string | undefined;
+  let fallbackPolaroidCredits:
+    | Record<string, { author?: string; authorLink?: string }>
+    | undefined;
+  if (locale === "en") {
+    const rawIt = getGuideRaw("it", cat, slug);
+    if (rawIt) {
+      const itFrontmatter = parseFrontmatter(rawIt);
+      fallbackAuthor = itFrontmatter.author;
+      fallbackAuthorLink = itFrontmatter.authorLink;
+      fallbackPolaroidCredits = itFrontmatter.polaroidCredits;
+    }
+  }
+  const resolvedAuthor = localAuthor ?? fallbackAuthor;
+  const resolvedAuthorLink = localAuthorLink ?? fallbackAuthorLink;
 
   if (isPolaroidDiaryCategory(cat)) {
     const blocks = parseBlocksOmitFirstH1(raw);
@@ -70,7 +91,9 @@ export default async function GuidePage({ params }: Props) {
     let polaroidKeyBlocks: MarkdownBlock[] | undefined;
     if (locale === "en") {
       const rawIt = getGuideRaw("it", cat, slug);
-      if (rawIt) polaroidKeyBlocks = parseBlocksOmitFirstH1(rawIt);
+      if (rawIt) {
+        polaroidKeyBlocks = parseBlocksOmitFirstH1(rawIt);
+      }
     }
 
     return (
@@ -100,14 +123,19 @@ export default async function GuidePage({ params }: Props) {
               polaroidKeyBlocks={polaroidKeyBlocks}
               pageSlug={slug}
               locale={locale}
+              defaultPhotoAuthor={resolvedAuthor}
+              defaultPhotoAuthorLink={resolvedAuthorLink}
+              photoCreditsByBasename={
+                localPolaroidCredits ?? fallbackPolaroidCredits
+              }
             />
           </div>
 
-          {googleMapsUrl && (
+          {(localGoogleMapsUrl ?? undefined) && (
             <div className="mt-12 rounded-2xl bg-slate-50 p-6 shadow-sm">
               <p className="mb-4 font-sans text-sm text-slate-500">{mapsHint}</p>
               <a
-                href={googleMapsUrl}
+                href={localGoogleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-800 px-6 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-mare"
@@ -149,19 +177,19 @@ export default async function GuidePage({ params }: Props) {
           </div>
 
           {/* Photo credit — visible only when author is defined */}
-          {author && (
+          {resolvedAuthor && (
             <p className="mt-1 flex justify-end text-[11px] italic text-slate-400">
-              {authorLink ? (
+              {resolvedAuthorLink ? (
                 <a
-                  href={authorLink}
+                  href={resolvedAuthorLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-mare"
                 >
-                  📷 Foto di {author}
+                  📷 Foto di {resolvedAuthor}
                 </a>
               ) : (
-                <span>📷 Foto di {author}</span>
+                <span>📷 Foto di {resolvedAuthor}</span>
               )}
             </p>
           )}
@@ -180,11 +208,11 @@ export default async function GuidePage({ params }: Props) {
         </div>
 
         {/* Google Maps CTA — shown only when googleMapsUrl is set in frontmatter */}
-        {googleMapsUrl && (
+        {localGoogleMapsUrl && (
           <div className="mt-12 rounded-2xl bg-slate-50 p-6 shadow-sm">
             <p className="mb-4 font-sans text-sm text-slate-500">{mapsHint}</p>
             <a
-              href={googleMapsUrl}
+              href={localGoogleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-800 px-6 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-mare"

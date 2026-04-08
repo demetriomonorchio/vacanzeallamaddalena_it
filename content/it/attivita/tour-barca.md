@@ -3,6 +3,18 @@ title: "Tour in barca nell'arcipelago di La Maddalena"
 description: "Tre modi di navigare l'arcipelago: i tour guidati da Cala Gavetta, il charter privato su veliero d'epoca e il noleggio autonomo. Come scegliere in base al vento."
 excerpt: "I barconi storici di Cala Gavetta, i charter esclusivi su veliero d'epoca e il noleggio gommoni autonomo: tre logiche di navigazione diverse per un arcipelago che non si vede mai due volte allo stesso modo."
 category: "attivita"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-porto-come: "Mauro Cercignani"
+polaroidAuthorLink.il-porto-come: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.i-tour-guidati: "Mauro Cercignani"
+polaroidAuthorLink.i-tour-guidati: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.i-charter-privati: "Mauro Cercignani"
+polaroidAuthorLink.i-charter-privati: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-noleggio-autonomo: "Mauro Cercignani"
+polaroidAuthorLink.il-noleggio-autonomo: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.come-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.come-il-vento: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Tour in barca nell'arcipelago

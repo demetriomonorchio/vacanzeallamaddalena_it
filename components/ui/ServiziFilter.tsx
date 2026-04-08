@@ -5,25 +5,33 @@ import {
   ShoppingCart,
   Pill,
   CreditCard,
-  HeartPulse,
   ShoppingBasket,
   Bus,
   PhoneCall,
   MapPin,
+  Landmark,
+  Umbrella,
+  IceCream2,
+  Ship,
+  Bike,
 } from "lucide-react";
-import type { Servizio, CategoriaServizio, Zona } from "@/lib/servizi";
-import { categorieServizi, zone } from "@/lib/servizi";
+import type { Servizio, CategoriaServizio } from "@/lib/servizi";
+import { categorieServizi } from "@/lib/servizi";
 
 // ─── Icon map ────────────────────────────────────────────────────────────────
 
 const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   Supermercati:   <ShoppingCart  className="h-3.5 w-3.5" aria-hidden />,
   Farmacie:       <Pill          className="h-3.5 w-3.5" aria-hidden />,
+  Spiagge:        <Umbrella      className="h-3.5 w-3.5" aria-hidden />,
+  Gelaterie:      <IceCream2     className="h-3.5 w-3.5" aria-hidden />,
+  "Noleggio gommoni": <Ship className="h-3.5 w-3.5" aria-hidden />,
+  "Noleggio scooter e bike": <Bike className="h-3.5 w-3.5" aria-hidden />,
   "Banche & ATM": <CreditCard   className="h-3.5 w-3.5" aria-hidden />,
-  Ospedale:       <HeartPulse   className="h-3.5 w-3.5" aria-hidden />,
   Mercato:        <ShoppingBasket className="h-3.5 w-3.5" aria-hidden />,
   Trasporti:      <Bus          className="h-3.5 w-3.5" aria-hidden />,
   Emergenze:      <PhoneCall    className="h-3.5 w-3.5" aria-hidden />,
+  Musei:          <Landmark     className="h-3.5 w-3.5" aria-hidden />,
 };
 
 // ─── Chip component ───────────────────────────────────────────────────────────
@@ -60,28 +68,23 @@ type Props = {
   servizi: readonly Servizio[];
   labels: {
     allCategories: string;
-    allZone: string;
     noResults: string;
     openMaps: string;
     categoriesTitle: string;
-    zoneTitle: string;
   };
 };
 
 export function ServiziFilter({ servizi, labels }: Props) {
   const [activeCategory, setActiveCategory] = useState<CategoriaServizio | null>(null);
-  const [activeZona, setActiveZona] = useState<Zona | null>(null);
 
   const filtered = servizi.filter((s) => {
-    const catMatch = !activeCategory || s.category === activeCategory;
-    const zonaMatch = !activeZona || s.zona === activeZona;
-    return catMatch && zonaMatch;
+    return !activeCategory || s.category === activeCategory;
   });
 
   return (
     <div>
       {/* ── Filter chips ────────────────────────────────────────────────── */}
-      <div className="space-y-4 rounded-2xl border border-mare/10 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-mare/10 bg-white p-5 shadow-sm">
         {/* Row 1 — categories */}
         <div>
           <p className="mb-2.5 font-sans text-[11px] font-bold uppercase tracking-widest text-slate/40">
@@ -107,27 +110,6 @@ export function ServiziFilter({ servizi, labels }: Props) {
           </div>
         </div>
 
-        {/* Row 2 — zone */}
-        <div className="border-t border-mare/8 pt-4">
-          <p className="mb-2.5 font-sans text-[11px] font-bold uppercase tracking-widest text-slate/40">
-            {labels.zoneTitle}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Chip
-              label={labels.allZone}
-              active={activeZona === null}
-              onClick={() => setActiveZona(null)}
-            />
-            {zone.map((z) => (
-              <Chip
-                key={z}
-                label={z}
-                active={activeZona === z}
-                onClick={() => setActiveZona(activeZona === z ? null : z)}
-              />
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ── Results grid ────────────────────────────────────────────────── */}
@@ -172,9 +154,30 @@ function ServiceCardInner({
   openMaps: string;
   linked: boolean;
 }) {
+  const showTeaserDescription =
+    (s.category === "Spiagge" ||
+      s.category === "Musei" ||
+      s.category === "Mercato" ||
+      s.category === "Trasporti" ||
+      s.category === "Emergenze" ||
+      s.category === "Banche & ATM" ||
+      s.category === "Farmacie" ||
+      s.category === "Supermercati") &&
+    Boolean(s.description);
+
   return (
     <>
       <div className="min-w-0 flex-1">
+        {showTeaserDescription ? (
+          <div className="mb-2 overflow-hidden rounded-lg border border-mare/10 bg-slate-50">
+            {s.description ? (
+              <p className="px-2.5 py-2 font-sans text-[11px] leading-relaxed text-slate/70">
+                {s.description}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
         {/* Category icon + name */}
         <div className="flex items-center gap-1.5">
           <span className="shrink-0 text-mare/60">
@@ -189,6 +192,12 @@ function ServiceCardInner({
         <span className="mt-1.5 inline-block rounded-full bg-slate-100 px-2 py-0.5 font-sans text-[10px] text-slate/60">
           {s.zona}
         </span>
+        {typeof s.rating === "number" ? (
+          <p className="mt-1 font-sans text-[11px] text-amber-600">
+            ★ {s.rating.toFixed(1)}
+            {typeof s.reviews === "number" ? ` (${s.reviews})` : ""}
+          </p>
+        ) : null}
       </div>
 
       {/* Maps pin — only when linked */}

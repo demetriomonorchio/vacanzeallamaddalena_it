@@ -4,22 +4,31 @@ import type { Category } from "./categories";
 import { polaroidImageBasename } from "./utilitiesImageSlug";
 
 /**
- * Server-only: true se esiste `public/images/[category]/[pageSlug]/[basename].png`.
+ * Server-only: returns image public path if file exists.
+ * Preferred order: `.webp`, fallback `.png`.
  */
-export function guidePolaroidPngExists(
+export function guidePolaroidImageSrc(
   category: Category,
   pageSlug: string,
   displayTitle: string,
   imgName?: string
-): boolean {
+): string | null {
   const basename = polaroidImageBasename(displayTitle, imgName);
-  const abs = path.join(
-    process.cwd(),
-    "public",
-    "images",
-    category,
-    pageSlug,
-    `${basename}.png`
-  );
-  return fs.existsSync(abs);
+  const exts = ["webp", "png"] as const;
+
+  for (const ext of exts) {
+    const abs = path.join(
+      process.cwd(),
+      "public",
+      "images",
+      category,
+      pageSlug,
+      `${basename}.${ext}`
+    );
+    if (fs.existsSync(abs)) {
+      return `/images/${category}/${pageSlug}/${basename}.${ext}`;
+    }
+  }
+
+  return null;
 }

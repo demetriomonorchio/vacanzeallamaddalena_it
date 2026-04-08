@@ -9,13 +9,13 @@ category: "utilities"
 
 ## Il rito del traghetto da Palau
 
-La Maddalena è un'isola: per arrivarci, si prende il traghetto da Palau. La traversata di circa 15 minuti attraverso le Bocche di Bonifacio è il vero confine tra il continente e la magia dell'arcipelago.
+La Maddalena è un'isola: per arrivarci, si prende il traghetto da Palau. La traversata di circa 15 minuti è il vero confine tra il continente e la magia dell'arcipelago.
 
 Il porto di Palau si raggiunge facilmente:
 
 - **In auto da Olbia** (aeroporto Costa Smeralda): 55 km, circa 45 minuti.
 - **In auto da Alghero**: 145 km, circa 2 ore.
-- **In bus**: Collegamenti stagionali ARST e FlixBus collegano i principali scali con il porto di Palau.
+- **In bus**: Collegamenti stagionali ARST e turmoTravel collegano i principali scali con il porto di Palau.
 
 ## Quale compagnia scegliere?
 

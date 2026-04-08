@@ -2,7 +2,7 @@ import {
   polaroidImageBasename,
   polaroidRotationDeg,
 } from "@/lib/utilitiesImageSlug";
-import { guidePolaroidPngExists } from "@/lib/guidePolaroidImage";
+import { guidePolaroidImageSrc } from "@/lib/guidePolaroidImage";
 import { UtilitiesPolaroidInner } from "@/components/ui/UtilitiesPolaroidInner";
 import type { Category } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
@@ -25,6 +25,8 @@ type Props = {
    */
   imgName?: string;
   locale: Locale;
+  photoAuthor?: string;
+  photoAuthorLink?: string;
 };
 
 export function UtilitiesImageCard({
@@ -35,18 +37,17 @@ export function UtilitiesImageCard({
   index,
   imgName,
   locale,
+  photoAuthor,
+  photoAuthorLink,
 }: Props) {
   const sourceForFile = basenameSourceTitle ?? title;
   const basename = polaroidImageBasename(sourceForFile, imgName);
-  const hasImage = guidePolaroidPngExists(
+  const src = guidePolaroidImageSrc(
     category,
     slug,
     sourceForFile,
     imgName
   );
-  const src = hasImage
-    ? `/images/${category}/${slug}/${basename}.png`
-    : null;
   const rotationDeg = polaroidRotationDeg(`${category}/${slug}:${basename}`);
   const sideRight = index % 2 === 0;
   const floatClass = sideRight
@@ -55,16 +56,36 @@ export function UtilitiesImageCard({
 
   const missingLabel =
     locale === "it" ? "Immagine assente" : "Image missing";
+  const photoByLabel = locale === "it" ? "Foto di" : "Photo by";
 
   return (
-    <UtilitiesPolaroidInner
-      src={src}
-      expectedBasename={basename}
-      category={category}
-      pageSlug={slug}
-      rotationDeg={rotationDeg}
-      missingLabel={missingLabel}
-      className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}
-    />
+    <div className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}>
+      <UtilitiesPolaroidInner
+        src={src}
+        expectedBasename={basename}
+        category={category}
+        pageSlug={slug}
+        rotationDeg={rotationDeg}
+        missingLabel={missingLabel}
+      />
+      {photoAuthor ? (
+        <p className="relative z-20 mt-1.5 px-1 text-center text-xs italic leading-tight text-slate/70">
+          {photoAuthorLink ? (
+            <a
+              href={photoAuthorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 transition-colors hover:text-mare hover:underline"
+            >
+              📷 {photoByLabel} {photoAuthor}
+            </a>
+          ) : (
+            <span>
+              📷 {photoByLabel} {photoAuthor}
+            </span>
+          )}
+        </p>
+      ) : null}
+    </div>
   );
 }

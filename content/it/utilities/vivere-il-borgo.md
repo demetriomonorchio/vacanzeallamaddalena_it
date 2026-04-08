@@ -6,7 +6,7 @@ La maggior parte dei turisti trascorre a La Maddalena solo le ore necessarie per
 
 ## Come arrivare
 
-Il collegamento principale è via traghetto da Palau, sulla costa gallurese. La tratta dura circa 20 minuti; le corse sono frequenti da giugno a settembre (ogni 30-60 minuti) e più diradate nel resto dell'anno. I vettori principali sono Delcomar e Blu Navy — le tariffe e gli orari aggiornati si trovano sui rispettivi siti.
+Il collegamento principale è via traghetto da Palau, sulla costa gallurese. La tratta dura circa 20 minuti; le corse sono frequenti da giugno a settembre (ogni 30-60 minuti) e più diradate nel resto dell'anno. I vettori principali sono Delcomar e Maddalena Lines — le tariffe e gli orari aggiornati si trovano sui rispettivi siti.
 
 Da Olbia (aeroporto Olbia Costa Smeralda): circa 45 minuti in auto fino a Palau. Da Alghero (aeroporto Riviera del Corallo): circa 2 ore.
 
@@ -40,9 +40,9 @@ La piazza centrale di La Maddalena, nelle prime ore del mattino da giugno a sett
 
 ## La sera nel borgo
 
-Il lungomare di La Maddalena non è una promenade da cartolina: è un lungomare vivo, con bar storici, gelaterie artigianali, ristoranti senza insegne luminose e qualche locale dove la musica non è musica di sottofondo. D'estate, la passeggiata serale da piazza Umberto I verso Cala Gavetta e ritorno è il rito sociale dell'isola — partecipato, lento, libero da itinerario.
+Il lungomare di La Maddalena non è una promenade da cartolina: è un lungomare vivo, con bar storici, gelaterie artigianali, ristoranti e locali dove la musica non è musica di sottofondo. D'estate, la passeggiata serale da piazza Umberto I verso Cala Gavetta e ritorno è il rito sociale dell'isola — partecipato, lento, libero...
 
-Gli appartamenti Isola, Madda e Lena si trovano in questo perimetro. Non ci sono taxi da chiamare per rientrare.
+L'appartamento Madda si trova nel centro della città. Non ci sono taxi da chiamare per rientrare.
 
 ## Numeri utili
 
@@ -60,4 +60,4 @@ Polizia di Stato: 0789 737000
 
 Delcomar (traghetti Palau–La Maddalena): delcomar.it
 
-Blu Navy (traghetti Palau–La Maddalena): blunavysardegna.com
+MAddalena Lines (traghetti Palau–La Maddalena): blunavysardegna.com

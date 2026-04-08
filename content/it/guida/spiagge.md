@@ -1,3 +1,18 @@
+---
+title: "Spiagge e silenzio"
+category: "guida"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.prima-regola-smettila: "Mauro Cercignani"
+polaroidAuthorLink.prima-regola-smettila: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.granito-rosa-il: "Mauro Cercignani"
+polaroidAuthorLink.granito-rosa-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.le-spiagge-dellarcipelago: "Mauro Cercignani"
+polaroidAuthorLink.le-spiagge-dellarcipelago: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-tempo-giusto: "Mauro Cercignani"
+polaroidAuthorLink.il-tempo-giusto: "https://www.facebook.com/mauro.cercignani/"
+---
+
 # Spiagge e silenzio
 
 ## Prima regola: smettila di cercare la spiaggia più bella

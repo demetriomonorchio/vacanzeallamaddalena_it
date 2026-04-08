@@ -3,6 +3,18 @@ title: "Santo Stefano, Santa Maria e Razzoli — le isole esterne dell'arcipelag
 description: "Le isole minori dell'arcipelago: Santo Stefano con la base NATO dismessa, il Passo degli Asinelli tra Santa Maria e Razzoli, il faro di confine sull'ultima isola."
 excerpt: "Le isole che si vedono dall'orizzonte e si raggiungono solo quando il vento lo permette: tre caratteri estremi all'estremità nord dell'arcipelago."
 category: "isole"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.le-isole-che: "Mauro Cercignani"
+polaroidAuthorLink.le-isole-che: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.santo-stefano-la: "Mauro Cercignani"
+polaroidAuthorLink.santo-stefano-la: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.santa-maria-il: "Mauro Cercignani"
+polaroidAuthorLink.santa-maria-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.razzoli-il-faro: "Mauro Cercignani"
+polaroidAuthorLink.razzoli-il-faro: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-bordo-nord: "Mauro Cercignani"
+polaroidAuthorLink.il-bordo-nord: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Le isole esterne

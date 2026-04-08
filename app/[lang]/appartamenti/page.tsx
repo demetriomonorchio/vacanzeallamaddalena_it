@@ -4,11 +4,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MarkdownArticle } from "@/components/ui/MarkdownArticle";
+import {
+  parseBlocksOmitFirstH1,
+  renderInline,
+  type MarkdownBlock,
+} from "@/components/ui/MarkdownArticle";
+import { UtilitiesPolaroidInner } from "@/components/ui/UtilitiesPolaroidInner";
 import { apartments } from "@/lib/categories";
 import { locales, isLocale, defaultLocale } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
+import { parseFrontmatter } from "@/lib/guides";
 import { siteUrl, siteName } from "@/lib/metadata";
+import { polaroidRotationDeg } from "@/lib/utilitiesImageSlug";
 
 // ─── Static params ─────────────────────────────────────────────────────────────
 
@@ -93,17 +100,144 @@ const ctaLabel: Record<Locale, string> = {
   en: "Discover the apartment",
 };
 
+type ApartmentSection = {
+  title: string;
+  blocks: MarkdownBlock[];
+  aptSlug?: "isola" | "madda" | "lena";
+};
+
+function groupH2Sections(blocks: MarkdownBlock[]) {
+  const orphan: MarkdownBlock[] = [];
+  const sections: ApartmentSection[] = [];
+  let current: ApartmentSection | null = null;
+
+  for (const b of blocks) {
+    if (b.kind === "h2") {
+      if (current) sections.push(current);
+      const t = b.text.toLowerCase();
+      let aptSlug: ApartmentSection["aptSlug"];
+      if (t.includes("appartamento isola")) aptSlug = "isola";
+      else if (t.includes("appartamento madda")) aptSlug = "madda";
+      else if (t.includes("appartamento lena")) aptSlug = "lena";
+      current = { title: b.text, blocks: [], aptSlug };
+    } else if (current) {
+      current.blocks.push(b);
+    } else {
+      orphan.push(b);
+    }
+  }
+  if (current) sections.push(current);
+  return { orphan, sections };
+}
+
+function renderMarkdownBlock(b: MarkdownBlock, i: number) {
+  if (b.kind === "h3") {
+    return (
+      <h3 key={i} className="mt-8 font-serif text-lg font-semibold text-slate">
+        {b.text}
+      </h3>
+    );
+  }
+  if (b.kind === "blockquote") {
+    return (
+      <aside
+        key={i}
+        className="not-prose mt-12 border-l-2 border-mare bg-mare/[0.04] px-6 py-5"
+        aria-label="Consiglio editoriale"
+      >
+        <p className="font-sans text-sm leading-relaxed text-slate/85">
+          {renderInline(b.text)}
+        </p>
+      </aside>
+    );
+  }
+  return (
+    <p key={i} className="text-pretty">
+      {renderInline(b.text)}
+    </p>
+  );
+}
+
 export default async function AppartamentiPage({ params }: Props) {
   const { lang } = await params;
   const locale: Locale = isLocale(lang) ? lang : defaultLocale;
   const raw = getContent(locale);
   if (!raw) notFound();
+  const { author, authorLink } = parseFrontmatter(raw);
+  const photoByLabel = locale === "it" ? "Foto di" : "Photo by";
+  const blocks = parseBlocksOmitFirstH1(raw);
+  const { orphan, sections } = groupH2Sections(blocks);
 
   return (
     <div className="mx-auto max-w-content px-6 py-16 md:px-10 md:py-24">
-      {/* Intro text from markdown */}
-      <div className="max-w-prose">
-        <MarkdownArticle source={raw} />
+      {/* Intro + sections from markdown with apartment polaroids */}
+      <div className="mx-auto max-w-3xl">
+        <article className="space-y-6 font-sans text-base leading-relaxed text-slate-800">
+          <div className="space-y-6">
+            {orphan.map((b, i) => renderMarkdownBlock(b, i))}
+          </div>
+
+          {sections.map((section, si) => {
+            const apt = section.aptSlug
+              ? apartments.find((a) => a.slug === section.aptSlug)
+              : null;
+            const sideRight = si % 2 === 0;
+            const floatClass = sideRight
+              ? "float-right mb-4 ml-10 md:ml-12"
+              : "float-left mb-4 mr-10 md:mr-12";
+            return (
+              <section key={`apt-section-${si}`} className="space-y-6">
+                <div className="text-pretty">
+                  {apt ? (
+                    <div className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}>
+                      <UtilitiesPolaroidInner
+                        src={apt.image}
+                        expectedBasename={apt.slug}
+                        category="isole"
+                        pageSlug={apt.slug}
+                        rotationDeg={polaroidRotationDeg(`appartamenti:${apt.slug}`)}
+                        missingLabel={locale === "it" ? "Immagine assente" : "Image missing"}
+                      />
+                      {author ? (
+                        <p className="relative z-20 mt-1.5 px-1 text-center text-xs italic leading-tight text-slate/70">
+                          {authorLink ? (
+                            <a
+                              href={authorLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline-offset-2 transition-colors hover:text-mare hover:underline"
+                            >
+                              📷 {photoByLabel} {author}
+                            </a>
+                          ) : (
+                            <span>
+                              📷 {photoByLabel} {author}
+                            </span>
+                          )}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <h2
+                    className={`font-serif text-2xl font-semibold text-mare ${
+                      si > 0 || orphan.length > 0 ? "mt-12" : ""
+                    }`}
+                  >
+                    {section.title}
+                  </h2>
+
+                  <div className="mt-6 space-y-6">
+                    {section.blocks.map((b, bi) =>
+                      renderMarkdownBlock(b, si * 1000 + bi)
+                    )}
+                  </div>
+                  <div className="clear-both" aria-hidden />
+                </div>
+              </section>
+            );
+          })}
+        </article>
       </div>
 
       {/* Apartment cards with hero images */}

@@ -17,12 +17,12 @@ const pageMeta = {
   it: {
     title: "Servizi a La Maddalena — mappa per zona e categoria",
     description:
-      "Supermercati, farmacie, bancomat, ospedale e trasporti: tutti i servizi dell'isola filtrabili per categoria e zona geografica.",
+      "Supermercati, farmacie, bancomat, emergenze, trasporti e musei dell’arcipelago: servizi filtrabili per categoria e zona geografica.",
   },
   en: {
     title: "Services in La Maddalena — map by area and category",
     description:
-      "Supermarkets, pharmacies, ATMs, hospital and transport: all island services filterable by category and area.",
+      "Supermarkets, pharmacies, ATMs, emergencies, transport and archipelago museums: island services filterable by category and area.",
   },
 } satisfies Record<Locale, { title: string; description: string }>;
 
@@ -56,9 +56,7 @@ type ServiziPageLabels = {
   heading: string;
   intro: string;
   categoriesTitle: string;
-  zoneTitle: string;
   allCategories: string;
-  allZone: string;
   noResults: string;
   openMaps: string;
 };
@@ -69,11 +67,8 @@ const labels: Record<Locale, ServiziPageLabels> = {
     intro:
       "Tutti i servizi pratici di La Maddalena, filtrabili per categoria e zona. Clicca su una card per aprire Google Maps.",
     categoriesTitle: "Categoria",
-    zoneTitle: "Zona",
     allCategories: "Tutte",
-    allZone: "Tutte le zone",
-    noResults:
-      "Nessun servizio trovato in questa zona, prova a cambiare filtro.",
+    noResults: "Nessun servizio trovato, prova a cambiare categoria.",
     openMaps: "Apri in Google Maps",
   },
   en: {
@@ -81,10 +76,8 @@ const labels: Record<Locale, ServiziPageLabels> = {
     intro:
       "All practical services on La Maddalena, filterable by category and area. Tap a card to open Google Maps.",
     categoriesTitle: "Category",
-    zoneTitle: "Area",
     allCategories: "All",
-    allZone: "All areas",
-    noResults: "No services found in this area — try a different filter.",
+    noResults: "No services found — try a different category.",
     openMaps: "Open in Google Maps",
   },
 };
@@ -100,7 +93,7 @@ export default async function ServiziPage({ params }: Props) {
   const l = labels[locale];
 
   return (
-    <div className="mx-auto max-w-content px-6 pb-24 pt-14 md:px-10">
+    <div className="mx-auto max-w-content px-6 pb-24 pt-28 md:px-10 md:pt-36">
       {/* Header */}
       <div className="max-w-prose">
         <h1 className="font-serif text-4xl font-bold text-mare md:text-5xl">

@@ -10,6 +10,7 @@ import {
   getGuideRaw,
   guidesByCategory,
   isValidGuide,
+  parseFrontmatter,
   type Category,
 } from "@/lib/guides";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
@@ -37,6 +38,11 @@ export default async function UtilitiesDiaryPage({ params }: Props) {
   const locale = lang as Locale;
   const raw = getGuideRaw(locale, CATEGORY, slug);
   if (!raw) notFound();
+  const {
+    author: localAuthor,
+    authorLink: localAuthorLink,
+    polaroidCredits: localPolaroidCredits,
+  } = parseFrontmatter(raw);
 
   const entry = guidesByCategory[CATEGORY].find((g) => g.slug === slug);
   const title = entry?.title[locale] ?? slug.replace(/-/g, " ");
@@ -45,9 +51,20 @@ export default async function UtilitiesDiaryPage({ params }: Props) {
 
   /** Stessi file PNG per tutte le lingue: chiavi Polaroid dal markdown IT. */
   let polaroidKeyBlocks: MarkdownBlock[] | undefined;
+  let fallbackAuthor: string | undefined;
+  let fallbackAuthorLink: string | undefined;
+  let fallbackPolaroidCredits:
+    | Record<string, { author?: string; authorLink?: string }>
+    | undefined;
   if (locale === "en") {
     const rawIt = getGuideRaw("it", CATEGORY, slug);
-    if (rawIt) polaroidKeyBlocks = parseBlocksOmitFirstH1(rawIt);
+    if (rawIt) {
+      polaroidKeyBlocks = parseBlocksOmitFirstH1(rawIt);
+      const itFrontmatter = parseFrontmatter(rawIt);
+      fallbackAuthor = itFrontmatter.author;
+      fallbackAuthorLink = itFrontmatter.authorLink;
+      fallbackPolaroidCredits = itFrontmatter.polaroidCredits;
+    }
   }
 
   return (
@@ -77,6 +94,11 @@ export default async function UtilitiesDiaryPage({ params }: Props) {
             polaroidKeyBlocks={polaroidKeyBlocks}
             pageSlug={slug}
             locale={locale}
+            defaultPhotoAuthor={localAuthor ?? fallbackAuthor}
+            defaultPhotoAuthorLink={localAuthorLink ?? fallbackAuthorLink}
+            photoCreditsByBasename={
+              localPolaroidCredits ?? fallbackPolaroidCredits
+            }
           />
         </div>
       </div>

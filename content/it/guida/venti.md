@@ -1,3 +1,22 @@
+---
+title: "I venti dell'arcipelago"
+image: "/images/guida/venti/capire-il-vento.webp"
+author: "Demetrio Monorchio"
+authorLink: ""
+polaroidAuthor.capire-il-vento: "Demetrio Monorchio"
+polaroidAuthorLink.capire-il-vento: ""
+polaroidAuthor.maestrale-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.maestrale-il-vento: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.scirocco-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.scirocco-il-vento: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.libeccio-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.libeccio-il-vento: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.la-brezza-termica: "Mauro Cercignani"
+polaroidAuthorLink.la-brezza-termica: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.leggere-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.leggere-il-vento: "https://www.facebook.com/mauro.cercignani/"
+---
+
 # I venti dell'arcipelago
 
 ## Capire il vento prima di scegliere la spiaggia

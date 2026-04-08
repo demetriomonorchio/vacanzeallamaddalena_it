@@ -3,6 +3,18 @@ title: "Isola di La Maddalena — la capitale dell'arcipelago"
 description: "Dal porto di Cala Gavetta al faro di Guardia Vecchia, passando per il Passo della Moneta: La Maddalena come base operativa per esplorare l'intero arcipelago."
 excerpt: "Il porto che funziona, il borgo storico e le spiagge per ogni vento: l'isola principale dell'arcipelago come punto di partenza per tutto il resto."
 category: "isole"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.un-porto-che: "Mauro Cercignani"
+polaroidAuthorLink.un-porto-che: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-borgo-storico: "Mauro Cercignani"
+polaroidAuthorLink.il-borgo-storico: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-passo-della: "Mauro Cercignani"
+polaroidAuthorLink.il-passo-della: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.le-spiagge-dellisola: "Mauro Cercignani"
+polaroidAuthorLink.le-spiagge-dellisola: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.guardia-vecchia: "Gianni Careddu"
+polaroidAuthorLink.guardia-vecchia: "https://commons.wikimedia.org/wiki/File:La_Maddalena,_stazione_meteorologica_di_Guardiavecchia_(04).jpg"
 ---
 
 # Isola di La Maddalena

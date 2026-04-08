@@ -3,6 +3,20 @@ title: "Isola di Caprera — storia, sentieri e calette"
 description: "Compendio Garibaldino, Centro Velico di Stagnali, il sentiero di Punta Rossa e Cala Coticcio: la guida a Caprera, l'isola che non si capisce in un giorno."
 excerpt: "Garibaldi, il granito, i sentieri e le calette: Caprera è l'isola che sorprende chi si aspetta solo spiagge e delude chi viene solo per quelle."
 category: "isole"
+
+image: "/images/isole/spiagge-budelli-spargi/due-isole-due.webp"
+author: "Mauro Cercignani"
+authorLink: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.lisola-che-non: "Mauro Cercignani"
+polaroidAuthorLink.lisola-che-non: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-compendio-garibaldino: "Mauro Cercignani"
+polaroidAuthorLink.il-compendio-garibaldino: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.stagnali-e-il: "Mauro Cercignani"
+polaroidAuthorLink.stagnali-e-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.i-sentieri-punta: "Mauro Cercignani"
+polaroidAuthorLink.i-sentieri-punta: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.le-calette: "Mauro Cercignani"
+polaroidAuthorLink.le-calette: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Isola di Caprera

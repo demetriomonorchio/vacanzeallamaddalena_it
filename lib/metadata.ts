@@ -346,18 +346,18 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
         "mercato La Maddalena",
         "vivere La Maddalena",
         "numeri utili La Maddalena",
-        "Delcomar Blu Navy",
+        "Delcomar Maddalena Lines",
       ],
     },
     "come-arrivare": {
-      title: "Come arrivare a La Maddalena — traghetto da Palau, Delcomar e Blu Navy",
+      title: "Come arrivare a La Maddalena — traghetto da Palau, Delcomar e Maddalena Lines",
       description:
-        "Come prendere il traghetto da Palau a La Maddalena: differenze tra Delcomar e Blu Navy, come prenotare online in agosto, come muoversi sull'isola con scooter o bici elettrica.",
+        "Come prendere il traghetto da Palau a La Maddalena: differenze tra Delcomar e Maddalena Lines, come prenotare online in agosto, come muoversi sull'isola con scooter o bici elettrica.",
       keywords: [
         "come arrivare La Maddalena",
         "traghetto Palau La Maddalena",
         "Delcomar La Maddalena",
-        "Blu Navy La Maddalena",
+        "Maddalena Lines La Maddalena",
         "noleggio scooter La Maddalena",
         "noleggio bici elettrica La Maddalena",
         "come muoversi La Maddalena",
@@ -365,9 +365,9 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
       ],
     },
     servizi: {
-      title: "Servizi a La Maddalena — supermercati, farmacie, bancomat e ospedale",
+      title: "Servizi a La Maddalena — supermercati, farmacie, bancomat ed emergenze",
       description:
-        "Dove si trovano i supermercati, le farmacie di turno, i bancomat e l'ospedale Paolo Merlo a La Maddalena: la guida pratica per chi soggiorna in appartamento.",
+        "Dove si trovano i supermercati, le farmacie di turno, i bancomat e i numeri utili (incluso ospedale e pronto soccorso) a La Maddalena: la guida pratica per chi soggiorna in appartamento.",
       keywords: [
         "servizi La Maddalena",
         "supermercati La Maddalena",
@@ -623,18 +623,18 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
         "La Maddalena market",
         "living La Maddalena",
         "useful numbers La Maddalena",
-        "Delcomar Blu Navy",
+        "Delcomar Maddalena Lines",
       ],
     },
     "come-arrivare": {
-      title: "Getting to La Maddalena — ferry from Palau, Delcomar and Blu Navy",
+      title: "Getting to La Maddalena — ferry from Palau, Delcomar and Maddalena Lines",
       description:
-        "How to take the ferry from Palau to La Maddalena: differences between Delcomar and Blu Navy, how to book online in August, and how to get around by scooter or e-bike.",
+        "How to take the ferry from Palau to La Maddalena: differences between Delcomar and Maddalena Lines, how to book online in August, and how to get around by scooter or e-bike.",
       keywords: [
         "how to get to La Maddalena",
         "ferry Palau La Maddalena",
         "Delcomar La Maddalena ferry",
-        "Blu Navy La Maddalena ferry",
+        "Maddalena Lines La Maddalena ferry",
         "scooter hire La Maddalena",
         "e-bike hire La Maddalena",
         "getting around La Maddalena",
@@ -642,9 +642,9 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
       ],
     },
     servizi: {
-      title: "Services in La Maddalena — supermarkets, pharmacies, ATMs and hospital",
+      title: "Services in La Maddalena — supermarkets, pharmacies, ATMs and emergencies",
       description:
-        "Where to find supermarkets, duty pharmacies, ATMs and the Paolo Merlo hospital in La Maddalena: the practical guide for self-catering stays.",
+        "Where to find supermarkets, duty pharmacies, ATMs and emergency contacts (including hospital and ER) in La Maddalena: the practical guide for self-catering stays.",
       keywords: [
         "La Maddalena services",
         "supermarkets La Maddalena",
