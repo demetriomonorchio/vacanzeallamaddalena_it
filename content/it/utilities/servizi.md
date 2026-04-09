@@ -49,6 +49,34 @@ La copertura 5G sull'Isola di La Maddalena è in fase di espansione, tipica dell
 
 Il WiFi degli appartamenti Isola, Madda e Lena è incluso nel soggiorno. Per chi lavora da remoto: la connessione è ottima per videochiamate e uso professionale. In agosto, in alcune fasce orarie serali, la rete cellulare locale può rallentare per il carico: per call importanti, il WiFi dell'appartamento è più affidabile della rete mobile.
 
+## Servizi vela
+
+Chi arriva a La Maddalena per navigare trova una filiera completa: scuole vela, uscite giornaliere su veliero, basi nautiche per l'ormeggio e operatori per noleggio con skipper. La regola pratica e` una: nei mesi di luglio e agosto conviene bloccare almeno 48-72 ore prima, soprattutto per uscite in giornata verso Spargi, Budelli e Santa Maria.
+
+**Scuole e formazione vela**
+
+- **Centro Velico Caprera (Stagnali/Punta Coda)**: riferimento storico per corsi base, avanzati e regata.
+- **Club Nautico La Maddalena (Loc. Ricciolina)**: attivita` didattica e ambiente da circolo per chi vuole continuita`.
+- **Associazione Acque Libere (Via Ammiraglio Mirabello)**: scuola locale con impostazione pratica.
+- **VelamareClub - Base Nautica Sardegna (Abbatoggia)** e **Centro Nautico di Levante** (area Capo d'Orso): opzioni utili per chi si muove tra La Maddalena e Palau.
+
+**Escursioni e giornate in barca a vela**
+
+- **Veliero Helena**, **Fil Rouge Sail**, **Veliero Dolce Vita**, **Velieri Valentina**, **JOY Sailing**, **Leonidas**, **Veliero Francesca 1955**: operatori molto attivi sull'arcipelago, con formula tipica giornaliera e soste bagno.
+- **Sea Passion catamaran sailing tours**: soluzione catamarano per gruppi e itinerari piu` stabili con vento sostenuto.
+
+**Ormeggi e basi nautiche**
+
+- **Porto Cala Mangiavolpe**, **Cala Gavetta** e **Marina di Punta Nera**: i tre punti principali da valutare per transito e servizi in banchina.
+- Per barche private o charter in alta stagione: richiesta posti con largo anticipo e conferma telefonica il giorno prima dell'arrivo.
+
+**Supporto a terra**
+
+- **Lega Navale Italiana - Sezione La Maddalena**: riferimento locale per cultura marinaresca e rete sul territorio.
+- **Veleria Il Ponente Store**: utile per abbigliamento tecnico leggero e accessori.
+
+Nota pratica: orari, numeri telefonici e disponibilita` cambiano rapidamente in stagione. Prima di partire, verifica sempre sito ufficiale o contatto diretto dell'operatore.
+
 ## Numeri utili da salvare
 
 **Emergenze generali**: 112

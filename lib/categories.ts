@@ -16,7 +16,7 @@ export const categoryLabels: Record<Category, Record<Locale, string>> = {
   isole:     { it: "Isole",         en: "Islands"       },
   attivita:  { it: "Attività",      en: "Activities"    },
   guida:     { it: "Guida Insider", en: "Insider Guide" },
-  utilities: { it: "Pratiche",      en: "Utilities"     },
+  utilities: { it: "Utilità",       en: "Utilities"     },
 };
 
 export const categoryMeta: Record<
@@ -247,6 +247,14 @@ export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {
       excerpt: {
         it: "Supermercati, farmacie di turno, bancomat, numeri utili e WiFi: tutto quello che serve sapere per soggiornare in appartamento senza sorprese.",
         en: "Supermarkets, duty pharmacies, ATMs, emergency contacts and WiFi: everything you need for a self-catering stay without surprises.",
+      },
+    },
+    {
+      slug: "vela",
+      title: { it: "Servizi vela", en: "Sailing services" },
+      excerpt: {
+        it: "Scuole, uscite in veliero, basi nautiche e ormeggi: i riferimenti pratici per organizzare giornate a vela nell'arcipelago.",
+        en: "Schools, day sails, marinas and moorings: practical references to plan sailing days in the archipelago.",
       },
     },
   ],

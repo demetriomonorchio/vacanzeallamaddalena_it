@@ -9,8 +9,8 @@ polaroidAuthor.un-porto-che: "Mauro Cercignani"
 polaroidAuthorLink.un-porto-che: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.il-borgo-storico: "Mauro Cercignani"
 polaroidAuthorLink.il-borgo-storico: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-passo-della: "Mauro Cercignani"
-polaroidAuthorLink.il-passo-della: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-passo-della: "Studio Calvi"
+polaroidAuthorLink.il-passo-della: " https://www.studiocalvi.eu/images/progetti/caprera_la_maddalena_bridge/gallery/caprera-la-maddalena-bridge-3-800x533.JPG"
 polaroidAuthor.le-spiagge-dellisola: "Mauro Cercignani"
 polaroidAuthorLink.le-spiagge-dellisola: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.guardia-vecchia: "Gianni Careddu"
@@ -33,7 +33,9 @@ Il mercato del mattino — nella piazza centrale, attivo da giugno a settembre n
 
 ## Il Passo della Moneta
 
-Il Passo della Moneta è la porta verso Caprera: il tratto di strada che scende verso il pontile dove si imbarcano i mezzi per l'isola contigua. Da qui, guardando verso est, si vede La Maddalena dall'esterno per la prima volta — il profilo del granito, la forma dell'isola, il suo rapporto con il mare aperto. È un punto di orientamento fisico e visivo che vale una sosta, anche solo di cinque minuti.
+Attraversare il Passo della Moneta significa percorrere quel sottile confine blu che separa l'isola madre, La Maddalena, dalla selvaggia Caprera. Sin dal 1890, l'uomo ha cercato di unire queste due terre: prima con un affascinante ponte girevole in ferro, pensato per lasciar sfilare le barche, e poi con la storica struttura Bailey del 1974.
+
+Oggi, il collegamento si è evoluto in un’opera di alta ingegneria che si inserisce nel cuore del Parco Naturale de La Maddalena, un contesto dal valore naturalistico inestimabile. Il nuovo ponte stradale sfida la gravità con una luce totale di 52 metri, suddivisa in tre campate: una centrale da 25 metri e due laterali da 13,5 metri ciascuna.[Clicca qui per il PDF del Ponte Caprera](https://www.studiocalvi.eu/attachments/article/17/Ponte%20Caprera%20-%20La%20Maddalena.pdf)
 
 ## Le spiagge dell'isola principale
 

@@ -3,20 +3,18 @@ title: "Vela nell'arcipelago di La Maddalena"
 description: "La Maddalena è la capitale italiana della vela: le Bocche di Bonifacio come scuola naturale, il Centro Velico di Stagnali e il Trofeo Leone di Caprera."
 excerpt: "Le Bocche di Bonifacio come scuola naturale, il Centro Velico di Stagnali e le regate che hanno reso La Maddalena la capitale della vela italiana."
 category: "attivita"
-author: "Mauro Cercignani"
-authorLink: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.la-capitale-italiana: "Mauro Cercignani"
-polaroidAuthorLink.la-capitale-italiana: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-trofeo-leone: "Mauro Cercignani"
-polaroidAuthorLink.il-trofeo-leone: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-centro-velico: "Mauro Cercignani"
-polaroidAuthorLink.il-centro-velico: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.lassociazione-acque-libere: "Mauro Cercignani"
-polaroidAuthorLink.lassociazione-acque-libere: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.navigare-larcipelago-in: "Mauro Cercignani"
-polaroidAuthorLink.navigare-larcipelago-in: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-vento-come: "Mauro Cercignani"
-polaroidAuthorLink.il-vento-come: "https://www.facebook.com/mauro.cercignani/"
+author: "Demetrio Monorchio"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-capitale-italiana: "Giusy Tola"
+polaroidAuthorLink.la-capitale-italiana: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-centro-velico: "Centro velico caprera"
+polaroidAuthorLink.il-centro-velico: "https://www.centrovelicocaprera.it/"
+polaroidAuthor.l-associazione-acque-libere: "Acque libere"
+polaroidAuthorLink.l-associazione-acque-libere: "https://www.facebook.com/AcqueLibereLM/?locale=it_IT"
+polaroidAuthor.navigare-larcipelago-in: "Demetrio monorchio"
+polaroidAuthorLink.navigare-larcipelago-in: "https://www.vacanzemaddalena.com"
+polaroidAuthor.il-vento-come: "Demetrio Monorchio"
+polaroidAuthorLink.il-vento-come: "https://www.vacanzemaddalena.com"
 ---
 
 # Vela nell'arcipelago
@@ -26,10 +24,6 @@ polaroidAuthorLink.il-vento-come: "https://www.facebook.com/mauro.cercignani/"
 La Maddalena non è un posto dove si va a fare vela: è il posto dove la vela italiana ha imparato a essere seria. Le Bocche di Bonifacio — il tratto di mare tra La Maddalena e la Corsica, largo una ventina di miglia — sono una delle scuole naturali di navigazione più severe del Mediterraneo: venti imprevedibili, correnti forti, geometrie di isole che costringono a un'attenzione continua. Chi ha navigato qui porta con sé una competenza che si misura in qualità, non in miglia percorse.
 
 Porto Santo Stefano e il porto di La Maddalena hanno ospitato regate di rilievo internazionale. La Giraglia — la regata d'altura più importante del Mediterraneo occidentale — passa per le Bocche nella sua tratta notturna. È questo il peso specifico di questo pezzo di mare.
-
-## Il Trofeo Leone di Caprera
-
-Il Trofeo Leone di Caprera è la regata locale per eccellenza: velisti da tutta Italia si presentano ogni anno per gareggiare in un campo di regata dove il vento non perdona e le correnti non si lasciano leggere in anticipo. Non è un evento mondano: è una competizione seria, ospitata in un contesto che la rende tale. Per molti partecipanti, arrivare è già una forma di rispetto nei confronti del mare.
 
 ## Il Centro Velico Caprera
 
