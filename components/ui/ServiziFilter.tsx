@@ -14,6 +14,7 @@ import {
   IceCream2,
   Ship,
   Bike,
+  Sailboat,
 } from "lucide-react";
 import type { Servizio, CategoriaServizio } from "@/lib/servizi";
 import { categorieServizi } from "@/lib/servizi";
@@ -24,6 +25,7 @@ const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   Supermercati:   <ShoppingCart  className="h-3.5 w-3.5" aria-hidden />,
   Farmacie:       <Pill          className="h-3.5 w-3.5" aria-hidden />,
   Spiagge:        <Umbrella      className="h-3.5 w-3.5" aria-hidden />,
+  Vela:           <Sailboat      className="h-3.5 w-3.5" aria-hidden />,
   Gelaterie:      <IceCream2     className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio gommoni": <Ship className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio scooter e bike": <Bike className="h-3.5 w-3.5" aria-hidden />,
