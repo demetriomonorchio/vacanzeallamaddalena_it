@@ -4,15 +4,15 @@ category: "guida"
 author: "Demetrio Monorchio"
 authorLink: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.non-e-solo: "Demetrio Monorchio"
-polaroidAuthorLink.non-e-solo: https://www.vacanzemaddalena.com/"
+polaroidAuthorLink.non-e-solo: https://www.vacanzemaddalena.com/
 polaroidAuthor.il-pesce-dal: "Demetrio Monorchio"
-polaroidAuthorLink.il-pesce-dal: https://www.vacanzemaddalena.com/"
+polaroidAuthorLink.il-pesce-dal: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.il-gelato-artigianale: "Demetrio Monorchio"
-polaroidAuthorLink.il-gelato-artigianale: https://www.vacanzemaddalena.com/"
+polaroidAuthorLink.il-gelato-artigianale: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.il-vino-sardo: "Demetrio Monorchio"
-polaroidAuthorLink.il-vino-sardo: https://www.vacanzemaddalena.com/"
+polaroidAuthorLink.il-vino-sardo: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.il-mercato-del: "Demetrio Monorchio"
-polaroidAuthorLink.il-mercato-del: https://www.vacanzemaddalena.com/"
+polaroidAuthorLink.il-mercato-del: "https://www.vacanzemaddalena.com/"
 ---
 
 # Tavola di porto
