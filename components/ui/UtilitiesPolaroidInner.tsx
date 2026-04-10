@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useMemo } from "react";
+import { createPortal } from "react-dom";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Category } from "@/lib/categories";
 
 type Props = {
@@ -75,6 +77,29 @@ const PAINTED_WALL_BASE: readonly string[] = [
    radial-gradient(ellipse 80% 55% at 15% 25%, rgb(100 210 190 / 0.38) 0%, transparent 48%),
    linear-gradient(140deg, rgb(65 195 175) 0%, rgb(120 225 205) 46%, rgb(45 175 155) 100%)`,
 ];
+
+/** Stili inline così Chrome non dipende da Tailwind per overlay / stacking. */
+const LIGHTBOX_OVERLAY_STYLE: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  zIndex: 2147483647,
+  backgroundColor: "rgba(0, 0, 0, 0.85)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "1rem",
+  touchAction: "none",
+  overscrollBehavior: "contain",
+  pointerEvents: "auto",
+};
+
+const LIGHTBOX_CLOSE_STYLE: CSSProperties = {
+  position: "fixed",
+  top: "max(12px, env(safe-area-inset-top, 0px))",
+  right: "max(12px, env(safe-area-inset-right, 0px))",
+  zIndex: 2147483647,
+  pointerEvents: "auto",
+};
 
 /** Nastro orizzontale: lati corti sinistro e destro seghettati (SVG). */
 function SerratedTape({
@@ -223,7 +248,30 @@ export function UtilitiesPolaroidInner({
   className = "",
 }: Props) {
   const reactId = useId().replace(/:/g, "");
+  const [enlarged, setEnlarged] = useState(false);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const relativePath = `images/${category}/${pageSlug}/${expectedBasename}.png`;
+
+  const closeEnlarged = useCallback(() => setEnlarged(false), []);
+
+  useEffect(() => {
+    if (!enlarged) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") closeEnlarged();
+    };
+    window.addEventListener("keydown", onKey, true);
+    /** Solo `body`: `overflow` anche su `html` può rompere `position:fixed` in Chrome. */
+    const prevBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusId = requestAnimationFrame(() => {
+      closeBtnRef.current?.focus({ preventScroll: true });
+    });
+    return () => {
+      cancelAnimationFrame(focusId);
+      window.removeEventListener("keydown", onKey, true);
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, [enlarged, closeEnlarged]);
 
   const decor = useMemo(() => {
     const h = hashString(`${category}/${pageSlug}:${expectedBasename}`);
@@ -241,10 +289,31 @@ export function UtilitiesPolaroidInner({
     };
   }, [category, pageSlug, expectedBasename, reactId]);
 
+  const openEnlarged = useCallback(() => {
+    if (!src) return;
+    queueMicrotask(() => setEnlarged(true));
+  }, [src]);
+
+  const onPolaroidKeyDown = useCallback(
+    (e: ReactKeyboardEvent) => {
+      if (!src) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setEnlarged(true);
+      }
+    },
+    [src],
+  );
+
   return (
     <div
-      className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className}`}
+      className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className} ${src ? "cursor-zoom-in" : ""}`}
       style={{ transform: `rotate(${rotationDeg}deg)` }}
+      role={src ? "button" : undefined}
+      tabIndex={src ? 0 : undefined}
+      aria-label={src ? "Apri anteprima ingrandita" : undefined}
+      onClick={openEnlarged}
+      onKeyDown={onPolaroidKeyDown}
     >
       <div className="relative isolate block w-full max-w-full overflow-visible">
         {/* Macchia parete: centrata sulla polaroid, abbastanza grande da restare sotto tutta la cornice. */}
@@ -305,6 +374,47 @@ export function UtilitiesPolaroidInner({
           </div>
         </figure>
       </div>
+
+      {enlarged &&
+        src &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            style={LIGHTBOX_OVERLAY_STYLE}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Anteprima ingrandita"
+            onClick={closeEnlarged}
+          >
+            <button
+              ref={closeBtnRef}
+              type="button"
+              style={LIGHTBOX_CLOSE_STYLE}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-2xl leading-none text-slate-700 shadow-lg ring-1 ring-slate-300 transition hover:bg-slate-50"
+              aria-label="Chiudi anteprima"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeEnlarged();
+              }}
+            >
+              ×
+            </button>
+            <div
+              className="relative mx-auto max-h-[min(88vh,720px)] w-full max-w-[min(92vw,720px)] cursor-default"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt=""
+                className="mx-auto max-h-[min(88vh,720px)] w-auto max-w-full object-contain drop-shadow-2xl"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </div>
+          </div>,
+          document.getElementById("lightbox-root") ?? document.body,
+        )}
     </div>
   );
 }

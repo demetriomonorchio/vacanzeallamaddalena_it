@@ -39,7 +39,11 @@ export default function RootLayout({
       lang={defaultLocale}
       className={`${fontSerif.variable} ${fontSans.variable} ${fontHandwriting.variable}`}
     >
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        {children}
+        {/* Portal per lightbox polaroid (sopra tutto il layout, stacking affidabile) */}
+        <div id="lightbox-root" />
+      </body>
     </html>
   );
 }

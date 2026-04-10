@@ -30,14 +30,14 @@ export function Hero({
         className="object-cover object-center"
       />
 
-      {/* Overlay — bottom-up gradient for content legibility */}
+      {/* Overlay — very subtle for a brighter hero look */}
       <div
-        className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/35 to-slate-900/10"
+        className="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-slate-900/10 to-transparent"
         aria-hidden
       />
-      {/* Top overlay — extra density for fixed navbar text contrast */}
+      {/* Top overlay — minimal contrast aid for navbar */}
       <div
-        className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent"
+        className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/10 to-transparent"
         aria-hidden
       />
 
