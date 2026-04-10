@@ -77,20 +77,4 @@ Chi arriva a La Maddalena per navigare trova una filiera completa: scuole vela, 
 
 Nota pratica: orari, numeri telefonici e disponibilita` cambiano rapidamente in stagione. Prima di partire, verifica sempre sito ufficiale o contatto diretto dell'operatore.
 
-## Numeri utili da salvare
-
-**Emergenze generali**: 112
-
-**Pronto Soccorso Ospedale Paolo Merlo**: 0789 791400
-
-**Carabinieri La Maddalena**: 0789 736943 https://share.google/IJ0JlQ6TxIJhW4qnI
-
-**Capitaneria di porto** (emergenze in mare): 1530
-
-**Delcomar** (traghetti): 0789 707800
-
-**Maddelana Lines** (traghetti): 0789 708080
-
-**Polizia Municipale**: 0789 736250
-
-> **Consiglio di Demetrio** — L'appartamento Madda è nel cuore del borgo: il Dettore è a cinque minuti a piedi, la farmacia e il mercato del porto a meno di tre. Non devi organizzarti come se andassi in un posto sperduto. Devi solo arrivare. [Scopri gli appartamenti su vacanzemaddalena.com](https://vacanzemaddalena.com)
+> **Consiglio di Demetrio** — L'appartamento Madda è nel cuore del borgo: il Dettore è a cinque minuti a piedi, la farmacia e il mercato del porto a meno di tre. Non devi organizzarti come se andassi in un posto sperduto. Devi solo arrivare. [Scopri gli appartamenti su vacanzemaddalena.com](https://www.vacanzemaddalena.com/it/#appartamenti)

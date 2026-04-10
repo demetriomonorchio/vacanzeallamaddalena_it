@@ -51,28 +51,25 @@ La posizione dell'alloggio definisce il tuo tipo di vacanza. Ecco come orientart
 
 # Le opzioni per esplorare in libertà
 
-### 1. In Scooter: La scelta definitiva
+## 1. In Scooter
 
 Lo scooter è il mezzo migliore per vivere l'arcipelago. Ti permette di passare rapidamente dal centro storico alle calette di **Caprera**, trovando sempre parcheggio a un passo dalla sabbia.
 
-- **Noleggi consigliati:** Vicino al porto trovi professionisti affidabili come **Noleggio Cossu** e **La Maddalena Rent**.
-- **Consiglio:** In alta stagione prenota telefonicamente con anticipo. Per le tariffe aggiornate, verifica sui siti ufficiali dei noleggiatori.
+- Per le tariffe aggiornate, verifica sui siti ufficiali dei noleggiatori.
 
-### 2. In Bicicletta o E-bike: Natura e sport
+## 2. In Bicicletta o E-bike: Natura e sport
 
 Per chi cerca un ritmo lento tra i profumi della macchia mediterranea.
 
 - **E-bike:** La scelta ideale per superare i dislivelli di Caprera senza fatica.
 - **Nota per gli ospiti:** Gli appartamenti **Isola e Lena** dispongono di parcheggio: puoi portare le tue bici da casa e imbarcarle sul traghetto a tariffe agevolate.
 
-### 3. Trasporto pubblico: Comodo e panoramico
+## 3. Trasporto pubblico: Comodo e panoramico
 
-Il servizio bus **TurmoTravel** collega il centro con mete iconiche come la spiaggia di **Spalmatore**. È l'opzione perfetta per chi alloggia da **Madda** e vuole una giornata di mare in totale relax senza guidare. Consulta il sito ufficiale del vettore per gli orari aggiornati.
+Il servizio bus **TurmoTravel** collega il centro con mete iconiche come la spiaggia di **Spalmatore**. È l'opzione perfetta per chi alloggia da **Madda** e vuole una giornata di mare in totale relax senza guidare. Consulta il sito ufficiale del vettore per gli orari aggiornati. [ Trasporto pubblico](https://trasportopubblico.gruppoturmotravel.com/OrariUrbani?linea=4VU2DYPBXTF2VY83&mode=2&period=)
 
 ---
 
 ## Il consiglio di Demetrio
 
-Se cerchi la vita serale e i ristorantini, scegli **Madda**: vivrai l'isola come un locale, spostandoti a piedi. Se invece il tuo sogno è svegliarti guardando il mare o cenare in giardino dopo una giornata di scogli, **Isola** e **Lena** sono le tue mete; in questo caso, noleggia uno scooter e avrai l'intero arcipelago a portata di mano in pochi minuti.
-
-> [Scopri i nostri appartamenti su vacanzemaddalena.com](https://vacanzemaddalena.com)
+Se cerchi la vita serale e i ristorantini, scegli **Madda**: vivrai l'isola come un locale, spostandoti a piedi. Se invece il tuo sogno è svegliarti guardando il mare o cenare in giardino dopo una giornata di scogli, **Isola** e **Lena** sono le tue mete; in questo caso, noleggia uno scooter e avrai l'intero arcipelago a portata di mano in pochi minuti. [ vacanzemaddalena.com](https://www.vacanzemaddalena.com/it/#appartamenti)

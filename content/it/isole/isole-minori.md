@@ -5,16 +5,16 @@ excerpt: "Le isole che si vedono dall'orizzonte e si raggiungono solo quando il 
 category: "isole"
 author: "Mauro Cercignani"
 authorLink: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.le-isole-che: "Giusy Tola"
-polaroidAuthorLink.le-isole-che: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.le-isole-che: "Mauro Cercignani"
+polaroidAuthorLink.le-isole-che: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.santo-stefano-la: "Giusy Tola"
 polaroidAuthorLink.santo-stefano-la: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.santa-maria-il: "Mauro Cercignani"
-polaroidAuthorLink.santa-maria-il: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.razzoli-il-faro: "Mauro Cercignani"
-polaroidAuthorLink.razzoli-il-faro: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-bordo-nord: "Mauro Cercignani"
-polaroidAuthorLink.il-bordo-nord: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.santa-maria-il: "Felix Dance, CC BY-SA 3.0, via Wikimedia Commons"i"
+polaroidAuthorLink.santa-maria-il: "https://commons.wikimedia.org/wiki/File:Beach_at_Cala_Santa_Maria,_Maddalena_Islands.jpg"
+polaroidAuthor.razzoli-il-faro: "Gianni Careddu, CC BY-SA 3.0, via Wikimedia Commons"
+polaroidAuthorLink.razzoli-il-faro:"https://commons.wikimedia.org/w/index.php?curid=21292191"
+polaroidAuthor.il-bordo-nord: "Vаdiм, CC BY-SA 3.0, via Wikimedia Commons""
+polaroidAuthorLink.il-bordo-nord: "https://commons.wikimedia.org/wiki/File:La_Maddalena_Archipel_Aerial_view.jpg#file"
 ---
 
 # Le isole esterne
@@ -45,6 +45,6 @@ Si raggiunge solo via mare. La sosta nella baia sudest richiede un'ancora lunga 
 
 ## Il bordo nord dell'arcipelago
 
-Navigare da La Maddalena verso Razzoli è capire l'arcipelago nella sua interezza e nella sua scala. Si passa vicino a Santo Stefano, si lambisce il versante est di Santa Maria, si entra nel Passo degli Asinelli con la Corsica a meno di dieci miglia nautiche. Il Parco Nazionale finisce qui — o meglio, finisce dove finisce l'acqua sotto giurisdizione italiana. Oltre, il territorio francese del Parco Marino Internazionale delle Bocche di Bonifacio. Una continuità ecologica che i confini non riescono a interrompere.
+Navigare da La Maddalena verso Razzoli è capire l'arcipelago nella sua interezza e nella sua scala. Si passa vicino a Budelli, si lambisce il versante est di Santa Maria, si entra nel Passo degli Asinelli con la Corsica a meno di dieci miglia nautiche. Il Parco Nazionale finisce qui — o meglio, finisce dove finisce l'acqua sotto giurisdizione italiana. Oltre, il territorio francese del Parco Marino Internazionale delle Bocche di Bonifacio. Una continuità ecologica che i confini non riescono a interrompere.
 
 > **Consiglio di Demetrio** — Per esplorare le isole esterne — Santa Maria, il Passo degli Asinelli, Razzoli — non serve un charter con orari fissi: serve una base stabile a La Maddalena che ti permetta di partire quando il vento è giusto e di rientrare quando hai finito. L'appartamento Isola è progettato per questo: tra calette e silenzio, a quattro minuti dal porto. Il giorno che lo Scirocco si ferma e il cielo si apre, sei già pronto. [Scopri l'appartamento Isola su vacanzemaddalena.com](https://vacanzemaddalena.com)
