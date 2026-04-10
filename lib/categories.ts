@@ -187,7 +187,7 @@ export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {
       slug: "food",
       title: { it: "Tavola di porto", en: "Harbour table" },
       excerpt: {
-        it: "Pesce di rete, granita come rito, Vermentino freddo. Mangiare a La Maddalena senza algoritmi.",
+        it: "Pesce fresco, gelato artigianale come rito, Vermentino freddo. Mangiare a La Maddalena senza algoritmi.",
         en: "Net fish, granite ice as ritual, cold Vermentino. Eating in La Maddalena without algorithms.",
       },
     },

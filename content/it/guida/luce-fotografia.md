@@ -5,10 +5,10 @@ excerpt: "Il granito diafano all'alba di Punta Tegge, i riflessi di Cala Coticci
 category: "guida"
 author: "Mauro Cercignani"
 authorLink: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-soggetto-e: "Mauro Cercignani"
-polaroidAuthorLink.il-soggetto-e: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.punta-tegge-il: "Mauro Cercignani"
-polaroidAuthorLink.punta-tegge-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.il-soggetto-e: "Demetrio Monorchio"
+polaroidAuthorLink.il-soggetto-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.punta-tegge-il: "Demetrio Monorchio"
+polaroidAuthorLink.punta-tegge-il: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.cala-coticcio-la: "Mauro Cercignani"
 polaroidAuthorLink.cala-coticcio-la: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.guardia-vecchia-il: "Mauro Cercignani"
@@ -27,7 +27,7 @@ polaroidAuthorLink.note-tecniche: "https://www.facebook.com/mauro.cercignani/"
 
 C'è una distinzione che chi fotografa l'arcipelago di La Maddalena impara presto: il paesaggio è ovunque, ma la luce è disponibile solo in certi momenti e in certi punti. Tornare dalla Sardegna con fotografie mediocri di uno dei posti più belli del Mediterraneo è possibile — accade ogni volta che si scatta alle dodici di agosto con il sole zenitale che appiattisce ogni texture e satura ogni colore fino all'inverosimile.
 
-L'arcipelago ha una qualità fotografica straordinaria per due ragioni strutturali: il granito e il mare. Il granito rosa — *orthogneiss granitico* di origine precambriana, diafano nelle ore di luce radente — è un materiale che risponde alla luce in modo che il travertino o la pietra calcarea non fanno. L'acqua, con la sua stratificazione di colori tra il turchese superficiale e il blu profondo, è un soggetto che cambia composizione ogni ora del giorno. Conoscere quando e dove questi due elementi si incontrano nella loro versione migliore è l'unica tecnica che conta davvero.
+L'arcipelago ha una qualità fotografica straordinaria per due ragioni strutturali: il granito e il mare. Il granito rosa — _orthogneiss granitico_ di origine precambriana, diafano nelle ore di luce radente — è un materiale che risponde alla luce in modo che il travertino o la pietra calcarea non fanno. L'acqua, con la sua stratificazione di colori tra il turchese superficiale e il blu profondo, è un soggetto che cambia composizione ogni ora del giorno. Conoscere quando e dove questi due elementi si incontrano nella loro versione migliore è l'unica tecnica che conta davvero.
 
 ## Punta Tegge: il granito all'alba
 

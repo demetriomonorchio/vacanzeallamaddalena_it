@@ -15,6 +15,7 @@ import {
   Ship,
   Bike,
   Sailboat,
+  Footprints,
 } from "lucide-react";
 import type { Servizio, CategoriaServizio } from "@/lib/servizi";
 import { categorieServizi } from "@/lib/servizi";
@@ -34,6 +35,9 @@ const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   Trasporti:      <Bus          className="h-3.5 w-3.5" aria-hidden />,
   Emergenze:      <PhoneCall    className="h-3.5 w-3.5" aria-hidden />,
   Musei:          <Landmark     className="h-3.5 w-3.5" aria-hidden />,
+  "Sentieri Caprera": (
+    <Footprints className="h-3.5 w-3.5" aria-hidden />
+  ),
 };
 
 // ─── Chip component ───────────────────────────────────────────────────────────
@@ -159,6 +163,7 @@ function ServiceCardInner({
   const showTeaserDescription =
     (s.category === "Spiagge" ||
       s.category === "Musei" ||
+      s.category === "Sentieri Caprera" ||
       s.category === "Mercato" ||
       s.category === "Trasporti" ||
       s.category === "Emergenze" ||

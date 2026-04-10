@@ -1,6 +1,7 @@
 // Client-safe — no Node.js imports.
 import { serviziMercati } from "./serviziMercati";
 import { serviziMusei } from "./serviziMusei";
+import { serviziSentieriCaprera } from "./serviziSentieriCaprera";
 import { serviziSpiagge } from "./serviziSpiagge";
 import { serviziBanche } from "./serviziBanche";
 import { serviziFarmacie } from "./serviziFarmacie";
@@ -32,6 +33,7 @@ export const categorieServizi = [
   "Trasporti",
   "Emergenze",
   "Musei",
+  "Sentieri Caprera",
 ] as const;
 
 export type CategoriaServizio = (typeof categorieServizi)[number];
@@ -653,4 +655,7 @@ export const servizi: readonly Servizio[] = [
 
   // ─── Musei (solo arcipelago: La Maddalena e Caprera) ─────────────────────────
   ...serviziMusei,
+
+  // ─── Sentieri Caprera (luoghi, spiagge e punti panoramici) ───────────────────
+  ...serviziSentieriCaprera,
 ];
