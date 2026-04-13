@@ -157,22 +157,35 @@ export function Navbar({ locale }: NavbarProps) {
           </Link>
         </div>
 
-        <button
-          type="button"
-          className={`md:hidden ${solidChrome ? "text-mare" : "text-white drop-shadow-md"} rounded-md p-2 transition-colors hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mare`}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav-panel"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          <span className="sr-only">
-            {menuOpen ? mobileNav.close : mobileNav.open}
-          </span>
-          {menuOpen ? (
-            <X className="h-7 w-7" strokeWidth={2} aria-hidden />
-          ) : (
-            <Menu className="h-7 w-7" strokeWidth={2} aria-hidden />
-          )}
-        </button>
+        <div className="flex shrink-0 items-center gap-1 md:hidden">
+          <Link
+            href={`/${other}`}
+            hrefLang={other}
+            className={`font-sans text-sm font-semibold underline-offset-4 transition-colors duration-300 hover:underline ${
+              solidChrome
+                ? "text-slate/50 hover:text-mare"
+                : "text-white drop-shadow-md hover:text-sabbia"
+            }`}
+          >
+            {langSwitchLabel[locale]}
+          </Link>
+          <button
+            type="button"
+            className={`${solidChrome ? "text-mare" : "text-white drop-shadow-md"} rounded-md p-2 transition-colors hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mare`}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav-panel"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <span className="sr-only">
+              {menuOpen ? mobileNav.close : mobileNav.open}
+            </span>
+            {menuOpen ? (
+              <X className="h-7 w-7" strokeWidth={2} aria-hidden />
+            ) : (
+              <Menu className="h-7 w-7" strokeWidth={2} aria-hidden />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Secondary row — category navigation (tablet/desktop) */}
@@ -276,16 +289,6 @@ export function Navbar({ locale }: NavbarProps) {
                     onClick={() => setMenuOpen(false)}
                   >
                     {serviziLabel[locale]}
-                  </Link>
-                </li>
-                <li className="pt-4">
-                  <Link
-                    href={`/${other}`}
-                    hrefLang={other}
-                    className="inline-flex font-sans text-sm font-semibold text-slate/60 underline-offset-4 hover:text-mare hover:underline"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {langSwitchLabel[locale]}
                   </Link>
                 </li>
               </ul>
