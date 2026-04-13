@@ -1,35 +1,54 @@
-# Boat excursions in the archipelago
+---
+title: "Boat tours in the La Maddalena archipelago"
+description: "Three ways to explore the archipelago: guided tours from Cala Gavetta, private charter on a classic sailing yacht, and bareboat rental. How to choose based on the wind."
+excerpt: "The historic gozzi of Cala Gavetta, exclusive charters on classic sailing yachts, and self-drive dinghy rental: three different ways to navigate an archipelago that never looks the same twice."
+category: "attivita"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-porto-come: "Gemini"
+polaroidAuthorLink.il-porto-come: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.i-tour-guidati: "Gemini"
+polaroidAuthorLink.i-tour-guidati: "https://www.vacanzemaddalena.com"
+polaroidAuthor.i-charter-privati: "Gemini"
+polaroidAuthorLink.i-charter-privati: "https://www.vacanzemaddalena.com"
+polaroidAuthor.il-noleggio-autonomo: "Gemini"
+polaroidAuthorLink.il-noleggio-autonomo: "https://www.vacanzemaddalena.com"
+polaroidAuthor.come-il-vento: "Mauro Cercignani"
+polaroidAuthorLink.come-il-vento: "https://www.facebook.com/mauro.cercignani/"
+---
 
-## There is no single way to sail here
+# Boat tours in the archipelago
 
-The La Maddalena archipelago is visited from the sea, not from land. Paths tell one part of the story; the other — Budelli, Razzoli, Santa Maria, the seabeds around Spargi — can only be told from a boat. La Maddalena's harbour is where every choice begins: type of vessel, pace, wind direction.
+## The port as the starting point of everything
 
-With our apartments minutes from the embarkation points, each morning you can decide how to move across the Park.
+There is one thing you understand as soon as you arrive in La Maddalena: the port is not infrastructure — it is the centre of life. Cala Gavetta, Via Amendola, Porto Cala Mangiavolpe — three boarding areas, each with its own logic, boats, and operators. Every morning, coffee still hot, the port tells you what the weather will do and where it is worth going.
 
-## Guided island tours
+From the Madda apartment you can walk there in five minutes — just enough time to choose how you want to sail.
 
-Guided boat tours are the most straightforward way to reach the outer islands. Full-day departures typically stop at Budelli (Spiaggia Rosa viewed from the water), Spargi (Cala Corsara), Santa Maria and Razzoli. They depart from Via Amendola, Cala Gavetta and the Padule quay — all a short walk from the centre.
+## Guided tours: the main route
 
-Notable operators: Consorzio Meraviglie dell'Arcipelago (meravigliedellarcipelago.it), Delfino Tours (gitearcipelago.it), Dream Boat (tourlamaddalena.it), Flotta del Parco (flottadelparco.com), Enjoy La Maddalena (enjoylamaddalena.com). For a slower pace, the vintage schooner Apollo II (apollosecondo.it) or La Reole (lareolecharter.com) offer longer, sailing-focused outings.
+The large gozzi and motorboats that leave every morning from Via Amendola are the most direct way to reach the outer islands. Six- to eight-hour trips with stops at Budelli (Spiaggia Rosa from the water), Spargi (Cala Corsara and Cala d’Alga), Santa Maria, and Razzoli. The freeboard is high, the motion is gentler, and the guide explains what you are passing through.
 
-## Bareboat hire
+## Bareboat rental: freedom as a method
 
-For experienced sailors, hiring a vessel and building your own itinerary offers maximum freedom. Hire points are concentrated around Cala Gavetta, Via Padule and Via Amendola. La Maddalena Yacht (lamaddalenayacht.it), Gipsy Motor Boat (lamaddalenaboatexcursions.it) and Exclusive Boats (lamaddalenaexclusiveboats.com) offer day hire of RIBs and motorboats.
+**Bareboat rental: sail on your own**
+If you already have boating experience and want a personalised itinerary without intermediaries, renting without a skipper is the most authentic way to explore the archipelago. You can hire RIBs or motorboats by the day from the many centres along Via Padule, Cala Gavetta, and other harbour areas on the island.
 
-A Park permit is required for navigation in regulated zones: purchase online at lamaddalenapark.it before departure.
+📍 Find the operator that suits you: 🔗 [See rental centres on our services page](https://vacanzeallamaddalena.it/en/servizi)
 
-## Diving and underwater terrain
+📝 Useful tips before you cast off:
+**Weather:** Always check the latest forecast before leaving the harbour.
 
-The archipelago seabed is among the richest in the Mediterranean. Posidonia meadows, gorgonian fans, moray eels, grouper, rays. The shoals around Spargi and the wrecks near Caprera — including a Second World War aircraft lying at under ten metres — are internationally recognised dive sites.
+**Safety:** Study the chart and mark shallows and reefs carefully.
 
-Three centres operate permanently on the island: Area 11 Diver (area11diver.net) near Punta Tegge; Argonauta Diving Sardinia (divinglamaddalena.com) based at Camping Abbatoggia; and La Maddalena Diving ASD at the local jetty.
+**Rules:** In Italy you do not need a licence to drive boats or RIBs with engines up to 40 hp. That makes rental accessible to many people — but above that power a licence is required.
 
-Zone B dive permit: €5 per day, €75 for the full season.
+## How the wind changes everything
 
-## Sailing schools
+The most common mistake visitors make is booking a tour without looking at the wind. The archipelago is exposed: with a 20-knot Mistral, the outer islands — Budelli, Razzoli, the north-west of Spargi — become uncomfortable or impossible to reach. It is not an emergency; it is the nature of the place.
 
-The Centro Velico Caprera (centrovelicocaprera.it) at Stagnali is one of Italy's longest-established sailing schools: courses for every level, from beginner to licence. Associazione Acque Libere (acque-libere.org) organises outings and courses with a more informal approach. The Club Nautico La Maddalena is the reference point for racing and for joining the local sailing community.
+The right answer to the Mistral is not to stay on land — it is to change course. The east side of Caprera is sheltered almost all the time; Cala Coticcio, Cala Brigantina, and the coast between Stagnali and Punta Rossa stay reachable even in strong wind. Spargi’s “canyons” on the lee side can be flat even when the Strait of Bonifacio is rough.
 
-## A practical note
+If you have a week, you learn to read the sky the night before. If you have three days, you ask your hotelier — or your apartment host.
 
-Our apartments provide updated local information: we can suggest which operator best matches your sea experience, the forecast wind and the length of your stay. Isola, Madda and Lena are five minutes from the embarkation points — the only distance that counts.
+> **Demetrio’s tip** — We come back to the harbour in the late afternoon, salt on our skin and the Spargi wreck still in our heads. The Madda apartment is five minutes from the quay: you unload gear, shower, and put something on the stove. There is no dead time between the sea and the evening. [Discover the Madda apartment on vacanzemaddalena.com](https://vacanzemaddalena.com)

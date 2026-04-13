@@ -13,8 +13,8 @@ polaroidAuthor.il-passo-della: Mauro Cercignani"
 polaroidAuthorLink.il-passo-della: " https://www.facebook.com/mauro.cercignani"
 polaroidAuthor.le-spiagge-dellisola: "Mauro Cercignani"
 polaroidAuthorLink.le-spiagge-dellisola: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.guardia-vecchia: "Gianni Careddu"
-polaroidAuthorLink.guardia-vecchia: "https://commons.wikimedia.org/wiki/File:La_Maddalena,_stazione_meteorologica_di_Guardiavecchia_(04).jpg"
+polaroidAuthor.guardia-vecchia: "Mauro Cercignani"
+polaroidAuthorLink.guardia-vecchia: "https://www.facebook.com/mauro.cercignani/"
 ---
 
 # Isola di La Maddalena

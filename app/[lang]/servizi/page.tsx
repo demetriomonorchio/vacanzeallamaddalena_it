@@ -106,7 +106,7 @@ export default async function ServiziPage({ params }: Props) {
 
       {/* Filterable grid — client component */}
       <div className="mt-10">
-        <ServiziFilter servizi={servizi} labels={l} />
+        <ServiziFilter servizi={servizi} locale={locale} labels={l} />
       </div>
     </div>
   );

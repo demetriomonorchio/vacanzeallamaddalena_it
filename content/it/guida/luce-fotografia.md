@@ -11,8 +11,8 @@ polaroidAuthor.punta-tegge-il: "Demetrio Monorchio"
 polaroidAuthorLink.punta-tegge-il: "https://www.vacanzemaddalena.com/"
 polaroidAuthor.cala-coticcio-la: "Mauro Cercignani"
 polaroidAuthorLink.cala-coticcio-la: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.guardia-vecchia-il: "Mauro Cercignani"
-polaroidAuthorLink.guardia-vecchia-il: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.guardia-vecchia-il: "Giusy Tola"
+polaroidAuthorLink.guardia-vecchia-il: "https://www.vacanzemaddalena.com/#chisiamo"
 polaroidAuthor.la-punta-rossa: "Mauro Cercignani"
 polaroidAuthorLink.la-punta-rossa: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.il-porto-di: "Mauro Cercignani"
@@ -37,13 +37,37 @@ Il colore del granito in queste condizioni non è rosa: è arancio caldo, quasi 
 
 Per essere a Punta Tegge all'alba dall'appartamento: venti minuti a piedi dal centro, dieci in bici. L'ora vale la sveglia presto.
 
-## Cala Coticcio: la luce zenitale buona
+## Cala Coticcio: Cala Coticcio: Guida alla "Piccola Tahiti" di Caprera
 
-La luce zenitale — quella delle dieci del mattino in estate, verticale e bianca — è nemica della fotografia di paesaggio in quasi tutti i luoghi. Cala Coticcio è l'eccezione. L'orientamento nordest della caletta, la profondità contenuta del fondale e il colore bianco del quarzo sul fondo creano una condizione in cui la luce verticale, invece di appiattire, produce una stratificazione di colori nell'acqua che non esiste in nessun'altra ora del giorno.
+Cala Coticcio è il gioiello della Sardegna nord-orientale. Situata sull'isola di Caprera, all'interno del Parco Nazionale dell'Arcipelago di La Maddalena, è celebre per il contrasto cromatico tra le rocce di granito rosa, la sabbia bianchissima e un mare così turchese da valerle il soprannome di "Piccola Tahiti".
 
-Dalle dieci alle undici del mattino, il fondale di Cala Coticcio è attraversato da fasci di luce che si rifrangono sul quarzo e risalgono verso la superficie creando quel verde-azzurro luminoso che nelle fotografie sembra ritoccato e non lo è. I graniti rosa delle pareti che circondano la caletta — accessibile solo via mare o dopo 45 minuti di sentiero da Stagnali — completano la composizione.
+🛑 Regole d'Accesso e Tutela
+Essendo classificata come Zona TA (massima tutela), la cala è un ecosistema estremamente fragile. Per preservarne la bellezza, l'Ente Parco ha introdotto rigide restrizioni:
 
-È il luogo più fotografato dell'arcipelago per una ragione che ha poco di spontaneo: richiede di arrivarci nella finestra giusta.
+Numero Chiuso: L'accesso è limitato a un numero ristretto di visitatori al giorno, suddivisi in fasce orarie.
+
+Guida Obbligatoria: Non è possibile percorrere il sentiero in autonomia. L'escursione via terra deve essere effettuata necessariamente con una Guida Ambientale Escursionistica (GAE) autorizzata.
+
+Prenotazione: È obbligatorio prenotare il proprio posto in anticipo attraverso i canali ufficiali del Parco o del Comune di La Maddalena, pagando il relativo ticket d'ingresso e il servizio guida.
+
+🥾 Come Raggiungerla
+Esistono due modi principali per godere di questo scenario, ognuno con caratteristiche diverse:
+
+1. Via Terra (Trekking)
+   Il sentiero è un'esperienza immersiva nella macchia mediterranea, ma richiede preparazione:
+
+Percorso: Circa 3,2 km (andata/ritorno).
+
+Tempo: 45-60 minuti a tratta.
+
+Difficoltà: Moderata, con tratti sconnessi.
+
+Equipaggiamento: Sono indispensabili scarpe da trekking o sportive chiuse e una scorta abbondante d'acqua.
+
+2. Via Mare
+   Molte imbarcazioni partono da Palau o La Maddalena. È l'opzione più panoramica, ma tieni presente che le barche devono rispettare le boe di delimitazione e non possono avvicinarsi alla riva per proteggere i fondali incontaminati.
+
+Il consiglio dell'esperto: Prenota con largo anticipo durante i mesi estivi (luglio e agosto), poiché i posti disponibili si esauriscono molto velocemente.
 
 ## Guardia Vecchia: il tramonto verso la Corsica
 
@@ -55,9 +79,37 @@ Il problema di Guardia Vecchia al tramonto è la folla in agosto: il percorso è
 
 ## La Punta Rossa di Caprera
 
-Il faro a strisce rosse sull'estremità nordest di Caprera è il soggetto verticale più iconico dell'arcipelago. La struttura bianca e rossa si staglia contro il granito scuro della scogliera e il blu delle Bocche — una composizione che funziona in quasi tutte le condizioni di luce, ma che trova la sua versione migliore nel tardo pomeriggio, quando la luce laterale illumina le strisce rosse senza accecarne il bianco.
+Batteria di Punta Rossa: Fascino e Storia a Caprera
+Situata all'estremo sud dell’isola di Caprera, la Batteria di Punta Rossa è uno dei complessi militari più imponenti e suggestivi dell’Arcipelago di La Maddalena. Un luogo dove la storia bellica si fonde con la natura selvaggia della Sardegna.
 
-Raggiungere la Punta Rossa richiede circa tre ore di cammino da Stagnali (sentiero del Due Mari più deviazione nord). Non è un posto che si visita di improvviso: va pianificato come escursione fotografica, con il tempo di arrivare nel pomeriggio e godere della luce delle diciassette-diciotto.
+🏛️ Storia e Caratteristiche
+Costruita nel 1866, la batteria ha garantito la difesa costiera e il rifornimento navale fino alla fine della Seconda Guerra Mondiale. Sebbene sia stata utilizzata per esercitazioni della Marina Militare fino al 2010, oggi il sito vive in uno stato di affascinante abbandono.
+
+Il Complesso: Comprende un'antica fortezza dotata di gallerie, cunicoli, casermette e un'ex stazione torpedini.
+
+Architettura e Natura: Le rovine sono perfettamente integrate tra gli scogli rossi e il mare cristallino, creando un contrasto visivo unico.
+
+Stato Attuale: Dichiarata di interesse culturale nel 2018, la struttura è oggi un "museo a cielo aperto" in perenne mutamento, molto amata da fotografi e amanti dell'esplorazione urbana.
+
+📍 Come Arrivare
+Per raggiungere questo luogo fuori dal tempo, segui queste indicazioni:
+
+Raggiungi Caprera: Attraversa il ponte che collega La Maddalena a Caprera.
+
+Direzione Sud: Segui le strade sterrate oltre Cala Andreani.
+
+Percorso a piedi: Lascia l'auto e prosegui verso la punta meridionale seguendo i sentieri che portano verso la stazione torpedini.
+
+✨ Cosa Vedere durante la visita
+Oltre al panorama mozzafiato, non perdere i dettagli architettonici del compendio militare:
+
+Le postazioni da tiro: Imponenti strutture che dominano il mare.
+
+I grandi capannoni e la garitta: Testimonianze dell'antica logistica militare.
+
+Spiaggia di Punta Rossa: Una piccola insenatura nelle immediate vicinanze, celebre per la sua sabbia grigio chiarissimo e le acque trasparenti.
+
+Nota di sicurezza: A causa dello stato di abbandono e dei possibili crolli, si raccomanda la massima prudenza durante l'esplorazione delle rovine.
 
 ## Il porto di Cala Gavetta: la fotografia di reportage
 

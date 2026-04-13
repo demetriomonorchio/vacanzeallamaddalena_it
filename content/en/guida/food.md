@@ -1,21 +1,51 @@
+---
+title: "Harbour table"
+category: "guida"
+author: "Demetrio Monorchio"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.non-e-solo: "Demetrio Monorchio"
+polaroidAuthorLink.non-e-solo: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-pesce-dal: "Demetrio Monorchio"
+polaroidAuthorLink.il-pesce-dal: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-gelato-artigianale: "Demetrio Monorchio"
+polaroidAuthorLink.il-gelato-artigianale: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-vino-sardo: "Demetrio Monorchio"
+polaroidAuthorLink.il-vino-sardo: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-mercato-del: "Demetrio Monorchio"
+polaroidAuthorLink.il-mercato-del: "https://www.vacanzemaddalena.com/"
+---
+
 # Harbour table
 
-## It is not gastronomy: it is habit
+## Not just food: the Maddalenino way of life
 
-Eating on the La Maddalena archipelago is not a gastronomic act in the modern sense. It is an hourly, geographical, social ritual. Market fish in the morning, granite ice at eleven, a long lunch at noon with the wind lifting napkins. Quality is not announced — it is taken for granted.
+Eating in the La Maddalena archipelago means following the rhythm of boats coming back to harbour. Do not expect standard tourist menus: here the experience is tied to the place. From a gelato stop in **Piazza Comando** to dinner with a sea view, every meal reflects the island’s identity. Real quality is not in neon signs — it is in how fresh the Gallura ingredients are.
 
-## The fish
+## Fish: from sea to table
 
-The net is the menu. Lobster, dentex, octopus, sea urchins when the season allows. Locals don't order: they ask what came in that morning. The same logic applies to the traveller who wants to eat properly. The historic trattorie of the old town — plastic tables, prices without decimal points — are often better than the lit-up signs on the waterfront.
+In La Maddalena the sea writes the menu. If you want authenticity, skip the overly polished places and walk into the old town alleys.
 
-## Granite ice
+- **What to order:** Do not stick to the usual dishes. Ask for the catch of the day: **dentex, amberjack, or local octopus**.
+- **Insider tip:** Historic trattorie serve unbeatable plates such as spaghetti with bottarga or fregola with seafood. If the menu is handwritten, you are probably in the right place.
 
-La Maddalena granite ice is an institution. It is not sorbet: it is granite — shaved ice, real syrup, served in a glass with cream only if you ask. The ritual is morning: before a swim or after a walk through the Caprera trails. The historic bars in the centre serve it all day, but it tastes better at nine.
+## Artisan gelato: the after-dinner ritual
 
-## Sardinian wine
+Unlike many other places, in La Maddalena the real evening stroll ritual is a good artisan gelato. Gelaterie in the centre are an institution — the obligatory stop after a day on the boat or during an evening walk along **Via Garibaldi**.
 
-Cold Vermentino as a starting point. Cannonau is for the evening — grilled fish on the rocks, tables after sunset. Don't look for international labels: the island already has everything.
+- **Local flavours:** Look for Sardinian-inspired options such as **myrtle**, **strawberry-tree honey**, or toasted almond.
+- **Best time:** Evening, when the village comes alive and the air cools. It is the perfect way to end a day among Caprera’s coves.
 
-## The morning market
+## Sardinian wine: Vermentino and Cannonau
 
-La Maddalena's central square in the early morning hours is the place where you understand the territory better than any guidebook. Fruit, fish, cheese, a few farmers from the countryside. An hour spent there is worth a full itinerary.
+Sardinia has an excellent wine tradition that fits the archipelago climate perfectly.
+
+- **Vermentino di Gallura DOCG:** The undisputed king — white, savoury, aromatic, best ice-cold with fish dishes.
+- **Cannonau:** Ideal for late dinners with local meat or aged cheeses such as pecorino sardo DOP.
+- **Tip:** Always ask for wine from Gallura cellars: proximity to the sea gives the whites a unmistakable salty note.
+
+## The morning market: the beating heart
+
+To really understand the island, visit the covered market in the early hours. Near the harbour, this is where residents shop.
+
+- **What to buy:** Grey mullet bottarga, cheeses from inland shepherds, seasonal fruit.
+- **Why go:** It is the best place to watch daily Maddalenino life — and to pick up tips from fishmongers on which island is most sheltered from **today’s Mistral or Scirocco** (essential for choosing Spargi or Caprera).

@@ -125,9 +125,9 @@ export function Navbar({ locale }: NavbarProps) {
           <Image
             src="/images/home/logo.webp"
             alt="Vacanze alla Maddalena - Logo"
-            width={200}
-            height={70}
-            className="h-[45px] w-auto max-w-[min(100%,11rem)] object-contain object-left md:h-[65px] md:max-w-none"
+            width={240}
+            height={84}
+            className="h-[56px] w-auto max-w-[min(100%,13rem)] object-contain object-left md:h-[78px] md:max-w-none"
             priority
           />
         </Link>

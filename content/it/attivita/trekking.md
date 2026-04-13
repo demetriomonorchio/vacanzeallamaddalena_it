@@ -33,20 +33,70 @@ Il percorso richiede circa due ore andata e ritorno. Non ha difficoltà tecniche
 
 ## I sentieri di Caprera
 
-Caprera è l'isola dove il trekking diventa un argomento serio. La rete di sentieri — segnata, ma non sempre manutenuta con regolarità — copre l'intera isola con percorsi di diversa difficoltà e diversa resa paesaggistica.
+🥾 Guida al Trekking nell'Isola di Caprera
+L'isola di Caprera vanta una rete di 16 sentieri ufficiali, perfetti per scoprire scenari naturali selvaggi, siti storici militari e calette nascoste.
 
-**Monte Fico** (224 m, il punto più alto di Caprera) si raggiunge in circa un'ora dal parcheggio principale. La vista dalla cima include l'intero arcipelago italiano e, nelle giornate di Maestrale, le montagne della Corsica nel dettaglio. È il punto da cui si capisce la scala di questo territorio: non grande in assoluto, ma articolato come pochi.
+⚠️ Nota importante: Data la natura granitica e irregolare del suolo, è fondamentale indossare scarpe chiuse (da trekking o sportive).
 
-**Il percorso dei Due Mari** è il sentiero longitudinale che attraversa l'isola da sudovest a nordest, con viste alternate sul versante delle Bocche di Bonifacio e su quello del mare aperto verso la Sardegna. La distanza è di circa 12 chilometri, con un dislivello contenuto. Si percorre in meno di quattro ore con soste; nella parte finale è possibile scendere a Cala Coticcio e rientrare via mare con un taxi boat.
+🌟 I Percorsi Imperdibili
+🏝️ Cala Coticcio (Tahiti)
+Il sentiero più celebre ma anche tra i più tecnici.
 
-**Punta Rossa** è l'obiettivo più impegnativo: il sentiero nordest di Caprera, che porta al faro a strisce rosse sull'estremità nordorientale dell'isola. Il percorso attraversa una parte selvaggia di Caprera — macchia alta, granito, nessun servizio, poca ombra — e arriva a un punto da cui la Corsica è già abbastanza vicina da sembrare parte dello stesso paesaggio. La distanza totale supera i 15 chilometri: è un'escursione da pianificare, non da improvvisare.
+Accesso: Situato in area a tutela integrale. L'ingresso è contingentato a 60 persone al giorno ed è obbligatorio essere accompagnati da una guida ambientale autorizzata.
+
+Percorso: Partenza vicino al Forte di Arbuticci; durata circa 40-45 minuti a tratta. Presenta passaggi esposti o scivolosi.
+
+🌊 Cala Napoletana
+Un'escursione di media difficoltà nel settore settentrionale dell'isola.
+
+Percorso: Inizia dalla fortificazione di Arbuticci. Si cammina per circa 30-45 minuti immersi nella macchia mediterranea fino a raggiungere una spiaggia di sabbia bianca finissima.
+
+⛰️ Monte Tejalone
+Il "tetto" dell'isola (212 metri) con panorama a 360° sull'intero Arcipelago.
+
+Dettagli: Il sentiero n. 07 è ripido ma breve (40-45 minuti). La vetta si raggiunge tramite una scalinata finale di 115 gradini, dove sorgono i resti di una postazione militare.
+
+🏖️ Cala Serena
+Ideale per chi desidera una passeggiata rilassante e pianeggiante.
+
+Percorso: Parte da Cala Garibaldi e si completa in soli 15-20 minuti.
+
+🗺️ Altri Itinerari di Interesse
+Sentiero di Candeo: Porta all'Opera Candeo, una straordinaria fortificazione militare mimetizzata nel granito.
+
+Sentiero della Conigliera: Itinerario di media difficoltà (circa 1 ora e 30 min) con spettacolari scorci costieri.
+
+Cala Andreani - Punta Rossa: Una facile camminata esplorativa nella zona sud di Caprera.
+
+💡 Consigli Pratici per il 2026
+💧 Risorse: Non sono presenti punti di ristoro lungo i percorsi; porta sempre con te almeno 1,5 litri d'acqua, cappello e crema solare.
+
+📅 Quando andare: Primavera e autunno sono ideali per il clima mite. In estate, si raccomanda di partire alle prime luci dell'alba.
+
+📲 Prenotazioni: Per accedere a Cala Coticcio e Cala Brigantina, è necessario prenotare con largo anticipo sul portale ufficiale del Parco Nazionale.
+📍 Consulta la risorsa ufficiale: 🗺️ [mappa sentieri](https://lamaddalenapark.iswebcloud.it/download/allegati/217/201541721231O__OCARTAGO-IsoladiCaprera_2020_STAMPA_FRONTE.jpg)
 
 ## La stagione giusta
 
-Il trekking sull'arcipelago ha una stagione precisa: **aprile-giugno** e **settembre-ottobre**. In luglio e agosto il caldo rende impraticabili i percorsi esposti nelle ore centrali, e la vegetazione secca perde quella qualità olfattiva — il mirto, il lentisco, il corbezzolo in fiore — che è parte integrante dell'esperienza. Settembre è il mese migliore: temperatura tollerabile, folla ridotta, luce ancora lunga nelle prime ore del pomeriggio.
+🥾 Quando camminare nell'Arcipelago
+Il trekking a La Maddalena e Caprera non ha un calendario restrittivo: la rete dei sentieri è praticabile tutto l'anno, offrendo sfumature diverse in ogni stagione. Tuttavia, per godersi l'esperienza in piena sicurezza, è fondamentale monitorare il bollettino meteo ed evitare le escursioni in caso di vento forte, che può rendere instabile il passo sui terreni granitici.
+
+⚠️ Restrizioni e Accessi Protetti
+È importante ricordare che per alcune delle calette più sensibili e protette, come la celebre Cala Coticcio, vigono restrizioni specifiche. L'accesso è contingentato e monitorato per preservare l'ecosistema. Per queste zone, e in generale per muoversi in sicurezza, è caldamente raccomandato rivolgersi alle guide ambientali autorizzate dell'Ente Parco. Le guide non solo garantiscono l'accesso nel rispetto delle regole, ma arricchiscono l'escursione con la loro conoscenza del territorio.
+
+🌸 Primavera e Autunno: Il clima ideale
+Sebbene si possa camminare sempre, aprile-giugno e settembre-ottobre restano i periodi d'oro. In questi mesi la macchia mediterranea esplode nei suoi profumi più intensi — mirto, lentisco e corbezzolo — che diventano parte integrante del cammino.
+
+☀️ L'estate: Strategia e orari
+In luglio e agosto il caldo intenso rende sconsigliabili i percorsi privi di ombra nelle ore centrali della giornata. Il segreto è partire all'alba per godersi la frescura e la luce magica del mattino presto, sempre verificando la disponibilità dei permessi per le spiagge a numero chiuso.
+
+🍂 Settembre: Il mese perfetto
+Molti considerano settembre il periodo migliore: le temperature tornano tollerabili, l'affollamento diminuisce e la luce pomeridiana permette escursioni senza fretta, regalando panorami limpidi e indimenticabili.
+
+Consiglio per la sicurezza: Verifica sempre la velocità del vento e, per le aree a tutela integrale, prenota la tua visita con una guida autorizzata per evitare sanzioni e proteggere l'ambiente.
 
 ## Le guide ambientali (GAE)
 
 Le **Guide Ambientali Escursionistiche** certificate operano sull'arcipelago e organizzano escursioni tematiche: flora e fauna, storia militare, fotografia naturalistica. Per i sentieri meno conosciuti di Caprera — e per chi vuole capire cosa sta guardando mentre cammina, non soltanto dove sta andando — una guida locale cambia completamente la qualità dell'esperienza.
 
-> **Consiglio di Giusy** — Dopo il percorso dei Due Mari o la salita a Punta Rossa, il granito sotto i piedi e l'odore del mirto ancora in testa, c'è un momento preciso in cui vuoi fermarti e non fare più niente. L'appartamento Lena è costruito per quel momento: luminoso, silenzioso, con una vista sul mare che non chiede niente in cambio. Dal Ponte della Libertà a casa: dieci minuti. [Scopri l'appartamento Lena su vacanzemaddalena.com](https://vacanzemaddalena.com)
+> **Consiglio di Giusy** — Dopo il percorso a Caprera o la salita a Guardia vecchia, il granito sotto i piedi e l'odore del mirto ancora in testa, c'è un momento preciso in cui vuoi fermarti e non fare più niente. L'appartamento Isola è costruito per quel momento: luminoso, silenzioso, con una vista sul mare che non chiede niente in cambio. [Scopri l'appartamento Isola su vacanzemaddalena.com](https://www.vacanzemaddalena.com/it/appartamenti/isola/)

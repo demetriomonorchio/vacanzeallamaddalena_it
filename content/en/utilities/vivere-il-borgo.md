@@ -1,63 +1,63 @@
 # Living the village
 
-## La Maddalena is not a stop: it is the place
+## La Maddalena is not a stopover. It is the destination.
 
-Most tourists spend in La Maddalena only the hours needed to catch a ferry or board an island tour. They are in transit. Those who stay in an apartment in the village centre have a completely different experience: they know the bar where they have breakfast, the time the little square near the port clears, the Wednesday market. It is a quality difference that no star rating captures.
+Most visitors spend in La Maddalena only the time needed to catch a ferry or board a tour. They are passing through. People staying in an apartment in the village centre have a very different experience: they know the breakfast bar, the time the small park near the harbour clears out, and the Wednesday market rhythm. It is a quality difference you cannot measure in stars.
 
-## How to arrive
+## How to get here
 
-The main connection is by ferry from Palau, on the Gallura coast. The crossing takes around 20 minutes; services are frequent from June to September (every 30–60 minutes) and thinner for the rest of the year. The main operators are Delcomar and Maddalena Lines — updated timetables and fares on their respective sites.
+The main connection is the ferry from Palau, on the Gallura coast. Crossing time is around 20 minutes; services are frequent from June to September (every 30-60 minutes) and less frequent for the rest of the year. Main operators are Delcomar and Maddalena Lines — updated fares and schedules are on their official websites.
 
-From Olbia (Olbia Costa Smeralda airport): around 45 minutes by car to Palau. From Alghero (Riviera del Corallo airport): around 2 hours.
+From Olbia (Olbia Costa Smeralda airport): about 45 minutes by car to Palau. From Alghero (Riviera del Corallo airport): around 2 hours.
 
-In high season the ferry carries cars, but on the island a car is not necessary: the centre is walkable in 20 minutes, and for Caprera a hire bicycle or scooter is enough.
+In high season ferries also board cars, but on the island one is often unnecessary: the centre is walkable in 20 minutes, and for Caprera a bike or rental scooter is enough.
 
-## Getting around
+## Getting around the island
 
-The local bus service connects La Maddalena centre with the main island locations (Spalmatore, Bassa Trinità, Guardia Vecchia). For Caprera, a dedicated connection crosses the Ponte della Libertà and reaches the main beaches and the Garibaldi Compendium.
+Local buses connect central La Maddalena with main island areas (Spalmatore, Bassa Trinita, Guardia Vecchia). For Caprera, a dedicated route crosses Ponte della Liberta and reaches the main coves and the Garibaldi museum area.
 
-Bicycle and scooter hire is available at multiple points in the centre — Via Amendola and the lanes near the port. For those who prefer not to drive, the taxi service operates year-round; the local radio-taxi number is posted in every business.
+Bike and scooter rental is available in several central points — Via Amendola and nearby side streets close to the harbour. For those who do not want to drive, taxi service runs all year; local radio-taxi number is posted in shops and bars.
 
 ## Essential services
 
-Pharmacies: two in the historic centre, with night-duty rotation. The on-duty pharmacy is displayed in the window.
+Pharmacies: two in the historic centre, with rotating night duty. The duty number is posted in each pharmacy window.
 
-Out-of-hours medical service (Guardia Medica): active during night hours and public holidays. Contact via the national number 116117.
+Out-of-hours medical service: active at night and on holidays. Office in the centre, reachable via the national number 116117.
 
-Paolo Merlo Hospital: full-service facility with A&E, situated behind the centre. For maritime emergencies, the reference is the Harbour Authority (Capitaneria di Porto).
+Paolo Merlo Hospital: full-service structure with emergency room, located just behind the centre. For non-maritime emergencies this is the right reference; for emergencies at sea, contact the Harbour Master.
 
-Banks and ATMs: two bank branches with ATMs in the pedestrian centre. In high season ATM queues build on Friday evenings; withdrawing in the morning is advisable.
+Banks and ATMs: two banks with ATM in the pedestrian centre. In high season Friday evening queues can be long; morning withdrawals are easier.
 
-Supermarkets: two main shops in the centre (one open Sunday mornings in summer). The morning market supplements for fresh fish, fruit and vegetables.
+Supermarkets: two main stores in the centre (one also open Sunday morning in summer). Morning market in the square is excellent for fresh fruit, fish, and vegetables.
 
-Postal services: post office on Via Nazionale, open Monday to Friday. For urgent shipments, private couriers have collection points in some tobacconists.
+Postal services: post office on Via Nazionale, open Monday to Friday. For urgent shipping, private couriers use collection points in selected tobacconists.
 
-## The morning market
+## Morning market
 
-La Maddalena's central square, in the early morning hours from June to September, hosts a small market with local products: fruit from the Gallura countryside, fresh artisanal fish, pecorino and ricotta cheeses, the occasional artisan producer. Arriving between 7.30 and 9.00 means finding everything; after 10 it is already over.
+In early morning from June to September, La Maddalena’s main square hosts a compact market with local products: Gallura fruit, fresh small-scale catch, pecorino and ricotta, and a few artisan producers. Arrive between 7:30 and 9:00 for full selection; after 10:00, best fish is usually gone.
 
-It is the place where you understand the island's seasonality better than any guidebook — and where you buy the best ingredients for a lunch cooked in the apartment.
+It is the best place to understand island seasonality and buy the right ingredients for lunch in your apartment.
 
 ## Evening in the village
 
-La Maddalena's waterfront is not a picture-postcard promenade: it is a living one, with historic bars, artisan ice-cream makers, restaurants without lit-up signs and a few places where the music is not background. In summer, the evening stroll from Piazza Umberto I towards Cala Gavetta and back is the island's social ritual — well-attended, unhurried, free from itinerary.
+La Maddalena seafront is not postcard-only promenade: it is a living waterfront, with historic bars, artisan gelato shops, restaurants, and venues where music is not background noise. In summer, the evening walk from Piazza Umberto I to Cala Gavetta and back is the island’s social ritual — shared, slow, open.
 
-The apartments Isola, Madda and Lena sit within this perimeter. No taxi needed to get home.
+The Madda apartment is in the city centre. No taxi needed to return at night.
 
 ## Useful numbers
 
-Ente Parco Nazionale: 0789 790224 — autorizzazioni@lamaddalenapark.org
+National Park Authority: +39 0789 790224 — autorizzazioni@lamaddalenapark.org
 
-La Maddalena Harbour Authority: 0789 735400
+La Maddalena Harbour Master: +39 0789 735400
 
-Out-of-hours medical service: 116117
+Out-of-hours doctor (night and holidays): 116117
 
-A&E — Paolo Merlo Hospital: 0789 791200
+Emergency Room — Paolo Merlo Hospital: +39 0789 791200
 
-Carabinieri La Maddalena: 0789 736006
+Carabinieri La Maddalena: +39 0789 736006
 
-Polizia di Stato: 0789 737000
+State Police: +39 0789 737000
 
-Delcomar (Palau–La Maddalena ferries): delcomar.it
+Delcomar (Palau-La Maddalena ferries): delcomar.it
 
-Maddalena Lines (Palau–La Maddalena ferries): blunavysardegna.com
+Maddalena Lines (Palau-La Maddalena ferries): blunavysardegna.com

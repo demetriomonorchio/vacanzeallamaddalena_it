@@ -1,16 +1,16 @@
 ---
 title: "Spiagge e silenzio"
 category: "guida"
-author: "Mauro Cercignani"
-authorLink: "https://www.facebook.com/mauro.cercignani/"
+author: "Giusy Tola"
+authorLink: "https://www.vacanzemaddalena.com/it/#chi-siamo"
 polaroidAuthor.prima-regola-smettila: "Mauro Cercignani"
 polaroidAuthorLink.prima-regola-smettila: "https://www.facebook.com/mauro.cercignani/"
 polaroidAuthor.granito-rosa-il: "Mauro Cercignani"
 polaroidAuthorLink.granito-rosa-il: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.le-spiagge-dellarcipelago: "Mauro Cercignani"
-polaroidAuthorLink.le-spiagge-dellarcipelago: "https://www.facebook.com/mauro.cercignani/"
-polaroidAuthor.il-tempo-giusto: "Mauro Cercignani"
-polaroidAuthorLink.il-tempo-giusto: "https://www.facebook.com/mauro.cercignani/"
+polaroidAuthor.le-spiagge-dellarcipelago: "Giusy Tola"
+polaroidAuthorLink.le-spiagge-dellarcipelago: "https://www.vacanzemaddalena.com/it/#chi-siamo"
+polaroidAuthor.il-tempo-giusto: "Giusy Tola"
+polaroidAuthorLink.il-tempo-giusto: "https://www.vacanzemaddalena.com/it/#chi-siamo"
 ---
 
 # Spiagge e silenzio
@@ -35,4 +35,13 @@ Bassa Trinità, su La Maddalena, ha sabbia fine, fondale basso, adatto alle fami
 
 ## Il tempo giusto
 
-Prima delle dieci. Dopo le diciassette. Il resto appartiene ai charter.
+Ecco il testo con l'aggiunta delle icone per renderlo più visivo e facile da leggere:
+
+⏳ Le Ore d'Oro vs Le Ore della Folla
+🌅 L'ora dei privilegiati (Prima delle 10:00): È il momento del "primo caffè in barca". Le calette sono deserte, l'acqua è piatta perché nessuna elica l'ha ancora mossa e il rumore dominante è solo quello dei gabbiani. È la pace assoluta prima dell'arrivo della flotta.
+
+⛵ L'ora del caos (Dalle 10:00 alle 17:00): In questa fascia oraria il mare non è più "tuo". È il regno dei grandi tour, dei gommoni a noleggio e della musica che arriva dalle barche vicine. È il momento in cui l'Arcipelago lavora a pieno ritmo per i turisti.
+
+🌇 L'ora del ritorno (Dopo le 17:00): Quando i charter rientrano in porto, le isole sembrano fare un sospiro di sollievo. La luce diventa calda, l'ombra dei graniti si allunga sull'acqua e le spiagge tornano a essere territori selvaggi.
+
+💡 In poche parole: Se vuoi evitare di sentirti un numero tra i tanti, devi essere fuori fase. Goditi il mare quando gli altri si stanno svegliando o quando sono già sotto la doccia in hotel. Il "resto" della giornata è solo rumore di sottofondo.

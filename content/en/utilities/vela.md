@@ -1,34 +1,32 @@
 ---
-title: "Sailing services in La Maddalena — schools, day sails and moorings"
-description: "From historic sailing schools to day-sail operators and marina logistics: practical references to organise sailing in the archipelago."
-excerpt: "Sailing schools, yacht-day experiences, catamaran tours and mooring hubs: a practical guide to plan sailing days in La Maddalena."
+title: "Sailing services in La Maddalena — schools, trips, and moorings"
+description: "From historic sailing schools to day sails on classic yachts, plus marinas and moorings: practical references for planning sailing in the archipelago."
+excerpt: "Sailing schools, day sails, catamarans, and nautical bases: a practical guide to planning navigation in La Maddalena."
 category: "utilities"
 ---
 
 # Sailing services
 
-## A real sailing base, not just day trips
+## The right archipelago for people who actually sail
 
-La Maddalena is not only a place to book a boat tour. It is a full nautical ecosystem: training schools, local clubs, day-sail operators, marina infrastructure and support on shore.
+La Maddalena is not only a place to book a tour: it is a complete nautical system. In just a few kilometres you find historic sailing schools, local clubs, operators for day trips, and harbours for transit or technical support. If you want to sail well, planning matters: pick base, departure time, and boat type according to the day’s wind.
 
-If sailing is the core of your stay, planning matters: choose base, departure time and boat type according to the wind of the day.
-
-In July and August, day sails and moorings should be confirmed 48-72 hours in advance; for peak holiday weeks, booking earlier is strongly recommended.
+In July and August, for sailing trips and moorings, confirm 48-72 hours in advance. For weekends and Ferragosto weeks, one week ahead is better.
 
 ## Sailing schools and training
 
-For training-focused stays, these are the main references:
+If your goal is to learn or improve, these are the strongest starting points:
 
-- **Centro Velico Caprera (Stagnali / Punta Coda)**: long-standing national benchmark for sailing education and racing culture.
-- **Club Nautico La Maddalena (Loc. Ricciolina)**: club environment with continuity for local and returning sailors.
-- **Associazione Acque Libere (Via Ammiraglio Mirabello)**: practical school format with local operational focus.
-- **VelamareClub - Base Nautica Sardegna** and **Centro Nautico di Levante**: useful alternatives for guests moving between La Maddalena and Palau area.
+- **Centro Velico Caprera (Stagnali / Punta Coda)**: national reference for training, cruising, and racing.
+- **Club Nautico La Maddalena (Loc. Ricciolina)**: club environment and ongoing training path.
+- **Associazione Acque Libere (Via Ammiraglio Mirabello)**: local school with practical approach and operational outings.
+- **VelamareClub - Base Nautica Sardegna (Abbatoggia)** and **Centro Nautico di Levante (Palau / Capo d'Orso area)**: useful options if you move between La Maddalena and Gallura coast.
 
-Before booking, ask about real course level, training boat type, and instructor-to-student ratio.
+Practical rule: before booking a course, always ask boat type, instructor/student ratio, and true level (beginner, intermediate, autonomy).
 
-## Day sails and skippered experiences
+## Day sails and classic yacht trips
 
-For guests who want a sailing day without handling the boat directly, options include:
+For travellers who want a full sea day without handling the boat directly, La Maddalena offers many options:
 
 - **Veliero Helena**
 - **Fil Rouge Sail**
@@ -39,39 +37,39 @@ For guests who want a sailing day without handling the boat directly, options in
 - **Veliero Francesca 1955**
 - **Sea Passion** (catamaran)
 
-The key difference between operators is not only price. It is daily rhythm, guest density on board and how much true sailing is done versus engine transfer.
+Differences are not only price: pace of the day, number of guests onboard, and how much real sailing vs motor transit all vary. If you want a more technical day, ask in advance for route plan, max passengers, and weather policy under strong Mistral.
 
-## Moorings and marina logistics
+## Moorings, marinas, and harbour logistics
 
-Main operational references:
+For transit, support, or boarding, the main references are:
 
 - **Porto Cala Mangiavolpe**
 - **Cala Gavetta**
 - **Marina di Punta Nera**
 
-In high season, transit berths are often the main bottleneck. Confirm in advance:
+In high season, transit berths are the operational bottleneck. Always confirm:
 
 - latest check-in time;
-- draft limits;
-- included services (water, power, showers, berthing assistance);
-- direct phone or VHF contact active on arrival day.
+- maximum accepted draft;
+- included services (water, power, showers, mooring assistance);
+- active VHF channel or direct phone on arrival day.
 
-## Onshore support
+## Complementary land services
 
-Beyond sailing itself, two useful support points:
+Two useful references beyond pure navigation:
 
-- **Lega Navale Italiana - La Maddalena section**: local maritime network and boating culture.
-- **Veleria Il Ponente Store**: sailing-related clothing and practical accessories.
+- **Lega Navale Italiana - Sezione La Maddalena**: local network and maritime culture.
+- **Veleria Il Ponente Store**: support for accessories, light technical clothing, and small operational needs.
 
-## Quick pre-departure checklist
+## Checklist before departure
 
-Before confirming your sailing day:
+Before confirming a sailing day:
 
-- check real wind conditions, not only early forecast snapshots;
-- verify exact meeting point and boarding time;
-- bring water, sunscreen and a light windproof layer;
-- save the operator phone number and maritime emergency number (**1530**).
+- verify real wind, not only morning forecast;
+- ask exact harbour and boarding time;
+- always bring water, sunscreen, and a light windproof layer;
+- save operator and Coast Guard number (1530).
 
-In this archipelago, good sailing days are built on simple logistics done well.
+A good day in this archipelago depends on simple logistical details. People who prepare them in advance genuinely enjoy the sea.
 
-> **Demetrio's tip** - If sailing is central to your holiday, choose a base that keeps port logistics easy. Isola, Madda and Lena are designed for that: practical home setup, fast access to the harbour, easy return after a full day at sea. [Discover our apartments on vacanzemaddalena.com](https://vacanzemaddalena.com)
+> **Demetrio’s tip** - If sailing is the core of your holiday, the best base is the one that gets you to the quay in minutes and lets you return without stress. Isola, Madda, and Lena apartments are built for this: real home, simple logistics, harbour close by. [Discover the apartments on vacanzemaddalena.com](https://vacanzemaddalena.com)

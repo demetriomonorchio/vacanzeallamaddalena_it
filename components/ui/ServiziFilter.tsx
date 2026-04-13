@@ -15,10 +15,13 @@ import {
   Ship,
   Bike,
   Sailboat,
+  Waves,
+  Wind,
   Footprints,
 } from "lucide-react";
 import type { Servizio, CategoriaServizio } from "@/lib/servizi";
 import { categorieServizi } from "@/lib/servizi";
+import type { Locale } from "@/lib/i18n";
 
 // ─── Icon map ────────────────────────────────────────────────────────────────
 
@@ -27,6 +30,8 @@ const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   Farmacie:       <Pill          className="h-3.5 w-3.5" aria-hidden />,
   Spiagge:        <Umbrella      className="h-3.5 w-3.5" aria-hidden />,
   Vela:           <Sailboat      className="h-3.5 w-3.5" aria-hidden />,
+  Diving:         <Waves         className="h-3.5 w-3.5" aria-hidden />,
+  "Windsurf kite": <Wind         className="h-3.5 w-3.5" aria-hidden />,
   Gelaterie:      <IceCream2     className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio gommoni": <Ship className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio scooter e bike": <Bike className="h-3.5 w-3.5" aria-hidden />,
@@ -38,6 +43,43 @@ const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   "Sentieri Caprera": (
     <Footprints className="h-3.5 w-3.5" aria-hidden />
   ),
+};
+
+const categoryLabel: Record<Locale, Record<CategoriaServizio, string>> = {
+  it: {
+    Supermercati: "Supermercati",
+    Farmacie: "Farmacie",
+    Spiagge: "Spiagge",
+    Vela: "Vela",
+    Diving: "Diving",
+    "Windsurf kite": "Windsurf kite",
+    Gelaterie: "Gelaterie",
+    "Noleggio gommoni": "Noleggio gommoni",
+    "Noleggio scooter e bike": "Noleggio scooter e bike",
+    "Banche & ATM": "Banche & ATM",
+    Mercato: "Mercato",
+    Trasporti: "Trasporti",
+    Emergenze: "Emergenze",
+    Musei: "Musei",
+    "Sentieri Caprera": "Sentieri Caprera",
+  },
+  en: {
+    Supermercati: "Supermarkets",
+    Farmacie: "Pharmacies",
+    Spiagge: "Beaches",
+    Vela: "Sailing",
+    Diving: "Diving",
+    "Windsurf kite": "Windsurf & kitesurf",
+    Gelaterie: "Ice cream shops",
+    "Noleggio gommoni": "RIB rental",
+    "Noleggio scooter e bike": "Scooter & bike rental",
+    "Banche & ATM": "Banks & ATMs",
+    Mercato: "Market",
+    Trasporti: "Transport",
+    Emergenze: "Emergencies",
+    Musei: "Museums",
+    "Sentieri Caprera": "Caprera trails",
+  },
 };
 
 // ─── Chip component ───────────────────────────────────────────────────────────
@@ -72,6 +114,7 @@ function Chip({
 
 type Props = {
   servizi: readonly Servizio[];
+  locale: Locale;
   labels: {
     allCategories: string;
     noResults: string;
@@ -80,7 +123,7 @@ type Props = {
   };
 };
 
-export function ServiziFilter({ servizi, labels }: Props) {
+export function ServiziFilter({ servizi, locale, labels }: Props) {
   const [activeCategory, setActiveCategory] = useState<CategoriaServizio | null>(null);
 
   const filtered = servizi.filter((s) => {
@@ -105,7 +148,7 @@ export function ServiziFilter({ servizi, labels }: Props) {
             {categorieServizi.map((cat) => (
               <Chip
                 key={cat}
-                label={cat}
+                label={categoryLabel[locale][cat]}
                 icon={categoryIcon[cat]}
                 active={activeCategory === cat}
                 onClick={() =>
