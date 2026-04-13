@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/ui/Navbar";
+import { SiteFooter } from "@/components/ui/SiteFooter";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { siteMetadata } from "@/lib/metadata";
 
@@ -32,13 +33,7 @@ export default async function LangLayout({
     <>
       <Navbar locale={lang as Locale} />
       <main id="main">{children}</main>
-      <footer className="border-t border-mare/10 bg-sabbia py-12 text-center">
-        <p className="font-sans text-xs text-slate/60">
-          {lang === "it"
-            ? "Un progetto editoriale sul territorio dell’arcipelago."
-            : "An editorial project on the archipelago."}
-        </p>
-      </footer>
+      <SiteFooter locale={lang as Locale} />
     </>
   );
 }
