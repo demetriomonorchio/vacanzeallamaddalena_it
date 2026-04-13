@@ -116,9 +116,12 @@ function groupH2Sections(blocks: MarkdownBlock[]) {
       if (current) sections.push(current);
       const t = b.text.toLowerCase();
       let aptSlug: ApartmentSection["aptSlug"];
-      if (t.includes("appartamento isola")) aptSlug = "isola";
-      else if (t.includes("appartamento madda")) aptSlug = "madda";
-      else if (t.includes("appartamento lena")) aptSlug = "lena";
+      if (t.includes("appartamento isola") || t.includes("isola apartment"))
+        aptSlug = "isola";
+      else if (t.includes("appartamento madda") || t.includes("madda apartment"))
+        aptSlug = "madda";
+      else if (t.includes("appartamento lena") || t.includes("lena apartment"))
+        aptSlug = "lena";
       current = { title: b.text, blocks: [], aptSlug };
     } else if (current) {
       current.blocks.push(b);
