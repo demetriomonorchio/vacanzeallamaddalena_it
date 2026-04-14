@@ -27,8 +27,6 @@ Prima di parlare di fondali, va detto una cosa sull'acqua. La visibilità del ma
 
 ## La Secca di Mezzo
 
-Ecco il testo convertito in formato Markdown, mantenendo inalterate tutte le informazioni originali:
-
 ⚠️ La Secca di Mezzo Passo
 La Secca di Mezzo Passo (spesso chiamata semplicemente Secca di Mezzo) è un pericoloso banco roccioso situato nel cuore dell'Arcipelago di La Maddalena, in Sardegna.
 
