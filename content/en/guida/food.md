@@ -1,17 +1,17 @@
 ---
-title: "Harbour table"
+title: "Tavola di porto"
 category: "guida"
-author: "Demetrio Monorchio"
+author: "Gemini"
 authorLink: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.non-e-solo: "Demetrio Monorchio"
-polaroidAuthorLink.non-e-solo: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.il-pesce-dal: "Demetrio Monorchio"
+polaroidAuthor.non-e-solo: "Gemini"
+polaroidAuthorLink.non-e-solo: https://www.vacanzemaddalena.com/
+polaroidAuthor.il-pesce-dal: "Gemini"
 polaroidAuthorLink.il-pesce-dal: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.il-gelato-artigianale: "Demetrio Monorchio"
+polaroidAuthor.il-gelato-artigianale: "Gemini"
 polaroidAuthorLink.il-gelato-artigianale: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.il-vino-sardo: "Demetrio Monorchio"
+polaroidAuthor.il-vino-sardo: "Gemini"
 polaroidAuthorLink.il-vino-sardo: "https://www.vacanzemaddalena.com/"
-polaroidAuthor.il-mercato-del: "Demetrio Monorchio"
+polaroidAuthor.il-mercato-del: "Gemini"
 polaroidAuthorLink.il-mercato-del: "https://www.vacanzemaddalena.com/"
 ---
 

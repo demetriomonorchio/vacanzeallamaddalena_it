@@ -27,7 +27,7 @@ Isola è un appartamento vero: **due camere da letto** arredate con cura per il 
 
 Isola è la scelta di chi viene all'arcipelago per il mare nel senso più letterale: chi fa immersioni, chi noleggia il gommone, chi vuole svegliarsi con il blu già davanti. Con il parcheggio disponibile, è anche il punto di partenza naturale per chi arriva con bici o attrezzatura propria. Perfetto per una coppia che cerca una fuga romantica, per una famiglia, per un gruppo di amici con la stessa idea di vacanza: quella dove il mare è il centro di ogni giornata.
 
-> [Verifica disponibilità e prenota Appartamento Isola](https://vacanzemaddalena.com)
+> [Verifica disponibilità e prenota Appartamento Isola](https://www.vacanzemaddalena.com/it/appartamenti/isola/)
 
 ## Appartamento Madda — Il centro come stile di vita
 
@@ -45,7 +45,7 @@ Non abitiamo stabilmente sul posto, ma siamo sempre raggiungibili telefonicament
 
 Madda è la scelta per chi vuole abitare l'isola nel senso quotidiano: fare la spesa al mercato del mattino, sedersi nei bar dove siedono i maddalenini, finire la serata con il porto sotto casa. Un appartamento dove la piccola dimensione è un pregio, non una limitazione — perché tutto quello che conta è fuori dalla porta.
 
-> [Verifica disponibilità e prenota Appartamento Madda](https://vacanzemaddalena.com)
+> [Verifica disponibilità e prenota Appartamento Madda](https://www.vacanzemaddalena.com/it/appartamenti/madda/)
 
 ## Appartamento Lena — La luce, il giardino, il rito dell'aria aperta
 
@@ -61,7 +61,7 @@ Lena è un **trilocale ampio e luminoso** — tre camere, spazio per famiglie o 
 
 Lena è l'equilibrio. Non la concentrazione di servizi urbani di Madda, non la vista assoluta di Isola — ma un appartamento dove ogni ora della giornata trova il suo spazio: il mattino in terrazza con il caffè, il pomeriggio al mare a cinque minuti, la sera al barbecue con qualcosa di fresco. La scelta ideale per famiglie con bambini, per chi viene con l'attrezzatura da mettere in macchina e non vuole pensare al parcheggio, per chi vuole il mare vicino senza averlo come unica opzione.
 
-> [Verifica disponibilità e prenota Appartamento Lena](https://vacanzemaddalena.com)
+> [Verifica disponibilità e prenota Appartamento Lena](https://www.vacanzemaddalena.com/it/appartamenti/lena/)
 
 ## Perché sceglierci
 
@@ -77,4 +77,4 @@ Madda nel cuore del borgo per chi vuole vivere l'isola a piedi, senza pensare ai
 
 Un numero di telefono che risponde. Una persona di fiducia in loco. Noi raggiungibili per qualsiasi cosa, dal consiglio sul ristorante all'urgenza. Nessun check-in automatizzato, nessun codice sul muro — o quando c'è, c'è anche qualcuno dietro.
 
-> **Scegli il tuo appartamento e verifica la disponibilità** — Isola, Madda e Lena su [vacanzemaddalena.com](https://vacanzemaddalena.com)
+> **Scegli il tuo appartamento e verifica la disponibilità** — Isola, Madda e Lena su [vacanzemaddalena.com](https://www.vacanzemaddalena.com/it/#appartamenti)
