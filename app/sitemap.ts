@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllGuideRefs, categories } from "@/lib/guides";
+import { apartments, categories, getAllGuideRefs } from "@/lib/categories";
 import { locales } from "@/lib/i18n";
 import { siteUrl } from "@/lib/metadata";
 
@@ -17,13 +17,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  // Appartamenti page
+  // Appartamenti index page
   for (const lang of locales) {
     entries.push({
       url: `${siteUrl}/${lang}/appartamenti`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 1,
+    });
+  }
+
+  // Appartamenti detail pages
+  for (const lang of locales) {
+    for (const apartment of apartments) {
+      entries.push({
+        url: `${siteUrl}/${lang}/appartamenti/${apartment.slug}`,
+        lastModified: now,
+        changeFrequency: "monthly",
+        priority: 0.9,
+      });
+    }
+  }
+
+  // Servizi page
+  for (const lang of locales) {
+    entries.push({
+      url: `${siteUrl}/${lang}/servizi`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     });
   }
 
