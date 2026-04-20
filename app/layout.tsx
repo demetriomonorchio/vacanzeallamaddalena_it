@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Caveat, Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { siteUrl } from "@/lib/metadata";
 import { defaultLocale } from "@/lib/i18n";
 
