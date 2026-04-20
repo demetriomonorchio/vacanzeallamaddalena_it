@@ -100,7 +100,7 @@ export function MaddalenaMap({
   );
 
   const focusLocation = useCallback(
-    (locationId: string) => {
+    (locationId: string, source: "marker" | "list" = "list") => {
       const map = mapRef.current;
       const markerEntry = markerRegistryRef.current[locationId];
       const target = visibleLocations.find((loc) => loc.id === locationId);
@@ -121,7 +121,10 @@ export function MaddalenaMap({
         curve: isTeggeView ? 1.65 : 1.3,
       });
 
-      markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+      const shouldShowPopup = !(source === "list" && isTeggeView);
+      if (shouldShowPopup) {
+        markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+      }
       setSelectedLocationId(locationId);
     },
     [visibleLocations]
@@ -179,7 +182,7 @@ export function MaddalenaMap({
           .addTo(map);
 
         marker.getElement().addEventListener("click", () => {
-          focusLocation(location.id);
+          focusLocation(location.id, "marker");
         });
 
         markerRegistryRef.current[location.id] = { marker, popup };
@@ -249,7 +252,7 @@ export function MaddalenaMap({
               <li key={location.id}>
                 <button
                   type="button"
-                  onClick={() => focusLocation(location.id)}
+                  onClick={() => focusLocation(location.id, "list")}
                   className={`w-full rounded-xl border px-4 py-3 text-left transition-colors ${
                     isActive
                       ? "border-mare/50 bg-white"
