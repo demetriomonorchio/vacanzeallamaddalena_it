@@ -45,6 +45,12 @@ export type Servizio = {
   name: string;
   category: CategoriaServizio;
   zona: Zona;
+  /** Coordinates in [longitude, latitude]. */
+  coordinates?: [number, number];
+  /** Cardinal winds the beach is exposed to (e.g. N, NW, W). */
+  esposizione?: string[];
+  /** Local tip based on wind exposure. */
+  maddiTip?: string;
   /** Google Maps short or full URL */
   url?: string;
   /** Optional public rating shown in card (e.g. 4.4). */

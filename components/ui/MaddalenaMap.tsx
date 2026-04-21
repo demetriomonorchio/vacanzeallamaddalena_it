@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import { MADDI_LOCATIONS, type Location } from "@/src/data/maddi-data";
+import { MADDI_LOCATIONS } from "@/src/data/maddi-data";
+import { serviziSpiagge } from "@/lib/serviziSpiagge";
+import type { Spiaggia } from "@/types/maddi";
+import type { Servizio } from "@/lib/servizi";
+import { MaddiConcierge } from "@/components/ui/MaddiConcierge";
 
 type MaddalenaMapProps = {
   className?: string;
@@ -15,21 +19,75 @@ type MaddalenaMapProps = {
 
 const defaultCenter: [number, number] = [9.4095, 41.2145];
 
-const markerColorByType: Record<Location["type"], string> = {
-  alloggio: "#0f766e",
-  ristorante: "#b91c1c",
-  esperienza: "#1d4ed8",
-  "punto-foto": "#7c3aed",
+type FiltroAttivo = "all" | "spiagge" | "food" | "alloggi";
+type TipoMappa = "alloggi" | "food" | "spiagge";
+type MappaLocation = {
+  id: string;
+  name: string;
+  tipo: TipoMappa;
+  coordinates: [number, number];
+  description: string;
+  maddiTip: string;
+  esposizione?: string[];
 };
 
-const markerSymbolByType: Record<Location["type"], string> = {
-  alloggio: "\u2302",
-  ristorante: "\u{1F37D}",
-  esperienza: "\u{1F3AF}",
-  "punto-foto": "\u{1F4F7}",
+const markerColorByType: Record<TipoMappa, string> = {
+  alloggi: "#0f766e",
+  food: "#b91c1c",
+  spiagge: "#0ea5e9",
 };
 
-function createMarkerElement(location: Location) {
+const markerSymbolByType: Record<TipoMappa, string> = {
+  alloggi: "\u2302",
+  food: "\u{1F37D}",
+  spiagge: "\u{1F3D6}",
+};
+
+const VENTI_OPTIONS = [
+  { sigla: "N", nome: "Tramontana" },
+  { sigla: "NE", nome: "Grecale" },
+  { sigla: "E", nome: "Levante" },
+  { sigla: "SE", nome: "Scirocco" },
+  { sigla: "S", nome: "Ostro" },
+  { sigla: "SW", nome: "Libeccio" },
+  { sigla: "W", nome: "Ponente" },
+  { sigla: "NW", nome: "Maestrale" },
+] as const;
+type DirezioneVento = (typeof VENTI_OPTIONS)[number]["sigla"];
+type SpiaggiaCompat = Spiaggia & { zona: Servizio["zona"] };
+
+function createBeachId(name: string, index: number) {
+  const slug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return `spiaggia-${slug}-${index}`;
+}
+
+function isSpiaggia(servizio: Servizio): servizio is SpiaggiaCompat {
+  return (
+    servizio.category === "Spiagge" &&
+    Array.isArray(servizio.coordinates) &&
+    Array.isArray(servizio.esposizione) &&
+    typeof servizio.maddiTip === "string"
+  );
+}
+
+function getSpiaggeConsigliate(direzioneVento: string): SpiaggiaCompat[] {
+  const vento = direzioneVento.toUpperCase();
+  return serviziSpiagge.filter(
+    (spiaggia): spiaggia is SpiaggiaCompat =>
+      isSpiaggia(spiaggia) && !spiaggia.esposizione.includes(vento)
+  );
+}
+
+function getNomeVento(sigla: DirezioneVento) {
+  return VENTI_OPTIONS.find((item) => item.sigla === sigla)?.nome ?? sigla;
+}
+
+function createMarkerElement(location: MappaLocation) {
   const markerEl = document.createElement("button");
   markerEl.type = "button";
   markerEl.title = location.name;
@@ -38,7 +96,7 @@ function createMarkerElement(location: Location) {
   markerEl.style.height = "18px";
   markerEl.style.borderRadius = "9999px";
   markerEl.style.border = "2px solid #ffffff";
-  markerEl.style.background = markerColorByType[location.type];
+  markerEl.style.background = markerColorByType[location.tipo];
   markerEl.style.boxShadow = "0 2px 8px rgba(15, 23, 42, 0.35)";
   markerEl.style.cursor = "pointer";
   markerEl.style.display = "grid";
@@ -46,15 +104,21 @@ function createMarkerElement(location: Location) {
   markerEl.style.fontSize = "11px";
   markerEl.style.fontWeight = "700";
   markerEl.style.color = "#ffffff";
-  markerEl.textContent = markerSymbolByType[location.type];
+  markerEl.textContent = markerSymbolByType[location.tipo];
   return markerEl;
 }
 
-function buildPopupContent(location: Location) {
+function buildPopupContent(location: MappaLocation) {
+  const categoriaLabel =
+    location.tipo === "alloggi"
+      ? "alloggio"
+      : location.tipo === "food"
+        ? "food"
+        : "spiaggia";
   return `
     <div style="max-width: 260px; font-family: ui-sans-serif, system-ui, sans-serif;">
       <p style="margin: 0 0 4px; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">
-        ${location.type}
+        ${categoriaLabel}
       </p>
       <h3 style="margin: 0 0 6px; font-size: 16px; line-height: 1.2; color: #0f172a;">
         ${location.name}
@@ -82,22 +146,75 @@ export function MaddalenaMap({
   const markerRegistryRef = useRef<
     Record<string, { marker: mapboxgl.Marker; popup: mapboxgl.Popup }>
   >({});
+  const [isMapReady, setIsMapReady] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(
     null
   );
+  const [filtroAttivo, setFiltroAttivo] = useState<FiltroAttivo>("all");
+  const [windExpertAttivo, setWindExpertAttivo] = useState(true);
+  const [direzioneVento, setDirezioneVento] = useState<DirezioneVento>("NW");
+  const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
+    [number, number] | null
+  >(null);
 
-  const visibleLocations = useMemo(
+  const baseLocations = useMemo<MappaLocation[]>(
     () =>
       MADDI_LOCATIONS.filter(
         (location) =>
           location.type === "alloggio" || location.type === "ristorante"
-      ),
+      ).map((location) => ({
+        id: location.id,
+        name: location.name,
+        tipo: location.type === "alloggio" ? "alloggi" : "food",
+        coordinates: location.coordinates,
+        description: location.description,
+        maddiTip: location.maddiTip,
+      })),
     []
+  );
+
+  const spiaggeTutte = useMemo<SpiaggiaCompat[]>(
+    () => serviziSpiagge.filter(isSpiaggia),
+    []
+  );
+  const spiaggeVisibili = useMemo(
+    () =>
+      windExpertAttivo
+        ? getSpiaggeConsigliate(direzioneVento)
+        : spiaggeTutte,
+    [direzioneVento, spiaggeTutte, windExpertAttivo]
+  );
+  const allLocations = useMemo<MappaLocation[]>(
+    () => [
+      ...baseLocations,
+      ...spiaggeVisibili.map((spiaggia, index) => ({
+        id: createBeachId(spiaggia.name, index),
+        name: spiaggia.name,
+        tipo: "spiagge" as const,
+        coordinates: spiaggia.coordinates,
+        description: spiaggia.description ?? "Spiaggia dell'arcipelago.",
+        maddiTip: spiaggia.maddiTip,
+        esposizione: spiaggia.esposizione,
+      })),
+    ],
+    [baseLocations, spiaggeVisibili]
+  );
+  const visibleLocations = useMemo(
+    () =>
+      filtroAttivo === "all"
+        ? allLocations
+        : allLocations.filter((location) => location.tipo === filtroAttivo),
+    [allLocations, filtroAttivo]
   );
   const selectedLocation = useMemo(
     () => visibleLocations.find((location) => location.id === selectedLocationId),
     [selectedLocationId, visibleLocations]
   );
+  const handleSpiaggiaClick = useCallback((coordinates: [number, number]) => {
+    setWindExpertAttivo(true);
+    setFiltroAttivo("spiagge");
+    setPendingSpiaggiaCoords(coordinates);
+  }, []);
 
   const focusLocation = useCallback(
     (locationId: string, source: "marker" | "list" = "list") => {
@@ -109,14 +226,15 @@ export function MaddalenaMap({
       Object.values(markerRegistryRef.current).forEach(({ popup }) => popup.remove());
 
       const isTeggeView = target.id === "casa-tegge";
+      const isSpiaggiaMarkerView = source === "marker" && target.tipo === "spiagge";
 
       map.flyTo({
         center: target.coordinates,
-        zoom: isTeggeView ? 15.8 : 14.6,
-        pitch: isTeggeView ? 72 : 0,
+        zoom: isSpiaggiaMarkerView ? 15 : isTeggeView ? 15.8 : 14.6,
+        pitch: isSpiaggiaMarkerView ? 45 : isTeggeView ? 72 : 0,
         bearing: isTeggeView ? 258 : 0,
         essential: true,
-        duration: isTeggeView ? 2200 : 900,
+        duration: isSpiaggiaMarkerView ? 900 : isTeggeView ? 2200 : 900,
         speed: isTeggeView ? 0.55 : 1.1,
         curve: isTeggeView ? 1.65 : 1.3,
       });
@@ -146,6 +264,7 @@ export function MaddalenaMap({
 
     mapRef.current = map;
     markerRegistryRef.current = {};
+    setIsMapReady(false);
 
     map.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
 
@@ -167,36 +286,7 @@ export function MaddalenaMap({
         "horizon-blend": 0.28,
       });
 
-      const bounds = new mapboxgl.LngLatBounds();
-
-      visibleLocations.forEach((location) => {
-        const popup = new mapboxgl.Popup({ offset: 18 }).setHTML(
-          buildPopupContent(location)
-        );
-
-        const marker = new mapboxgl.Marker({
-          element: createMarkerElement(location),
-          anchor: "center",
-        })
-          .setLngLat(location.coordinates)
-          .addTo(map);
-
-        marker.getElement().addEventListener("click", () => {
-          focusLocation(location.id, "marker");
-        });
-
-        markerRegistryRef.current[location.id] = { marker, popup };
-
-        bounds.extend(location.coordinates);
-      });
-
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, {
-          padding: 72,
-          maxZoom: 14,
-          duration: 0,
-        });
-      }
+      setIsMapReady(true);
     });
 
     return () => {
@@ -204,7 +294,84 @@ export function MaddalenaMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [center, focusLocation, mapStyle, mapboxToken, visibleLocations, zoom]);
+  }, [center, mapStyle, mapboxToken, zoom]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+
+    Object.values(markerRegistryRef.current).forEach(({ marker, popup }) => {
+      popup.remove();
+      marker.remove();
+    });
+    markerRegistryRef.current = {};
+
+    const bounds = new mapboxgl.LngLatBounds();
+
+    visibleLocations.forEach((location) => {
+      const popup = new mapboxgl.Popup({ offset: 18 }).setHTML(
+        buildPopupContent(location)
+      );
+
+      const marker = new mapboxgl.Marker({
+        element: createMarkerElement(location),
+        anchor: "center",
+      })
+        .setLngLat(location.coordinates)
+        .addTo(map);
+
+      marker.getElement().addEventListener("click", () => {
+        focusLocation(location.id, "marker");
+      });
+
+      markerRegistryRef.current[location.id] = { marker, popup };
+      bounds.extend(location.coordinates);
+    });
+
+    setSelectedLocationId((current) =>
+      current && visibleLocations.some((location) => location.id === current)
+        ? current
+        : null
+    );
+
+    if (!bounds.isEmpty()) {
+      map.fitBounds(bounds, {
+        padding: 72,
+        maxZoom: 14,
+        duration: 450,
+      });
+    }
+  }, [focusLocation, isMapReady, visibleLocations]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady || !pendingSpiaggiaCoords) return;
+
+    const target = visibleLocations.find(
+      (location) =>
+        location.tipo === "spiagge" &&
+        location.coordinates[0] === pendingSpiaggiaCoords[0] &&
+        location.coordinates[1] === pendingSpiaggiaCoords[1]
+    );
+    if (!target) return;
+
+    const markerEntry = markerRegistryRef.current[target.id];
+    if (!markerEntry) return;
+
+    Object.values(markerRegistryRef.current).forEach(({ popup }) => popup.remove());
+
+    map.flyTo({
+      center: pendingSpiaggiaCoords,
+      zoom: 15,
+      pitch: 45,
+      essential: true,
+      duration: 900,
+    });
+
+    markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+    setSelectedLocationId(target.id);
+    setPendingSpiaggiaCoords(null);
+  }, [isMapReady, pendingSpiaggiaCoords, visibleLocations]);
 
   if (!mapboxToken) {
     return (
@@ -221,22 +388,89 @@ export function MaddalenaMap({
       <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-slate/80">
         <span className="inline-flex items-center gap-2">
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[11px] font-bold text-white shadow-sm">
-            {markerSymbolByType.alloggio}
+            {markerSymbolByType.alloggi}
           </span>
           Alloggi
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-700 text-[11px] font-bold text-white shadow-sm">
-            {markerSymbolByType.ristorante}
+            {markerSymbolByType.food}
           </span>
-          Ristoranti
+          Food
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[11px] font-bold text-white shadow-sm">
+            {markerSymbolByType.spiagge}
+          </span>
+          Spiagge
         </span>
       </div>
 
-      <div
-        ref={containerRef}
-        className={`w-full overflow-hidden rounded-2xl border border-mare/20 shadow-sm ${heightClassName}`}
-      />
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {(
+          [
+            { key: "all", label: "Tutto" },
+            { key: "alloggi", label: "Alloggi" },
+            { key: "food", label: "Food" },
+            { key: "spiagge", label: "Spiagge" },
+          ] as const
+        ).map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => setFiltroAttivo(item.key)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+              filtroAttivo === item.key
+                ? "border-mare bg-mare text-white"
+                : "border-mare/30 bg-white text-slate hover:border-mare/55"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => {
+            setWindExpertAttivo((value) => !value);
+            setFiltroAttivo("spiagge");
+          }}
+          className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+            windExpertAttivo
+              ? "border-amber-500 bg-amber-500 text-white"
+              : "border-amber-400/70 bg-white text-amber-700 hover:border-amber-500"
+          }`}
+        >
+          Wind Expert
+        </button>
+        <select
+          value={direzioneVento}
+          onChange={(event) => {
+            setWindExpertAttivo(true);
+            setDirezioneVento(event.target.value as DirezioneVento);
+          }}
+          className="rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate"
+          aria-label="Direzione vento"
+        >
+          {VENTI_OPTIONS.map((vento) => (
+            <option key={vento.sigla} value={vento.sigla}>
+              {vento.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="relative">
+        <div
+          ref={containerRef}
+          className={`w-full overflow-hidden rounded-2xl border border-mare/20 shadow-sm ${heightClassName}`}
+        />
+        <MaddiConcierge
+          ventoAttuale={getNomeVento(direzioneVento)}
+          listaSpiagge={spiaggeTutte}
+          onSpiaggiaClick={handleSpiaggiaClick}
+          className="z-30"
+        />
+      </div>
 
       <div className="mt-5">
         <h2 className="font-sans text-sm font-semibold text-slate/80">
@@ -246,7 +480,11 @@ export function MaddalenaMap({
           {visibleLocations.map((location) => {
             const isActive = selectedLocationId === location.id;
             const typeLabel =
-              location.type === "alloggio" ? "Alloggio" : "Ristorante";
+              location.tipo === "alloggi"
+                ? "Alloggio"
+                : location.tipo === "food"
+                  ? "Food"
+                  : "Spiaggia";
 
             return (
               <li key={location.id}>
@@ -262,9 +500,9 @@ export function MaddalenaMap({
                   <span className="inline-flex items-center gap-2 text-xs text-slate/65">
                     <span
                       className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                      style={{ backgroundColor: markerColorByType[location.type] }}
+                      style={{ backgroundColor: markerColorByType[location.tipo] }}
                     >
-                      {markerSymbolByType[location.type]}
+                      {markerSymbolByType[location.tipo]}
                     </span>
                     {typeLabel}
                   </span>
