@@ -87,6 +87,15 @@ function getNomeVento(sigla: DirezioneVento) {
   return VENTI_OPTIONS.find((item) => item.sigla === sigla)?.nome ?? sigla;
 }
 
+function getSelectedCategory(
+  filtro: FiltroAttivo
+): "spiagge" | "food" | "case" | undefined {
+  if (filtro === "spiagge") return "spiagge";
+  if (filtro === "food") return "food";
+  if (filtro === "alloggi") return "case";
+  return undefined;
+}
+
 function createMarkerElement(location: MappaLocation) {
   const markerEl = document.createElement("button");
   markerEl.type = "button";
@@ -466,6 +475,7 @@ export function MaddalenaMap({
         />
         <MaddiConcierge
           ventoAttuale={getNomeVento(direzioneVento)}
+          selectedCategory={getSelectedCategory(filtroAttivo)}
           listaSpiagge={spiaggeTutte}
           onSpiaggiaClick={handleSpiaggiaClick}
           className="z-30"
