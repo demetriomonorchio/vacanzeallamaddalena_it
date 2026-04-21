@@ -5,6 +5,7 @@ import type { Spiaggia } from "@/types/maddi";
 
 type MaddiConciergeProps = {
   ventoAttuale: string;
+  isStrongWind?: boolean;
   selectedCategory?: "spiagge" | "food" | "case";
   listaSpiagge: Spiaggia[];
   onSpiaggiaClick?: (coordinates: [number, number]) => void;
@@ -49,18 +50,21 @@ function getMaddiMessage(vento: string) {
 
 function getCategoryMessage(
   selectedCategory: "spiagge" | "food" | "case" | undefined,
-  ventoAttuale: string
+  ventoAttuale: string,
+  isStrongWind: boolean
 ) {
+  const strongWindAlert = isStrongWind ? " Attenzione, oggi il vento è forte!" : "";
+
   if (selectedCategory === "spiagge") {
-    return getMaddiMessage(ventoAttuale);
+    return `${getMaddiMessage(ventoAttuale)}${strongWindAlert}`;
   }
   if (selectedCategory === "food") {
-    return "Hai fame? Ecco i miei posti preferiti. Il pesce da Zi Antò è una garanzia.";
+    return `Hai fame? Ecco i miei posti preferiti. Il pesce da Zi Antò è una garanzia.${strongWindAlert}`;
   }
   if (selectedCategory === "case") {
-    return "Stai cercando dove dormire? Queste case sono gestite direttamente da me, il comfort è assicurato.";
+    return `Stai cercando dove dormire? Queste case sono gestite direttamente da me, il comfort è assicurato.${strongWindAlert}`;
   }
-  return "Ciao! Sono Maddi, scegli una categoria e ti aiuto a trovare il posto giusto.";
+  return `Ciao! Sono Maddi, scegli una categoria e ti aiuto a trovare il posto giusto.${strongWindAlert}`;
 }
 
 function normalizeVento(value: string) {
@@ -76,6 +80,7 @@ function getBeachStatus(spiaggia: Spiaggia, direzioneVento: string): BeachStatus
 
 export function MaddiConcierge({
   ventoAttuale,
+  isStrongWind = false,
   selectedCategory,
   listaSpiagge,
   onSpiaggiaClick,
@@ -83,8 +88,8 @@ export function MaddiConcierge({
 }: MaddiConciergeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const messaggioMaddi = useMemo(
-    () => getCategoryMessage(selectedCategory, ventoAttuale),
-    [selectedCategory, ventoAttuale]
+    () => getCategoryMessage(selectedCategory, ventoAttuale, isStrongWind),
+    [isStrongWind, selectedCategory, ventoAttuale]
   );
   const [typedMessage, setTypedMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -131,9 +136,11 @@ export function MaddiConcierge({
         onClick={() => setIsExpanded(true)}
         className={`absolute bottom-3 left-3 z-20 inline-flex items-center gap-2 rounded-full border border-white/30 bg-slate-900/80 px-3 py-2 text-left text-white shadow-2xl backdrop-blur-md transition-colors hover:bg-slate-800/85 md:bottom-auto md:left-4 md:top-4 ${className ?? ""}`}
       >
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-200/90 text-base">
-          ✨
-        </span>
+        <img
+          src="/images/maddi-avatar.webp"
+          alt="Maddi avatar"
+          className="h-8 w-8 rounded-full object-cover border border-white/20 shadow-md"
+        />
         <span className="text-xs font-semibold">Maddi ha un consiglio...</span>
       </button>
     );

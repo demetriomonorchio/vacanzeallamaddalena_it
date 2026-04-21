@@ -10,33 +10,37 @@ export interface Location {
   description: string;
   maddiTip: string; // Il consiglio personalizzato di Maddì
   image?: string;
+  bookingUrl?: string;
 }
 
 export const MADDI_LOCATIONS: Location[] = [
   // --- I TUOI ALLOGGI ---
   {
     id: 'casa-centro',
-    name: 'Monolocale Centro Storico',
+    name: 'Madda',
     type: 'alloggio',
     coordinates: [9.405, 41.213], 
     description: 'Nel cuore pulsante della Maddalena, tra carruggi e storia.',
-    maddiTip: 'Perfetto se ami uscire a piedi la sera. Sei a due passi dal porto per il Veliero Francesca!'
+    maddiTip: 'Perfetto se ami uscire a piedi la sera. Sei a due passi dal porto per il Veliero Francesca!',
+    bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/madda/'
   },
   {
     id: 'casa-tegge',
-    name: 'Attico Vista Tegge',
+    name: 'Isola',
     type: 'alloggio',
     coordinates: [9.388, 41.214],
     description: 'Vista mozzafiato sulle scogliere e tramonti indimenticabili.',
-    maddiTip: 'Prepara la fotocamera: da qui vedrai i tramonti più belli dell’arcipelago.'
+    maddiTip: 'Prepara la fotocamera: da qui vedrai i tramonti più belli dell’arcipelago.',
+    bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/isola/'
   },
   {
     id: 'casa-giardino',
-    name: 'Villetta con Giardino Privato',
+    name: 'Lena',
     type: 'alloggio',
     coordinates: [9.391, 41.214],
     description: 'Oasi di pace immersa nel verde della macchia mediterranea.',
-    maddiTip: 'Il posto ideale per rilassarsi dopo un trekking con Eleonora.'
+    maddiTip: 'Il posto ideale per rilassarsi dopo un trekking con Eleonora.',
+    bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/lena/'
   },
 
   // --- RISTORANTI ---
