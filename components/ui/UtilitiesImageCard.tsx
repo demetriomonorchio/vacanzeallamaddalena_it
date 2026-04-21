@@ -51,15 +51,15 @@ export function UtilitiesImageCard({
   const rotationDeg = polaroidRotationDeg(`${category}/${slug}:${basename}`);
   const sideRight = index % 2 === 0;
   const floatClass = sideRight
-    ? "float-right mb-4 ml-10 md:ml-12"
-    : "float-left mb-4 mr-10 md:mr-12";
+    ? "float-right mb-4 ml-4 md:ml-12"
+    : "float-left mb-4 mr-4 md:mr-12";
 
   const missingLabel =
     locale === "it" ? "Immagine assente" : "Image missing";
   const photoByLabel = locale === "it" ? "Foto di" : "Photo by";
 
   return (
-    <div className={`${floatClass} w-[11rem] max-w-[40%] md:w-[13rem]`}>
+    <div className={`${floatClass} w-[9.75rem] max-w-[46%] md:w-[13rem] md:max-w-[40%]`}>
       <UtilitiesPolaroidInner
         src={src}
         expectedBasename={basename}
@@ -67,25 +67,10 @@ export function UtilitiesImageCard({
         pageSlug={slug}
         rotationDeg={rotationDeg}
         missingLabel={missingLabel}
+        photoCreditLabel={photoByLabel}
+        photoCreditAuthor={photoAuthor}
+        photoCreditLink={photoAuthorLink}
       />
-      {photoAuthor ? (
-        <p className="relative z-20 mt-1.5 px-1 text-center text-xs italic leading-tight text-slate/70">
-          {photoAuthorLink ? (
-            <a
-              href={photoAuthorLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline-offset-2 transition-colors hover:text-mare hover:underline"
-            >
-              📷 {photoByLabel} {photoAuthor}
-            </a>
-          ) : (
-            <span>
-              📷 {photoByLabel} {photoAuthor}
-            </span>
-          )}
-        </p>
-      ) : null}
     </div>
   );
 }

@@ -14,6 +14,9 @@ type Props = {
   pageSlug: string;
   rotationDeg: number;
   missingLabel: string;
+  photoCreditLabel?: string;
+  photoCreditAuthor?: string;
+  photoCreditLink?: string;
   className?: string;
 };
 
@@ -245,6 +248,9 @@ export function UtilitiesPolaroidInner({
   pageSlug,
   rotationDeg,
   missingLabel,
+  photoCreditLabel,
+  photoCreditAuthor,
+  photoCreditLink,
   className = "",
 }: Props) {
   const reactId = useId().replace(/:/g, "");
@@ -318,7 +324,7 @@ export function UtilitiesPolaroidInner({
       <div className="relative isolate block w-full max-w-full overflow-visible">
         {/* Macchia parete: centrata sulla polaroid, abbastanza grande da restare sotto tutta la cornice. */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[128%] md:w-[132%]"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[110%] w-[108%] md:h-[118%] md:w-[114%]"
           style={{
             background: decor.wallBackground,
             clipPath: decor.clipPath,
@@ -346,30 +352,50 @@ export function UtilitiesPolaroidInner({
               />
             ))}
 
-            <div className="relative max-w-full rounded-sm bg-white p-4 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55">
-              <div className="relative w-full overflow-hidden rounded-sm bg-slate-100 pb-[100%]">
-                {src ? (
-                  <Image
-                    src={src}
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 176px, 208px"
-                    className="object-contain"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
-                    <p className="font-sans text-[10px] font-medium uppercase tracking-wide text-slate/50">
-                      {missingLabel}
-                    </p>
-                    <p className="break-all font-mono text-[11px] leading-snug text-mare">
-                      {expectedBasename}.png
-                    </p>
-                    <p className="break-all font-mono text-[9px] leading-tight text-slate/60">
-                      public/{relativePath}
-                    </p>
-                  </div>
-                )}
+            <div className="relative max-w-full rounded-sm bg-white px-2 pt-2 pb-8 shadow-[0_8px_28px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.06)] ring-1 ring-slate-200/55 md:px-2.5 md:pt-2.5 md:pb-10">
+              <div className="relative w-full rounded-[2px] border-2 border-black/90 bg-white p-1">
+                <div className="relative w-full overflow-hidden rounded-[1px] border border-black/80 bg-slate-100 pb-[100%]">
+                  {src ? (
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 176px, 208px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-100 to-sabbia/40 p-3 text-center">
+                      <p className="font-sans text-[10px] font-medium uppercase tracking-wide text-slate/50">
+                        {missingLabel}
+                      </p>
+                      <p className="break-all font-mono text-[11px] leading-snug text-mare">
+                        {expectedBasename}.png
+                      </p>
+                      <p className="break-all font-mono text-[9px] leading-tight text-slate/60">
+                        public/{relativePath}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
+              <figcaption className="min-h-[1rem] pt-2 text-center font-sans text-[11px] italic leading-none text-slate/70 md:min-h-[1.125rem] md:pt-2.5 md:text-xs">
+                {photoCreditAuthor ? (
+                  photoCreditLink ? (
+                    <a
+                      href={photoCreditLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline-offset-2 transition-colors hover:text-mare hover:underline"
+                    >
+                      📷 {photoCreditLabel ?? "Foto di"} {photoCreditAuthor}
+                    </a>
+                  ) : (
+                    <span>
+                      📷 {photoCreditLabel ?? "Foto di"} {photoCreditAuthor}
+                    </span>
+                  )
+                ) : null}
+              </figcaption>
             </div>
           </div>
         </figure>
