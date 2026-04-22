@@ -334,4 +334,4 @@ export const serviziSentieriCaprera: readonly Servizio[] = [
     description:
       "Attrazione turistica · Piazza Caprera. Aperto 24 ore su 24. «Il fondale è molto caratteristico, i colori fantastici.»",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

@@ -442,4 +442,4 @@ export const serviziSpiagge: readonly Servizio[] = [
     rating: 4.3,
     reviews: 35,
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

@@ -33,10 +33,10 @@ export function WeatherWidget({ weather, className, locale = "it" }: WeatherWidg
 
   return (
     <aside
-      className={`absolute right-3 top-3 z-30 w-[calc(100%-1.5rem)] max-w-[320px] rounded-xl border border-white/10 bg-slate-950/80 p-2 text-white shadow-2xl backdrop-blur-md sm:w-auto sm:max-w-none sm:p-3 md:right-4 md:top-4 ${className ?? ""}`}
+      className={`absolute right-2 top-16 z-30 w-[calc(100%-1rem)] max-w-[280px] rounded-xl border border-white/10 bg-slate-950/80 p-2 text-white shadow-2xl backdrop-blur-md sm:right-10 sm:top-16 sm:w-auto sm:max-w-[300px] sm:p-2.5 md:right-14 md:top-16 ${className ?? ""}`}
     >
-      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:gap-4">
-        <div className="sm:min-w-[132px]">
+      <div className="flex flex-col items-stretch gap-1.5 sm:flex-row sm:gap-2">
+        <div className="sm:min-w-[116px]">
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold leading-none sm:text-2xl">
               {Math.round(weather.velocitaNodi)} kts
@@ -57,7 +57,7 @@ export function WeatherWidget({ weather, className, locale = "it" }: WeatherWidg
 
         <div className="h-px w-full bg-white/10 sm:h-auto sm:w-px" aria-hidden="true" />
 
-        <div className="sm:min-w-[140px]">
+        <div className="sm:min-w-[124px]">
           <div className="flex items-center gap-2">
             {weather.iconaVentoUrl ? (
               <img

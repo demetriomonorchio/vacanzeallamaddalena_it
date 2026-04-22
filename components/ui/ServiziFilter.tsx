@@ -18,6 +18,7 @@ import {
   Waves,
   Wind,
   Footprints,
+  UtensilsCrossed,
 } from "lucide-react";
 import type { Servizio, CategoriaServizio } from "@/lib/servizi";
 import { categorieServizi } from "@/lib/servizi";
@@ -35,6 +36,7 @@ const categoryIcon: Record<CategoriaServizio, React.ReactNode> = {
   Gelaterie:      <IceCream2     className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio gommoni": <Ship className="h-3.5 w-3.5" aria-hidden />,
   "Noleggio scooter e bike": <Bike className="h-3.5 w-3.5" aria-hidden />,
+  Ristoranti: <UtensilsCrossed className="h-3.5 w-3.5" aria-hidden />,
   "Banche & ATM": <CreditCard   className="h-3.5 w-3.5" aria-hidden />,
   Mercato:        <ShoppingBasket className="h-3.5 w-3.5" aria-hidden />,
   Trasporti:      <Bus          className="h-3.5 w-3.5" aria-hidden />,
@@ -56,6 +58,7 @@ const categoryLabel: Record<Locale, Record<CategoriaServizio, string>> = {
     Gelaterie: "Gelaterie",
     "Noleggio gommoni": "Noleggio gommoni",
     "Noleggio scooter e bike": "Noleggio scooter e bike",
+    Ristoranti: "Ristoranti",
     "Banche & ATM": "Banche & ATM",
     Mercato: "Mercato",
     Trasporti: "Trasporti",
@@ -73,6 +76,7 @@ const categoryLabel: Record<Locale, Record<CategoriaServizio, string>> = {
     Gelaterie: "Ice cream shops",
     "Noleggio gommoni": "RIB rental",
     "Noleggio scooter e bike": "Scooter & bike rental",
+    Ristoranti: "Restaurants",
     "Banche & ATM": "Banks & ATMs",
     Mercato: "Market",
     Trasporti: "Transport",

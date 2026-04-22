@@ -163,4 +163,4 @@ export const serviziTrasporti: readonly Servizio[] = [
     zona: "Cala Gavetta",
     coordinates: [9.4057552, 41.2114003],
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

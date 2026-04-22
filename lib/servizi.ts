@@ -14,6 +14,7 @@ import { serviziWindsurfKite } from "./serviziWindsurfKite";
 import { serviziGelaterie } from "./serviziGelaterie";
 import { serviziNoleggioGommoni } from "./serviziNoleggioGommoni";
 import { serviziNoleggioScooterBike } from "./serviziNoleggioScooterBike";
+import { serviziRistoranti } from "./serviziRistoranti";
 
 export const zone = [
   "Centro Storico",
@@ -37,6 +38,7 @@ export const categorieServizi = [
   "Gelaterie",
   "Noleggio gommoni",
   "Noleggio scooter e bike",
+  "Ristoranti",
   "Banche & ATM",
   "Mercato",
   "Trasporti",
@@ -48,6 +50,7 @@ export const categorieServizi = [
 export type CategoriaServizio = (typeof categorieServizi)[number];
 
 export type Servizio = {
+  id?: string;
   name: string;
   category: CategoriaServizio;
   zona: Zona;
@@ -63,6 +66,10 @@ export type Servizio = {
   rating?: number;
   /** Optional number of reviews paired with rating. */
   reviews?: number;
+  /** Highlighted by Maddi across map filters. */
+  isFavorite?: boolean;
+  /** Optional note shown when a favorite location is selected. */
+  maddiNote?: string;
   /** Short teaser (used e.g. for Spiagge cards). */
   description?: string;
   /** Card thumbnail: `/images/...` under `public` or `https://` URL. */
@@ -98,6 +105,8 @@ export const servizi: readonly Servizio[] = [
 
   // ─── Noleggio scooter e bike ────────────────────────────────────────────────
   ...serviziNoleggioScooterBike,
+  // ─── Ristoranti ──────────────────────────────────────────────────────────────
+  ...serviziRistoranti,
   // ─── Banche & ATM ────────────────────────────────────────────────────────────
   ...serviziBanche,
 

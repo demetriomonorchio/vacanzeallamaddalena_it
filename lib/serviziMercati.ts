@@ -31,4 +31,4 @@ export const serviziMercati: readonly Servizio[] = [
     reviews: 21,
     description: "Mercato · Piazza Giuseppe Garibaldi, 30. Servizi in loco.",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

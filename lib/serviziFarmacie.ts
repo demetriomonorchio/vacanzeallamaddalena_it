@@ -35,4 +35,4 @@ export const serviziFarmacie: readonly Servizio[] = [
     description:
       "Via Amendola, 67 · Tel. 0789 737390. «Bel punto vendita, ben organizzato e con personale preparato e competente.»",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

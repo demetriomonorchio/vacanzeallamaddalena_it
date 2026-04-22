@@ -61,4 +61,4 @@ export const serviziBanche: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Euronet+ATM,+Via+Giuseppe+Garibaldi+37,+La+Maddalena",
     description: "Bancomat · Via Giuseppe Garibaldi, 37.",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

@@ -10,6 +10,8 @@ export const serviziGelaterie: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Gelateria+La+Finestrella,+Via+Amendola+11,+La+Maddalena",
     rating: 4.8,
     reviews: 1294,
+    isFavorite: true,
+    maddiNote: "Le signore al banco sono simpaticissime e il gelato è delizioso",
   },
   {
     name: "Gelatissimo",
@@ -28,6 +30,8 @@ export const serviziGelaterie: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Dolci+Distrazioni,+Via+Giorgio+Amendola+35,+La+Maddalena",
     rating: 4.7,
     reviews: 59,
+    isFavorite: true,
+    maddiNote: "Ottimo il gelato di Dolci Distrazioni anche se e cambiata la proprietaria.",
   },
   {
     name: "Gelateria Ilva",
@@ -74,4 +78,4 @@ export const serviziGelaterie: readonly Servizio[] = [
     rating: 4.7,
     reviews: 831,
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

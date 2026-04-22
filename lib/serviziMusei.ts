@@ -79,4 +79,4 @@ export const serviziMusei: readonly Servizio[] = [
     description:
       "Museo · Borgo di Stagnali, 6. Chiuso temporaneamente. «Museo interessante, molto provvisto.»",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

@@ -3,11 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Spiaggia } from "@/types/maddi";
 import type { Locale } from "@/lib/i18n";
+import { servizi } from "@/lib/servizi";
+import { MADDI_LOCATIONS } from "@/src/data/maddi-data";
 
 type MaddiConciergeProps = {
   ventoAttuale: string;
   isStrongWind?: boolean;
   selectedCategory?: "spiagge" | "food" | "case";
+  selectedLocation?: {
+    name: string;
+    maddiTip?: string;
+    maddiNote?: string;
+  };
   listaSpiagge: Spiaggia[];
   onSpiaggiaClick?: (coordinates: [number, number]) => void;
   className?: string;
@@ -57,7 +64,13 @@ function getCategoryMessage(
   selectedCategory: "spiagge" | "food" | "case" | undefined,
   ventoAttuale: string,
   isStrongWind: boolean,
-  locale: Locale
+  locale: Locale,
+  favoriteNames: string[],
+  selectedLocation?: {
+    name: string;
+    maddiTip?: string;
+    maddiNote?: string;
+  }
 ) {
   const strongWindAlert =
     locale === "en"
@@ -68,16 +81,44 @@ function getCategoryMessage(
         ? " Attenzione, oggi il vento è forte!"
         : "";
 
+  const selectedLocationAdvice = selectedLocation?.maddiNote ?? selectedLocation?.maddiTip;
+  if (selectedLocation && selectedLocationAdvice) {
+    if (locale === "en") {
+      return `For ${selectedLocation.name}, my advice is: ${selectedLocationAdvice}.${strongWindAlert}`;
+    }
+    return `Per ${selectedLocation.name} il mio consiglio e: ${selectedLocationAdvice}.${strongWindAlert}`;
+  }
+
   if (selectedCategory === "spiagge") {
+    if (favoriteNames.length > 0) {
+      const picks = favoriteNames.slice(0, 3).join(", ");
+      return locale === "en"
+        ? `${getMaddiMessage(ventoAttuale, locale)} My top picks: ${picks}.${strongWindAlert}`
+        : `${getMaddiMessage(ventoAttuale, locale)} I miei top consigli: ${picks}.${strongWindAlert}`;
+    }
     return `${getMaddiMessage(ventoAttuale, locale)}${strongWindAlert}`;
   }
   if (selectedCategory === "food") {
+    if (favoriteNames.length > 0) {
+      const picks = favoriteNames.slice(0, 3).join(", ");
+      if (locale === "en") {
+        return `Hungry? Here are my favorite spots: ${picks}.${strongWindAlert}`;
+      }
+      return `Hai fame? Ecco i miei posti preferiti: ${picks}.${strongWindAlert}`;
+    }
     if (locale === "en") {
       return `Hungry? Here are my favorite spots.${strongWindAlert}`;
     }
-    return `Hai fame? Ecco i miei posti preferiti. Il pesce da Zi Antò è una garanzia.${strongWindAlert}`;
+    return `Hai fame? Ecco i miei posti preferiti.${strongWindAlert}`;
   }
   if (selectedCategory === "case") {
+    if (favoriteNames.length > 0) {
+      const picks = favoriteNames.slice(0, 3).join(", ");
+      if (locale === "en") {
+        return `Looking for where to stay? My favorite homes are: ${picks}.${strongWindAlert}`;
+      }
+      return `Stai cercando dove dormire? Le mie case preferite sono: ${picks}.${strongWindAlert}`;
+    }
     if (locale === "en") {
       return `Looking for where to stay? These homes are managed directly by me for maximum comfort.${strongWindAlert}`;
     }
@@ -104,15 +145,56 @@ export function MaddiConcierge({
   ventoAttuale,
   isStrongWind = false,
   selectedCategory,
+  selectedLocation,
   listaSpiagge,
   onSpiaggiaClick,
   className,
   locale = "it",
 }: MaddiConciergeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const favoriteNamesByCategory = useMemo(() => {
+    if (selectedCategory === "food") {
+      return servizi
+        .filter(
+          (servizio) =>
+            (servizio.category === "Ristoranti" || servizio.category === "Gelaterie") &&
+            servizio.isFavorite === true
+        )
+        .map((servizio) => servizio.name);
+    }
+
+    if (selectedCategory === "spiagge") {
+      return servizi
+        .filter((servizio) => servizio.category === "Spiagge" && servizio.isFavorite === true)
+        .map((servizio) => servizio.name);
+    }
+
+    if (selectedCategory === "case") {
+      return MADDI_LOCATIONS.filter(
+        (location) => location.type === "alloggio" && location.isFavorite === true
+      ).map((location) => location.name);
+    }
+
+    return [];
+  }, [selectedCategory]);
   const messaggioMaddi = useMemo(
-    () => getCategoryMessage(selectedCategory, ventoAttuale, isStrongWind, locale),
-    [isStrongWind, locale, selectedCategory, ventoAttuale]
+    () =>
+      getCategoryMessage(
+        selectedCategory,
+        ventoAttuale,
+        isStrongWind,
+        locale,
+        favoriteNamesByCategory,
+        selectedLocation
+      ),
+    [
+      favoriteNamesByCategory,
+      isStrongWind,
+      locale,
+      selectedCategory,
+      selectedLocation,
+      ventoAttuale,
+    ]
   );
   const [typedMessage, setTypedMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);

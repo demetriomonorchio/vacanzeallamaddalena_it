@@ -56,4 +56,4 @@ export const serviziNoleggioScooterBike: readonly Servizio[] = [
     rating: 3.5,
     reviews: 226,
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

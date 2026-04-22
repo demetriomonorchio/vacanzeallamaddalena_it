@@ -92,4 +92,4 @@ export const serviziVela: readonly Servizio[] = [
     reviews: 378,
     description: "Escursioni in catamarano nell'arcipelago.",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

@@ -425,4 +425,4 @@ export const serviziNoleggioGommoni: readonly Servizio[] = [
     rating: 4.9,
     reviews: 172,
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

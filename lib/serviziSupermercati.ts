@@ -133,4 +133,4 @@ export const serviziSupermercati: readonly Servizio[] = [
     description:
       "Centro commerciale · Via Amendola, 4 · Tel. 373 541 4320. «Qui si può trovare tutto il necessario per una giornata al mare.»",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

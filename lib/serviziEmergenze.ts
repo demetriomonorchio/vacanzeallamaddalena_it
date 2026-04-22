@@ -123,4 +123,4 @@ export const serviziEmergenze: readonly Servizio[] = [
     description:
       "Centro medico pubblico · Località Padule. Chiuso temporaneamente · Tel. 0789 737023. «Eccellente dall’accoglienza delle guardie giurate al personale medico.»",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

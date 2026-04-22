@@ -202,4 +202,4 @@ export const serviziWindsurfKite: readonly Servizio[] = [
     reviews: 76,
     description: "Spiaggia attrezzata con scuola vela e windsurf.",
   },
-];
+].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));
