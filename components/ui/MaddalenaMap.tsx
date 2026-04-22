@@ -414,6 +414,7 @@ export function MaddalenaMap({
     useState<WeatherLayerKey>("wind_new");
   const [weather, setWeather] = useState<MaddalenaWind | null>(null);
   const [weatherLayerError, setWeatherLayerError] = useState<string | null>(null);
+  const [showAllMobileFilters, setShowAllMobileFilters] = useState(false);
   const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
     [number, number] | null
   >(null);
@@ -728,6 +729,26 @@ export function MaddalenaMap({
       label: isEnglish ? "Scooter/Bike rental" : "Noleggio scooter e bike",
     },
   ] as const;
+  const primaryMobileFilters: readonly FiltroAttivo[] = [
+    "alloggi",
+    "food",
+    "spiagge",
+    "emergenze",
+    "noleggioGommoni",
+  ];
+  const hasHiddenMobileFilters = categoryFilterOptions.some(
+    (item) => !primaryMobileFilters.includes(item.key)
+  );
+
+  useEffect(() => {
+    if (!showAllMobileFilters) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showAllMobileFilters]);
+
   const handleSpiaggiaClick = useCallback((coordinates: [number, number]) => {
     setWindExpertAttivo(true);
     setFiltroAttivo("spiagge");
@@ -1160,10 +1181,11 @@ export function MaddalenaMap({
   }
 
   return (
-    <section className={className}>
+    <section className={`max-w-[100vw] overflow-hidden ${className ?? ""}`}>
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {categoryFilterOptions.map((item) => {
           const isActive = item.key === "alloggi" || filtroAttivo === item.key;
+          const isPrimaryMobile = primaryMobileFilters.includes(item.key);
           return (
             <button
               key={item.key}
@@ -1172,7 +1194,7 @@ export function MaddalenaMap({
               aria-pressed={isActive}
               aria-label={`Filtro ${item.label}`}
               title={item.label}
-              className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+              className={`${isPrimaryMobile ? "inline-flex" : "hidden"} items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors sm:inline-flex ${
                 isActive
                   ? "border-mare bg-mare text-white"
                   : "border-mare/25 bg-white/80 text-slate hover:border-mare/50"
@@ -1190,16 +1212,82 @@ export function MaddalenaMap({
             </button>
           );
         })}
+        {hasHiddenMobileFilters ? (
+          <button
+            type="button"
+            onClick={() => setShowAllMobileFilters(true)}
+            className="inline-flex items-center rounded-full border border-mare/25 bg-white/80 px-2.5 py-1 text-xs font-semibold text-slate transition-colors hover:border-mare/50 sm:hidden"
+            aria-expanded={showAllMobileFilters}
+          >
+            {isEnglish ? "More filters..." : "Più filtri..."}
+          </button>
+        ) : null}
       </div>
+      {showAllMobileFilters ? (
+        <div className="fixed inset-0 z-[70] sm:hidden" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-950/45"
+            onClick={() => setShowAllMobileFilters(false)}
+            aria-label={isEnglish ? "Close filters" : "Chiudi filtri"}
+          />
+          <div className="absolute inset-x-0 bottom-0 max-h-[75vh] overflow-y-auto rounded-t-2xl border-t border-mare/20 bg-sabbia p-4 shadow-2xl">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm font-semibold text-mare">
+                {isEnglish ? "All filters" : "Tutti i filtri"}
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowAllMobileFilters(false)}
+                className="rounded-full border border-mare/25 bg-white px-2.5 py-1 text-xs font-semibold text-slate"
+              >
+                {isEnglish ? "Close" : "Chiudi"}
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {categoryFilterOptions
+                .filter((item) => !primaryMobileFilters.includes(item.key))
+                .map((item) => {
+                  const isActive = item.key === "alloggi" || filtroAttivo === item.key;
+                  return (
+                    <button
+                      key={`mobile-extra-${item.key}`}
+                      type="button"
+                      onClick={() => {
+                        setFiltroAttivo(item.key);
+                        setShowAllMobileFilters(false);
+                      }}
+                      className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-semibold transition-colors ${
+                        isActive
+                          ? "border-mare bg-mare text-white"
+                          : "border-mare/25 bg-white text-slate hover:border-mare/50"
+                      }`}
+                    >
+                      <span
+                        className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                        style={{
+                          backgroundColor: markerColorByType[item.key],
+                        }}
+                      >
+                        {markerSymbolByType[item.key]}
+                      </span>
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="mb-4 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center">
         <button
           type="button"
           onClick={() => {
             setWindExpertAttivo((value) => !value);
             setFiltroAttivo("spiagge");
           }}
-          className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+          className={`w-full rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors sm:w-auto ${
             windExpertAttivo
               ? "border-amber-500 bg-amber-500 text-white"
               : "border-amber-400/70 bg-white text-amber-700 hover:border-amber-500"
@@ -1213,7 +1301,7 @@ export function MaddalenaMap({
             setWindExpertAttivo(true);
             setDirezioneVento(event.target.value as DirezioneVento);
           }}
-          className="rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate"
+          className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
           aria-label={isEnglish ? "Wind direction" : "Direzione vento"}
         >
           {VENTI_OPTIONS.map((vento) => (
@@ -1227,7 +1315,7 @@ export function MaddalenaMap({
           onChange={(event) =>
             setActiveWeatherLayer(event.target.value as WeatherLayerKey)
           }
-          className="rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate"
+          className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
           aria-label={isEnglish ? "Weather layer" : "Layer meteo"}
         >
           <option value="none">{isEnglish ? "Weather Off" : "Meteo Off"}</option>
@@ -1244,7 +1332,7 @@ export function MaddalenaMap({
         </p>
       ) : null}
 
-      <div className="relative">
+      <div className="relative w-full max-w-[100vw] overflow-hidden">
         <div
           ref={containerRef}
           className={`w-full overflow-hidden rounded-2xl border border-mare/20 shadow-sm ${heightClassName}`}
