@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { categories, categoryLabels } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
@@ -22,9 +22,9 @@ const appartamentiLabel: Record<Locale, string> = {
   en: "Apartments",
 };
 
-const serviziLabel: Record<Locale, string> = {
-  it: "Servizi",
-  en: "Services",
+const maddalenaLiveLabel: Record<Locale, string> = {
+  it: "Maddalena Live",
+  en: "Maddalena Live",
 };
 
 const mobileMenuAria: Record<Locale, { open: string; close: string; nav: string }> = {
@@ -43,6 +43,14 @@ const mobileMenuAria: Record<Locale, { open: string; close: string; nav: string 
 export function Navbar({ locale }: NavbarProps) {
   const other: Locale = locale === "it" ? "en" : "it";
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+  const currentPath = pathname || `/${locale}`;
+  const otherPath =
+    currentPath === "/"
+      ? `/${other}`
+      : currentPath.replace(/^\/(it|en)(?=\/|$)/, `/${other}`) || `/${other}`;
+  const languageSwitchHref = queryString ? `${otherPath}?${queryString}` : otherPath;
 
   // Home page = exactly "/it" or "/en"
   const isHome = pathname === `/${locale}` || pathname === "/";
@@ -145,7 +153,7 @@ export function Navbar({ locale }: NavbarProps) {
           </Link>
 
           <Link
-            href={`/${other}`}
+            href={languageSwitchHref}
             hrefLang={other}
             className={`font-sans text-xs font-semibold underline-offset-4 transition-colors duration-300 hover:underline ${
               solidChrome
@@ -159,7 +167,7 @@ export function Navbar({ locale }: NavbarProps) {
 
         <div className="flex shrink-0 items-center gap-1 md:hidden">
           <Link
-            href={`/${other}`}
+            href={languageSwitchHref}
             hrefLang={other}
             className={`font-sans text-sm font-semibold underline-offset-4 transition-colors duration-300 hover:underline ${
               solidChrome
@@ -220,14 +228,20 @@ export function Navbar({ locale }: NavbarProps) {
           />
           <li>
             <Link
-              href={`/${locale}/servizi`}
+              href={`/${locale}/maddalena-live`}
               className={`inline-block whitespace-nowrap px-3 py-2.5 font-sans text-xs font-bold uppercase tracking-widest transition-colors duration-300 ${
                 solidChrome
                   ? "text-mare/70 hover:text-mare"
                   : "text-white drop-shadow-md hover:text-sabbia"
               }`}
             >
-              {serviziLabel[locale]}
+              <span className="inline-flex items-center">
+                {maddalenaLiveLabel[locale]}
+                <span className="relative ml-2 inline-flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+                </span>
+              </span>
             </Link>
           </li>
         </ul>
@@ -284,11 +298,17 @@ export function Navbar({ locale }: NavbarProps) {
                 ))}
                 <li className="border-b border-mare/10">
                   <Link
-                    href={`/${locale}/servizi`}
+                    href={`/${locale}/maddalena-live`}
                     className="block py-4 font-sans text-sm font-bold uppercase tracking-widest text-mare/85"
                     onClick={() => setMenuOpen(false)}
                   >
-                    {serviziLabel[locale]}
+                    <span className="inline-flex items-center">
+                      {maddalenaLiveLabel[locale]}
+                      <span className="relative ml-2 inline-flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+                      </span>
+                    </span>
                   </Link>
                 </li>
               </ul>

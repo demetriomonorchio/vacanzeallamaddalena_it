@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Spiaggia } from "@/types/maddi";
+import type { Locale } from "@/lib/i18n";
 
 type MaddiConciergeProps = {
   ventoAttuale: string;
@@ -10,6 +11,7 @@ type MaddiConciergeProps = {
   listaSpiagge: Spiaggia[];
   onSpiaggiaClick?: (coordinates: [number, number]) => void;
   className?: string;
+  locale?: Locale;
 };
 
 type BeachStatus = "riparata" | "esposta";
@@ -33,7 +35,10 @@ const VENTO_TO_SIGLA: Record<string, string> = {
 };
 
 // Funzione che restituisce il messaggio dinamico in base al vento
-function getMaddiMessage(vento: string) {
+function getMaddiMessage(vento: string, locale: Locale) {
+  if (locale === "en") {
+    return `Hi! With this ${vento}, here are the best sheltered beaches for today.`;
+  }
   const n = vento.trim().toUpperCase();
   if (n === "MAESTRALE" || n === "NW" || n === "NORD OVEST" || n === "NORD-OVEST") {
     return "Oggi il Maestrale soffia forte! Ti ho selezionato le calette di Caprera e il versante Sud, dove l'acqua è una piscina.";
@@ -51,18 +56,35 @@ function getMaddiMessage(vento: string) {
 function getCategoryMessage(
   selectedCategory: "spiagge" | "food" | "case" | undefined,
   ventoAttuale: string,
-  isStrongWind: boolean
+  isStrongWind: boolean,
+  locale: Locale
 ) {
-  const strongWindAlert = isStrongWind ? " Attenzione, oggi il vento è forte!" : "";
+  const strongWindAlert =
+    locale === "en"
+      ? isStrongWind
+        ? " Warning: strong wind today!"
+        : ""
+      : isStrongWind
+        ? " Attenzione, oggi il vento è forte!"
+        : "";
 
   if (selectedCategory === "spiagge") {
-    return `${getMaddiMessage(ventoAttuale)}${strongWindAlert}`;
+    return `${getMaddiMessage(ventoAttuale, locale)}${strongWindAlert}`;
   }
   if (selectedCategory === "food") {
+    if (locale === "en") {
+      return `Hungry? Here are my favorite spots.${strongWindAlert}`;
+    }
     return `Hai fame? Ecco i miei posti preferiti. Il pesce da Zi Antò è una garanzia.${strongWindAlert}`;
   }
   if (selectedCategory === "case") {
+    if (locale === "en") {
+      return `Looking for where to stay? These homes are managed directly by me for maximum comfort.${strongWindAlert}`;
+    }
     return `Stai cercando dove dormire? Queste case sono gestite direttamente da me, il comfort è assicurato.${strongWindAlert}`;
+  }
+  if (locale === "en") {
+    return `Hi! I'm Maddi, pick a category and I'll help you find the right place.${strongWindAlert}`;
   }
   return `Ciao! Sono Maddi, scegli una categoria e ti aiuto a trovare il posto giusto.${strongWindAlert}`;
 }
@@ -85,11 +107,12 @@ export function MaddiConcierge({
   listaSpiagge,
   onSpiaggiaClick,
   className,
+  locale = "it",
 }: MaddiConciergeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const messaggioMaddi = useMemo(
-    () => getCategoryMessage(selectedCategory, ventoAttuale, isStrongWind),
-    [isStrongWind, selectedCategory, ventoAttuale]
+    () => getCategoryMessage(selectedCategory, ventoAttuale, isStrongWind, locale),
+    [isStrongWind, locale, selectedCategory, ventoAttuale]
   );
   const [typedMessage, setTypedMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -141,7 +164,9 @@ export function MaddiConcierge({
           alt="Maddi avatar"
           className="h-8 w-8 rounded-full object-cover border border-white/20 shadow-md"
         />
-        <span className="text-xs font-semibold">Maddi ha un consiglio...</span>
+        <span className="text-xs font-semibold">
+          {locale === "en" ? "Maddi has a tip..." : "Maddi ha un consiglio..."}
+        </span>
       </button>
     );
   }
@@ -158,7 +183,9 @@ export function MaddiConcierge({
             className="w-14 h-14 rounded-full object-cover border-2 border-white/20 shadow-xl"
           />
           <div>
-            <h3 className="text-sm font-semibold text-white">Maddi dice:</h3>
+            <h3 className="text-sm font-semibold text-white">
+              {locale === "en" ? "Maddi says:" : "Maddi dice:"}
+            </h3>
             <p className="text-sm font-semibold leading-snug text-white">
               {typedMessage}
               {isTyping ? (
@@ -173,7 +200,7 @@ export function MaddiConcierge({
           type="button"
           onClick={() => setIsExpanded(false)}
           className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-white/10 text-sm font-bold text-white transition-colors hover:bg-white/20"
-          aria-label="Chiudi pannello Maddi"
+          aria-label={locale === "en" ? "Close Maddi panel" : "Chiudi pannello Maddi"}
         >
           ×
         </button>

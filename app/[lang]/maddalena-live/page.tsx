@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function MappaTestPage({ params }: Props) {
+export default async function MaddalenaLivePage({ params }: Props) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 

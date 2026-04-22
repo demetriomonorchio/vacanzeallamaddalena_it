@@ -1,4 +1,5 @@
 "use client";
+import type { Locale } from "@/lib/i18n";
 
 type WeatherData = {
   velocitaNodi: number;
@@ -11,6 +12,7 @@ type WeatherData = {
 type WeatherWidgetProps = {
   weather: WeatherData;
   className?: string;
+  locale?: Locale;
 };
 
 function getArrowRotation(nomeVento: string) {
@@ -26,7 +28,7 @@ function getArrowRotation(nomeVento: string) {
   return 0;
 }
 
-export function WeatherWidget({ weather, className }: WeatherWidgetProps) {
+export function WeatherWidget({ weather, className, locale = "it" }: WeatherWidgetProps) {
   const rotation = getArrowRotation(weather.nomeVento);
 
   return (
@@ -60,7 +62,7 @@ export function WeatherWidget({ weather, className }: WeatherWidgetProps) {
             {weather.iconaVentoUrl ? (
               <img
                 src={weather.iconaVentoUrl}
-                alt="Icona meteo"
+                alt={locale === "en" ? "Weather icon" : "Icona meteo"}
                 className="h-8 w-8 object-contain"
               />
             ) : (

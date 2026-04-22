@@ -4,8 +4,22 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { MADDI_LOCATIONS } from "@/src/data/maddi-data";
 import { serviziSpiagge } from "@/lib/serviziSpiagge";
+import { serviziBanche } from "@/lib/serviziBanche";
+import { serviziSupermercati } from "@/lib/serviziSupermercati";
+import { serviziEmergenze } from "@/lib/serviziEmergenze";
+import { serviziFarmacie } from "@/lib/serviziFarmacie";
+import { serviziMercati } from "@/lib/serviziMercati";
+import { serviziMusei } from "@/lib/serviziMusei";
+import { serviziTrasporti } from "@/lib/serviziTrasporti";
+import { serviziVela } from "@/lib/serviziVela";
+import { serviziDiving } from "@/lib/serviziDiving";
+import { serviziWindsurfKite } from "@/lib/serviziWindsurfKite";
+import { serviziGelaterie } from "@/lib/serviziGelaterie";
+import { serviziNoleggioGommoni } from "@/lib/serviziNoleggioGommoni";
+import { serviziNoleggioScooterBike } from "@/lib/serviziNoleggioScooterBike";
 import type { Spiaggia } from "@/types/maddi";
 import type { Servizio } from "@/lib/servizi";
+import type { Locale } from "@/lib/i18n";
 import { MaddiConcierge } from "@/components/ui/MaddiConcierge";
 import { WeatherWidget } from "@/components/ui/WeatherWidget";
 import { getMaddalenaWind, type MaddalenaWind } from "@/lib/weatherService";
@@ -17,12 +31,45 @@ type MaddalenaMapProps = {
   mapStyle?: string;
   center?: [number, number];
   zoom?: number;
+  locale?: Locale;
 };
 
 const defaultCenter: [number, number] = [9.4095, 41.2145];
 
-type FiltroAttivo = "all" | "spiagge" | "food" | "alloggi";
-type TipoMappa = "alloggi" | "food" | "spiagge";
+type FiltroAttivo =
+  | "spiagge"
+  | "food"
+  | "alloggi"
+  | "banche"
+  | "supermercati"
+  | "farmacie"
+  | "mercati"
+  | "emergenze"
+  | "musei"
+  | "trasporti"
+  | "vela"
+  | "diving"
+  | "windsurfKite"
+  | "gelaterie"
+  | "noleggioGommoni"
+  | "noleggioScooterBike";
+type TipoMappa =
+  | "alloggi"
+  | "food"
+  | "spiagge"
+  | "banche"
+  | "supermercati"
+  | "farmacie"
+  | "mercati"
+  | "emergenze"
+  | "musei"
+  | "trasporti"
+  | "vela"
+  | "diving"
+  | "windsurfKite"
+  | "gelaterie"
+  | "noleggioGommoni"
+  | "noleggioScooterBike";
 type WeatherLayerKey = "none" | "wind_new" | "precipitation_new" | "clouds_new";
 type MappaLocation = {
   id: string;
@@ -39,12 +86,38 @@ const markerColorByType: Record<TipoMappa, string> = {
   alloggi: "#0f766e",
   food: "#b91c1c",
   spiagge: "#0ea5e9",
+  banche: "#7c3aed",
+  supermercati: "#f97316",
+  farmacie: "#16a34a",
+  mercati: "#ca8a04",
+  emergenze: "#dc2626",
+  musei: "#1d4ed8",
+  trasporti: "#64748b",
+  vela: "#0d9488",
+  diving: "#2563eb",
+  windsurfKite: "#7c3aed",
+  gelaterie: "#ec4899",
+  noleggioGommoni: "#0ea5e9",
+  noleggioScooterBike: "#f59e0b",
 };
 
 const markerSymbolByType: Record<TipoMappa, string> = {
   alloggi: "\u2302",
   food: "\u{1F37D}",
   spiagge: "\u{1F3D6}",
+  banche: "\u{1F3E6}",
+  supermercati: "\u{1F6D2}",
+  farmacie: "\u2695",
+  mercati: "\u{1F9FA}",
+  emergenze: "!",
+  musei: "\u{1F3DB}",
+  trasporti: "\u{1F68C}",
+  vela: "\u26F5",
+  diving: "\u{1F93F}",
+  windsurfKite: "\u{1F3C4}",
+  gelaterie: "\u{1F366}",
+  noleggioGommoni: "\u{1F6A4}",
+  noleggioScooterBike: "\u{1F6F5}",
 };
 
 const VENTI_OPTIONS = [
@@ -106,6 +179,22 @@ function isSpiaggia(servizio: Servizio): servizio is SpiaggiaCompat {
   );
 }
 
+function hasCoordinates(
+  servizio: Servizio
+): servizio is Servizio & { coordinates: [number, number] } {
+  return Array.isArray(servizio.coordinates);
+}
+
+function createServiceId(prefix: string, name: string, index: number) {
+  const slug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return `${prefix}-${slug}-${index}`;
+}
+
 function getSpiaggeConsigliate(direzioneVento: string): SpiaggiaCompat[] {
   const vento = direzioneVento.toUpperCase();
   return serviziSpiagge.filter(
@@ -116,6 +205,21 @@ function getSpiaggeConsigliate(direzioneVento: string): SpiaggiaCompat[] {
 
 function getNomeVento(sigla: DirezioneVento) {
   return VENTI_OPTIONS.find((item) => item.sigla === sigla)?.nome ?? sigla;
+}
+
+function getNomeVentoByLocale(sigla: DirezioneVento, locale: Locale) {
+  if (locale === "it") return getNomeVento(sigla);
+  const enBySigla: Record<DirezioneVento, string> = {
+    N: "Tramontane",
+    NE: "Northeast",
+    E: "East",
+    SE: "Southeast",
+    S: "South",
+    SW: "Southwest",
+    W: "West",
+    NW: "Mistral",
+  };
+  return enBySigla[sigla] ?? sigla;
 }
 
 function getSelectedCategory(
@@ -185,33 +289,69 @@ function getWindLegendGradient() {
 }
 
 function createMarkerElement(location: MappaLocation) {
+  const isAlloggio = location.tipo === "alloggi";
   const markerEl = document.createElement("button");
   markerEl.type = "button";
   markerEl.title = location.name;
   markerEl.setAttribute("aria-label", location.name);
-  markerEl.style.width = "18px";
-  markerEl.style.height = "18px";
+  markerEl.style.width = isAlloggio ? "24px" : "18px";
+  markerEl.style.height = isAlloggio ? "24px" : "18px";
   markerEl.style.borderRadius = "9999px";
-  markerEl.style.border = "2px solid #ffffff";
+  markerEl.style.border = isAlloggio ? "3px solid #ffffff" : "2px solid #ffffff";
   markerEl.style.background = markerColorByType[location.tipo];
-  markerEl.style.boxShadow = "0 2px 8px rgba(15, 23, 42, 0.35)";
+  markerEl.style.boxShadow = isAlloggio
+    ? "0 0 0 3px rgba(15, 118, 110, 0.35), 0 4px 14px rgba(15, 23, 42, 0.5)"
+    : "0 2px 8px rgba(15, 23, 42, 0.35)";
   markerEl.style.cursor = "pointer";
   markerEl.style.display = "grid";
   markerEl.style.placeItems = "center";
-  markerEl.style.fontSize = "11px";
+  markerEl.style.fontSize = isAlloggio ? "13px" : "11px";
   markerEl.style.fontWeight = "700";
   markerEl.style.color = "#ffffff";
   markerEl.textContent = markerSymbolByType[location.tipo];
   return markerEl;
 }
 
-function buildPopupContent(location: MappaLocation) {
-  const categoriaLabel =
-    location.tipo === "alloggi"
-      ? "alloggio"
-      : location.tipo === "food"
-        ? "food"
-        : "spiaggia";
+function buildPopupContent(location: MappaLocation, locale: Locale) {
+  const isEnglish = locale === "en";
+  const categoriaLabelByType: Record<TipoMappa, string> = isEnglish
+    ? {
+        alloggi: "accommodation",
+        food: "food",
+        spiagge: "beach",
+        banche: "banks & atm",
+        supermercati: "supermarkets",
+        farmacie: "pharmacies",
+        mercati: "markets",
+        emergenze: "emergency",
+        musei: "museums",
+        trasporti: "transport",
+        vela: "sailing",
+        diving: "diving",
+        windsurfKite: "windsurf / kite",
+        gelaterie: "ice cream",
+        noleggioGommoni: "boat rental",
+        noleggioScooterBike: "scooter / bike rental",
+      }
+    : {
+        alloggi: "alloggio",
+        food: "food",
+        spiagge: "spiaggia",
+        banche: "banche & atm",
+        supermercati: "supermercati",
+        farmacie: "farmacie",
+        mercati: "mercati",
+        emergenze: "emergenze",
+        musei: "musei",
+        trasporti: "trasporti",
+        vela: "vela",
+        diving: "diving",
+        windsurfKite: "windsurf / kite",
+        gelaterie: "gelaterie",
+        noleggioGommoni: "noleggio gommoni",
+        noleggioScooterBike: "noleggio scooter e bike",
+      };
+  const categoriaLabel = categoriaLabelByType[location.tipo];
   const bookingCta =
     location.tipo === "alloggi" && location.bookingUrl
       ? `
@@ -221,7 +361,7 @@ function buildPopupContent(location: MappaLocation) {
         rel="noopener noreferrer"
         style="display: inline-block; margin-top: 10px; padding: 8px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none; color: #ffffff; background: #0f172a;"
       >
-        Scopri appartamento
+        ${isEnglish ? "Discover apartment" : "Scopri appartamento"}
       </a>
       `
       : "";
@@ -251,6 +391,7 @@ export function MaddalenaMap({
   mapStyle = "mapbox://styles/mapbox/satellite-v9",
   center = defaultCenter,
   zoom = 12.4,
+  locale = "it",
 }: MaddalenaMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const windCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -266,7 +407,7 @@ export function MaddalenaMap({
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(
     null
   );
-  const [filtroAttivo, setFiltroAttivo] = useState<FiltroAttivo>("all");
+  const [filtroAttivo, setFiltroAttivo] = useState<FiltroAttivo>("alloggi");
   const [windExpertAttivo, setWindExpertAttivo] = useState(true);
   const [direzioneVento, setDirezioneVento] = useState<DirezioneVento>("NW");
   const [activeWeatherLayer, setActiveWeatherLayer] =
@@ -275,6 +416,7 @@ export function MaddalenaMap({
   const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
     [number, number] | null
   >(null);
+  const isEnglish = locale === "en";
 
   useEffect(() => {
     let isMounted = true;
@@ -325,9 +467,204 @@ export function MaddalenaMap({
         : spiaggeTutte,
     [direzioneVento, spiaggeTutte, windExpertAttivo]
   );
+  const bancheLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziBanche
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("banche", servizio.name, index),
+          name: servizio.name,
+          tipo: "banche" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Banca, ATM o ufficio postale.",
+          maddiTip: "Perfetto per prelievi veloci o pratiche in zona.",
+        })),
+    []
+  );
+  const supermercatiLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziSupermercati
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("supermercati", servizio.name, index),
+          name: servizio.name,
+          tipo: "supermercati" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Supermercato e alimentari.",
+          maddiTip: "Comodo per la spesa quotidiana vicino all'alloggio.",
+        })),
+    []
+  );
+  const farmacieLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziFarmacie
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("farmacie", servizio.name, index),
+          name: servizio.name,
+          tipo: "farmacie" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Farmacia sul territorio.",
+          maddiTip: "Utile per farmaci, creme sole e necessità dell'ultimo minuto.",
+        })),
+    []
+  );
+  const mercatiLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziMercati
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("mercati", servizio.name, index),
+          name: servizio.name,
+          tipo: "mercati" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Mercato locale.",
+          maddiTip: "Perfetto per prodotti freschi e atmosfera locale.",
+        })),
+    []
+  );
+  const emergenzeLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziEmergenze
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("emergenze", servizio.name, index),
+          name: servizio.name,
+          tipo: "emergenze" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Servizio di emergenza.",
+          maddiTip: "Punto di riferimento rapido in caso di necessità.",
+        })),
+    []
+  );
+  const museiLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziMusei
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("musei", servizio.name, index),
+          name: servizio.name,
+          tipo: "musei" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Museo dell'arcipelago.",
+          maddiTip: "Tappa culturale ideale nelle ore meno da spiaggia.",
+        })),
+    []
+  );
+  const trasportiLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziTrasporti
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("trasporti", servizio.name, index),
+          name: servizio.name,
+          tipo: "trasporti" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Servizio trasporto e mobilità.",
+          maddiTip: "Utile per spostarsi velocemente tra porto, centro e spiagge.",
+        })),
+    []
+  );
+  const velaLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziVela
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("vela", servizio.name, index),
+          name: servizio.name,
+          tipo: "vela" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Scuola o esperienza vela.",
+          maddiTip: "Ottima opzione per vivere il mare da protagonista.",
+        })),
+    []
+  );
+  const divingLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziDiving
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("diving", servizio.name, index),
+          name: servizio.name,
+          tipo: "diving" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Centro immersioni.",
+          maddiTip: "Perfetto per escursioni sub e corsi brevetto.",
+        })),
+    []
+  );
+  const windsurfKiteLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziWindsurfKite
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("windsurf-kite", servizio.name, index),
+          name: servizio.name,
+          tipo: "windsurfKite" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Scuola windsurf e kite.",
+          maddiTip: "Ideale quando soffia il maestrale.",
+        })),
+    []
+  );
+  const gelaterieLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziGelaterie
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("gelaterie", servizio.name, index),
+          name: servizio.name,
+          tipo: "gelaterie" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Gelateria artigianale.",
+          maddiTip: "Sosta dolce perfetta dopo il giro in centro.",
+        })),
+    []
+  );
+  const noleggioGommoniLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziNoleggioGommoni
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("noleggio-gommoni", servizio.name, index),
+          name: servizio.name,
+          tipo: "noleggioGommoni" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Noleggio gommoni e barche.",
+          maddiTip: "Ottimo per esplorare le calette in autonomia.",
+        })),
+    []
+  );
+  const noleggioScooterBikeLocations = useMemo<MappaLocation[]>(
+    () =>
+      serviziNoleggioScooterBike
+        .filter(hasCoordinates)
+        .map((servizio, index) => ({
+          id: createServiceId("noleggio-scooter-bike", servizio.name, index),
+          name: servizio.name,
+          tipo: "noleggioScooterBike" as const,
+          coordinates: servizio.coordinates,
+          description: servizio.description ?? "Noleggio scooter e bike.",
+          maddiTip: "Comodo per muoverti rapidamente tra centro e spiagge.",
+        })),
+    []
+  );
   const allLocations = useMemo<MappaLocation[]>(
     () => [
       ...baseLocations,
+      ...bancheLocations,
+      ...supermercatiLocations,
+      ...farmacieLocations,
+      ...mercatiLocations,
+      ...emergenzeLocations,
+      ...museiLocations,
+      ...trasportiLocations,
+      ...velaLocations,
+      ...divingLocations,
+      ...windsurfKiteLocations,
+      ...gelaterieLocations,
+      ...noleggioGommoniLocations,
+      ...noleggioScooterBikeLocations,
       ...spiaggeVisibili.map((spiaggia, index) => ({
         id: createBeachId(spiaggia.name, index),
         name: spiaggia.name,
@@ -338,19 +675,58 @@ export function MaddalenaMap({
         esposizione: spiaggia.esposizione,
       })),
     ],
-    [baseLocations, spiaggeVisibili]
+    [
+      bancheLocations,
+      baseLocations,
+      emergenzeLocations,
+      farmacieLocations,
+      gelaterieLocations,
+      mercatiLocations,
+      museiLocations,
+      noleggioGommoniLocations,
+      noleggioScooterBikeLocations,
+      spiaggeVisibili,
+      supermercatiLocations,
+      trasportiLocations,
+      velaLocations,
+      divingLocations,
+      windsurfKiteLocations,
+    ]
   );
   const visibleLocations = useMemo(
     () =>
-      filtroAttivo === "all"
-        ? allLocations
-        : allLocations.filter((location) => location.tipo === filtroAttivo),
+      allLocations.filter((location) =>
+        filtroAttivo === "alloggi"
+          ? location.tipo === "alloggi"
+          : location.tipo === "alloggi" || location.tipo === filtroAttivo
+      ),
     [allLocations, filtroAttivo]
   );
   const selectedLocation = useMemo(
     () => visibleLocations.find((location) => location.id === selectedLocationId),
     [selectedLocationId, visibleLocations]
   );
+  const categoryFilterOptions = [
+    { key: "alloggi", label: isEnglish ? "Accommodation" : "Alloggi" },
+    { key: "food", label: "Food" },
+    { key: "spiagge", label: isEnglish ? "Beaches" : "Spiagge" },
+    { key: "banche", label: "Banche & ATM" },
+    { key: "supermercati", label: isEnglish ? "Supermarkets" : "Supermercati" },
+    { key: "farmacie", label: isEnglish ? "Pharmacies" : "Farmacie" },
+    { key: "mercati", label: isEnglish ? "Markets" : "Mercati" },
+    { key: "emergenze", label: isEnglish ? "Emergency" : "Emergenze" },
+    { key: "musei", label: isEnglish ? "Museums" : "Musei" },
+    { key: "trasporti", label: isEnglish ? "Transport" : "Trasporti" },
+    { key: "vela", label: "Vela" },
+    { key: "diving", label: "Diving" },
+    { key: "windsurfKite", label: "Windsurf kite" },
+    { key: "gelaterie", label: isEnglish ? "Ice cream" : "Gelaterie" },
+    { key: "noleggioGommoni", label: isEnglish ? "Boat rental" : "Noleggio gommoni" },
+    {
+      key: "noleggioScooterBike",
+      label: isEnglish ? "Scooter/Bike rental" : "Noleggio scooter e bike",
+    },
+  ] as const;
   const handleSpiaggiaClick = useCallback((coordinates: [number, number]) => {
     setWindExpertAttivo(true);
     setFiltroAttivo("spiagge");
@@ -380,7 +756,12 @@ export function MaddalenaMap({
         curve: isTeggeView ? 1.65 : 1.3,
       });
 
-      markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+      const markerLngLat = markerEntry.marker.getLngLat();
+      const popupCoordinates: [number, number] =
+        source === "marker"
+          ? [markerLngLat.lng, markerLngLat.lat]
+          : target.coordinates;
+      markerEntry.popup.setLngLat(popupCoordinates).addTo(map);
       setSelectedLocationId(locationId);
     },
     [visibleLocations]
@@ -454,17 +835,55 @@ export function MaddalenaMap({
     markerRegistryRef.current = {};
 
     const bounds = new mapboxgl.LngLatBounds();
+    const displayCoordinatesById = new Map<string, [number, number]>();
+    const groupedByCoordinate = new Map<string, MappaLocation[]>();
+
+    visibleLocations.forEach((location) => {
+      const key = `${location.coordinates[0].toFixed(7)}|${location.coordinates[1].toFixed(7)}`;
+      const group = groupedByCoordinate.get(key);
+      if (group) {
+        group.push(location);
+      } else {
+        groupedByCoordinate.set(key, [location]);
+      }
+    });
+
+    groupedByCoordinate.forEach((group) => {
+      if (group.length === 1) {
+        const [only] = group;
+        displayCoordinatesById.set(only.id, only.coordinates);
+        return;
+      }
+
+      // Spread overlapping markers in a small circle so all POIs remain clickable.
+      const base = group[0].coordinates;
+      const baseLatRad = (base[1] * Math.PI) / 180;
+      const metersPerLonDegree = 111320 * Math.cos(baseLatRad);
+      const metersPerLatDegree = 110540;
+      const radiusMeters = 18;
+
+      group.forEach((location, index) => {
+        const angle = (2 * Math.PI * index) / group.length;
+        const dxMeters = Math.cos(angle) * radiusMeters;
+        const dyMeters = Math.sin(angle) * radiusMeters;
+        const lng = base[0] + dxMeters / metersPerLonDegree;
+        const lat = base[1] + dyMeters / metersPerLatDegree;
+        displayCoordinatesById.set(location.id, [lng, lat]);
+      });
+    });
 
     visibleLocations.forEach((location) => {
       const popup = new mapboxgl.Popup({ offset: 18, closeOnClick: false }).setHTML(
-        buildPopupContent(location)
+        buildPopupContent(location, locale)
       );
+      const displayCoordinates =
+        displayCoordinatesById.get(location.id) ?? location.coordinates;
 
       const marker = new mapboxgl.Marker({
         element: createMarkerElement(location),
         anchor: "center",
       })
-        .setLngLat(location.coordinates)
+        .setLngLat(displayCoordinates)
         .addTo(map);
 
       marker.getElement().addEventListener("click", (event) => {
@@ -473,7 +892,7 @@ export function MaddalenaMap({
       });
 
       markerRegistryRef.current[location.id] = { marker, popup };
-      bounds.extend(location.coordinates);
+      bounds.extend(displayCoordinates);
     });
 
     setSelectedLocationId((current) =>
@@ -489,7 +908,7 @@ export function MaddalenaMap({
         duration: 450,
       });
     }
-  }, [focusLocation, isMapReady, visibleLocations]);
+  }, [focusLocation, isMapReady, locale, visibleLocations]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -700,56 +1119,47 @@ export function MaddalenaMap({
       <div
         className={`rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 ${className ?? ""}`}
       >
-        Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa.
+        {isEnglish
+          ? "Set `NEXT_PUBLIC_MAPBOX_TOKEN` to display the map."
+          : "Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa."}
       </div>
     );
   }
 
   return (
     <section className={className}>
-      <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-slate/80">
-        <span className="inline-flex items-center gap-2">
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-700 text-[11px] font-bold text-white shadow-sm">
-            {markerSymbolByType.alloggi}
-          </span>
-          Alloggi
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-700 text-[11px] font-bold text-white shadow-sm">
-            {markerSymbolByType.food}
-          </span>
-          Food
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-600 text-[11px] font-bold text-white shadow-sm">
-            {markerSymbolByType.spiagge}
-          </span>
-          Spiagge
-        </span>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {categoryFilterOptions.map((item) => {
+          const isActive = item.key === "alloggi" || filtroAttivo === item.key;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setFiltroAttivo(item.key)}
+              aria-pressed={isActive}
+              aria-label={`Filtro ${item.label}`}
+              title={item.label}
+              className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                isActive
+                  ? "border-mare bg-mare text-white"
+                  : "border-mare/25 bg-white/80 text-slate hover:border-mare/50"
+              }`}
+            >
+              <span
+                className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                style={{
+                  backgroundColor: markerColorByType[item.key],
+                }}
+              >
+                {markerSymbolByType[item.key]}
+              </span>
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        {(
-          [
-            { key: "all", label: "Tutto" },
-            { key: "alloggi", label: "Alloggi" },
-            { key: "food", label: "Food" },
-            { key: "spiagge", label: "Spiagge" },
-          ] as const
-        ).map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setFiltroAttivo(item.key)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-              filtroAttivo === item.key
-                ? "border-mare bg-mare text-white"
-                : "border-mare/30 bg-white text-slate hover:border-mare/55"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
         <button
           type="button"
           onClick={() => {
@@ -762,7 +1172,7 @@ export function MaddalenaMap({
               : "border-amber-400/70 bg-white text-amber-700 hover:border-amber-500"
           }`}
         >
-          Wind Expert
+          {isEnglish ? "Wind Expert" : "Wind Expert"}
         </button>
         <select
           value={direzioneVento}
@@ -771,11 +1181,11 @@ export function MaddalenaMap({
             setDirezioneVento(event.target.value as DirezioneVento);
           }}
           className="rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate"
-          aria-label="Direzione vento"
+          aria-label={isEnglish ? "Wind direction" : "Direzione vento"}
         >
           {VENTI_OPTIONS.map((vento) => (
             <option key={vento.sigla} value={vento.sigla}>
-              {vento.nome}
+              {getNomeVentoByLocale(vento.sigla, locale)}
             </option>
           ))}
         </select>
@@ -785,12 +1195,14 @@ export function MaddalenaMap({
             setActiveWeatherLayer(event.target.value as WeatherLayerKey)
           }
           className="rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate"
-          aria-label="Layer meteo"
+          aria-label={isEnglish ? "Weather layer" : "Layer meteo"}
         >
-          <option value="none">Meteo Off</option>
-          <option value="wind_new">Layer Vento</option>
-          <option value="precipitation_new">Layer Pioggia</option>
-          <option value="clouds_new">Layer Nuvole</option>
+          <option value="none">{isEnglish ? "Weather Off" : "Meteo Off"}</option>
+          <option value="wind_new">{isEnglish ? "Wind Layer" : "Layer Vento"}</option>
+          <option value="precipitation_new">
+            {isEnglish ? "Rain Layer" : "Layer Pioggia"}
+          </option>
+          <option value="clouds_new">{isEnglish ? "Cloud Layer" : "Layer Nuvole"}</option>
         </select>
       </div>
 
@@ -831,11 +1243,12 @@ export function MaddalenaMap({
           </aside>
         ) : null}
         <MaddiConcierge
-          ventoAttuale={weather?.direction.nome ?? getNomeVento(direzioneVento)}
+          ventoAttuale={weather?.direction.nome ?? getNomeVentoByLocale(direzioneVento, locale)}
           isStrongWind={(weather?.speed ?? 0) > 15}
           selectedCategory={getSelectedCategory(filtroAttivo)}
           listaSpiagge={spiaggeTutte}
           onSpiaggiaClick={handleSpiaggiaClick}
+          locale={locale}
           className="z-30"
         />
         {weather ? (
@@ -847,6 +1260,7 @@ export function MaddalenaMap({
               iconaVentoUrl: weather.iconaMeteoUrl,
               descrizioneCielo: weather.descrizioneCielo,
             }}
+            locale={locale}
             className="z-30"
           />
         ) : null}
@@ -854,17 +1268,65 @@ export function MaddalenaMap({
 
       <div className="mt-5">
         <h2 className="font-sans text-sm font-semibold text-slate/80">
-          Luoghi in elenco (clic per centrare)
+          {isEnglish ? "Listed places (click to focus)" : "Luoghi in elenco (clic per centrare)"}
         </h2>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {visibleLocations.map((location) => {
             const isActive = selectedLocationId === location.id;
             const typeLabel =
               location.tipo === "alloggi"
-                ? "Alloggio"
+                ? isEnglish
+                  ? "Accommodation"
+                  : "Alloggio"
                 : location.tipo === "food"
                   ? "Food"
-                  : "Spiaggia";
+                  : location.tipo === "banche"
+                    ? "Banche & ATM"
+                    : location.tipo === "supermercati"
+                      ? isEnglish
+                        ? "Supermarket"
+                        : "Supermercato"
+                      : location.tipo === "farmacie"
+                        ? isEnglish
+                          ? "Pharmacy"
+                          : "Farmacia"
+                        : location.tipo === "mercati"
+                          ? isEnglish
+                            ? "Market"
+                            : "Mercato"
+                          : location.tipo === "emergenze"
+                            ? isEnglish
+                              ? "Emergency"
+                              : "Emergenza"
+                            : location.tipo === "musei"
+                              ? isEnglish
+                                ? "Museum"
+                                : "Museo"
+                              : location.tipo === "trasporti"
+                                ? isEnglish
+                                  ? "Transport"
+                                  : "Trasporto"
+                              : location.tipo === "vela"
+                                ? "Vela"
+                                : location.tipo === "diving"
+                                  ? "Diving"
+                                  : location.tipo === "windsurfKite"
+                                    ? "Windsurf kite"
+                                    : location.tipo === "gelaterie"
+                                        ? isEnglish
+                                          ? "Ice cream"
+                                          : "Gelateria"
+                                      : location.tipo === "noleggioGommoni"
+                                          ? isEnglish
+                                            ? "Boat rental"
+                                            : "Noleggio gommoni"
+                                        : location.tipo === "noleggioScooterBike"
+                                            ? isEnglish
+                                              ? "Scooter/Bike rental"
+                                              : "Noleggio scooter e bike"
+                    : isEnglish
+                      ? "Beach"
+                      : "Spiaggia";
 
             return (
               <li key={location.id}>
@@ -908,7 +1370,8 @@ export function MaddalenaMap({
                 Maddi
               </p>
               <p className="mt-1 text-sm leading-relaxed text-slate/85">
-                <strong>Maddì consiglia:</strong> {selectedLocation.maddiTip}
+                <strong>{isEnglish ? "Maddi recommends:" : "Maddì consiglia:"}</strong>{" "}
+                {selectedLocation.maddiTip}
               </p>
             </div>
           </div>
