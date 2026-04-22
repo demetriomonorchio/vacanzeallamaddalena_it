@@ -413,6 +413,7 @@ export function MaddalenaMap({
   const [activeWeatherLayer, setActiveWeatherLayer] =
     useState<WeatherLayerKey>("wind_new");
   const [weather, setWeather] = useState<MaddalenaWind | null>(null);
+  const [weatherLayerError, setWeatherLayerError] = useState<string | null>(null);
   const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
     [number, number] | null
   >(null);
@@ -947,7 +948,18 @@ export function MaddalenaMap({
     const owmApiKey =
       process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY ??
       process.env.NEXT_PUBLIC_OPENWEAT;
-    if (!owmApiKey) return;
+    if (!owmApiKey) {
+      if (activeWeatherLayer !== "none" && activeWeatherLayer !== "wind_new") {
+        setWeatherLayerError(
+          isEnglish
+            ? "OpenWeather API key missing: rain/cloud layers are unavailable."
+            : "Chiave OpenWeather mancante: layer pioggia/nuvole non disponibili."
+        );
+      } else {
+        setWeatherLayerError(null);
+      }
+      return;
+    }
 
     if (map.getLayer(OWM_LAYER_ID)) {
       map.removeLayer(OWM_LAYER_ID);
@@ -956,10 +968,24 @@ export function MaddalenaMap({
       map.removeSource(OWM_SOURCE_ID);
     }
 
-    if (activeWeatherLayer === "none" || activeWeatherLayer === "wind_new") return;
+    if (activeWeatherLayer === "none" || activeWeatherLayer === "wind_new") {
+      setWeatherLayerError(null);
+      return;
+    }
 
     const layerName = OWM_LAYERS[activeWeatherLayer];
     const tilesUrl = `https://tile.openweathermap.org/map/${layerName}/{z}/{x}/{y}.png?appid=${owmApiKey}`;
+    const handleMapError = (event: mapboxgl.ErrorEvent) => {
+      const sourceId = (event as { sourceId?: string }).sourceId;
+      if (sourceId !== OWM_SOURCE_ID) return;
+      setWeatherLayerError(
+        isEnglish
+          ? "OpenWeather rain/cloud layer failed to load (invalid key or plan)."
+          : "Layer OpenWeather pioggia/nuvole non caricato (chiave o piano non valido)."
+      );
+    };
+
+    map.on("error", handleMapError);
 
     map.addSource(OWM_SOURCE_ID, {
       type: "raster",
@@ -972,10 +998,17 @@ export function MaddalenaMap({
       type: "raster",
       source: OWM_SOURCE_ID,
       paint: {
-        "raster-opacity": 0.55,
+        "raster-opacity": activeWeatherLayer === "precipitation_new" ? 0.82 : 0.68,
+        "raster-fade-duration": 0,
+        "raster-contrast": activeWeatherLayer === "precipitation_new" ? 0.15 : -0.08,
       },
     });
-  }, [activeWeatherLayer, isMapReady]);
+    setWeatherLayerError(null);
+
+    return () => {
+      map.off("error", handleMapError);
+    };
+  }, [activeWeatherLayer, isEnglish, isMapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1205,6 +1238,11 @@ export function MaddalenaMap({
           <option value="clouds_new">{isEnglish ? "Cloud Layer" : "Layer Nuvole"}</option>
         </select>
       </div>
+      {weatherLayerError ? (
+        <p className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900">
+          {weatherLayerError}
+        </p>
+      ) : null}
 
       <div className="relative">
         <div

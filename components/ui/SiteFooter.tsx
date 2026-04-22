@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { categories, categoryLabels } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
 
@@ -59,8 +60,16 @@ const langSwitchLabel: Record<Locale, string> = {
 export function SiteFooter({ locale }: Props) {
   const pathname = usePathname() ?? "";
   const other: Locale = locale === "it" ? "en" : "it";
+  const [queryString, setQueryString] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setQueryString(window.location.search);
+  }, [pathname]);
+
   const otherPath =
     pathname.replace(/^\/(it|en)(?=\/|$)/, `/${other}`) || `/${other}`;
+  const languageSwitchHref = `${otherPath}${queryString}`;
   const t = copy[locale];
   const year = new Date().getFullYear();
 
@@ -136,13 +145,13 @@ export function SiteFooter({ locale }: Props) {
           <p className="text-left font-sans text-xs text-slate/55">
             © {year} {siteTitle[locale]}. {t.rights}
           </p>
-          <Link
-            href={otherPath}
+          <a
+            href={languageSwitchHref}
             hrefLang={other}
             className="font-sans text-xs font-semibold text-slate/50 underline-offset-4 transition-colors hover:text-mare hover:underline"
           >
             {langSwitchLabel[locale]}
-          </Link>
+          </a>
         </div>
       </div>
     </footer>

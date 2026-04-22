@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { categories, categoryLabels } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
@@ -43,14 +43,19 @@ const mobileMenuAria: Record<Locale, { open: string; close: string; nav: string 
 export function Navbar({ locale }: NavbarProps) {
   const other: Locale = locale === "it" ? "en" : "it";
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const queryString = searchParams.toString();
+  const [queryString, setQueryString] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setQueryString(window.location.search);
+  }, [pathname]);
+
   const currentPath = pathname || `/${locale}`;
   const otherPath =
     currentPath === "/"
       ? `/${other}`
       : currentPath.replace(/^\/(it|en)(?=\/|$)/, `/${other}`) || `/${other}`;
-  const languageSwitchHref = queryString ? `${otherPath}?${queryString}` : otherPath;
+  const languageSwitchHref = `${otherPath}${queryString}`;
 
   // Home page = exactly "/it" or "/en"
   const isHome = pathname === `/${locale}` || pathname === "/";
@@ -152,7 +157,7 @@ export function Navbar({ locale }: NavbarProps) {
             {appartamentiLabel[locale]}
           </Link>
 
-          <Link
+          <a
             href={languageSwitchHref}
             hrefLang={other}
             className={`font-sans text-xs font-semibold underline-offset-4 transition-colors duration-300 hover:underline ${
@@ -162,11 +167,11 @@ export function Navbar({ locale }: NavbarProps) {
             }`}
           >
             {langSwitchLabel[locale]}
-          </Link>
+          </a>
         </div>
 
         <div className="flex shrink-0 items-center gap-1 md:hidden">
-          <Link
+          <a
             href={languageSwitchHref}
             hrefLang={other}
             className={`font-sans text-sm font-semibold underline-offset-4 transition-colors duration-300 hover:underline ${
@@ -176,7 +181,7 @@ export function Navbar({ locale }: NavbarProps) {
             }`}
           >
             {langSwitchLabel[locale]}
-          </Link>
+          </a>
           <button
             type="button"
             className={`${solidChrome ? "text-mare" : "text-white drop-shadow-md"} rounded-md p-2 transition-colors hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mare`}
