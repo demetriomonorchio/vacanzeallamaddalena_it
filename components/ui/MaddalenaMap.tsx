@@ -39,6 +39,7 @@ const defaultCenter: [number, number] = [9.4095, 41.2145];
 
 type FiltroAttivo =
   | "spiagge"
+  | "sentieri"
   | "ristoranti"
   | "alloggi"
   | "banche"
@@ -58,6 +59,7 @@ type TipoMappa =
   | "alloggi"
   | "ristoranti"
   | "spiagge"
+  | "sentieri"
   | "banche"
   | "supermercati"
   | "farmacie"
@@ -86,6 +88,28 @@ type MappaLocation = {
   esposizione?: string[];
   bookingUrl?: string;
 };
+type SentieroInfo = {
+  id: string;
+  name: string;
+  description: string;
+  difficulty: string;
+  duration: string;
+  imageUrl?: string;
+  coordinates: [number, number];
+  pathCoordinates: [number, number][];
+  previewCoordinates: [number, number];
+  previewBearing: number;
+  photoStops: TrailPhoto[];
+};
+type TrailPhoto = {
+  id: string;
+  imageUrl: string;
+  coordinates: [number, number];
+  relatedRouteId: string;
+  maddiNote: string;
+  shotDate?: string;
+  title?: string;
+};
 
 function toLatLngString(coordinates: [number, number]) {
   const [lng, lat] = coordinates;
@@ -111,6 +135,7 @@ const markerColorByType: Record<TipoMappa, string> = {
   alloggi: "#0f766e",
   ristoranti: "#ea580c",
   spiagge: "#0ea5e9",
+  sentieri: "#06b6d4",
   banche: "#7c3aed",
   supermercati: "#f97316",
   farmacie: "#16a34a",
@@ -130,6 +155,7 @@ const markerSymbolByType: Record<TipoMappa, string> = {
   alloggi: "\u2302",
   ristoranti: "\u{1F355}",
   spiagge: "\u{1F3D6}",
+  sentieri: "\u{1F97E}",
   banche: "\u{1F3E6}",
   supermercati: "\u{1F6D2}",
   farmacie: "\u2695",
@@ -182,6 +208,16 @@ const WIND_MIN_KTS = WIND_COLOR_STOPS[0].knots;
 const WIND_MAX_KTS = WIND_COLOR_STOPS[WIND_COLOR_STOPS.length - 1].knots;
 const OWM_SOURCE_ID = "owm-weather-source";
 const OWM_LAYER_ID = "owm-weather-layer";
+const SENTIERI_SOURCE_ID = "sentieri-arcipelago-source";
+const SENTIERI_LAYER_ID = "sentieri-arcipelago-layer";
+const SENTIERI_HIGHLIGHT_LAYER_ID = "sentieri-arcipelago-highlight-layer";
+const SENTIERI_START_SOURCE_ID = "sentieri-arcipelago-start-source";
+const SENTIERI_START_LAYER_ID = "sentieri-arcipelago-start-layer";
+const SENTIERI_START_LABEL_LAYER_ID = "sentieri-arcipelago-start-label-layer";
+const SENTIERI_PHOTO_SOURCE_ID = "sentieri-arcipelago-photos-source";
+const SENTIERI_PHOTO_DOT_LAYER_ID = "sentieri-arcipelago-photos-dot-layer";
+const SENTIERI_PHOTO_LAYER_ID = "sentieri-arcipelago-photos-layer";
+const SENTIERI_PHOTO_ICON_ID = "sentieri-photo-camera-icon";
 type DirezioneVento = (typeof VENTI_OPTIONS)[number]["sigla"];
 type SpiaggiaCompat = Spiaggia & {
   zona: Servizio["zona"];
@@ -231,6 +267,219 @@ function getFavoriteMeta(customFavorite?: { isFavorite?: boolean; maddiNote?: st
     isFavorite,
     maddiNote,
   };
+}
+
+function getTrailProp(
+  properties: mapboxgl.MapboxGeoJSONFeature["properties"] | undefined,
+  keys: string[]
+) {
+  for (const key of keys) {
+    const value = properties?.[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+  return "";
+}
+
+function getTrailStartCoordinates(
+  geometry: mapboxgl.MapboxGeoJSONFeature["geometry"] | undefined
+): [number, number] | null {
+  if (!geometry) return null;
+  if (
+    geometry.type === "LineString" &&
+    Array.isArray(geometry.coordinates) &&
+    geometry.coordinates.length > 0
+  ) {
+    const first = geometry.coordinates[0];
+    if (Array.isArray(first) && typeof first[0] === "number" && typeof first[1] === "number") {
+      return [first[0], first[1]];
+    }
+  }
+  if (
+    geometry.type === "MultiLineString" &&
+    Array.isArray(geometry.coordinates) &&
+    geometry.coordinates.length > 0 &&
+    Array.isArray(geometry.coordinates[0]) &&
+    geometry.coordinates[0].length > 0
+  ) {
+    const first = geometry.coordinates[0][0];
+    if (Array.isArray(first) && typeof first[0] === "number" && typeof first[1] === "number") {
+      return [first[0], first[1]];
+    }
+  }
+  return null;
+}
+
+function getTrailLineCoordinates(
+  geometry: mapboxgl.MapboxGeoJSONFeature["geometry"] | undefined
+): [number, number][] {
+  if (!geometry) return [];
+  if (geometry.type === "LineString" && Array.isArray(geometry.coordinates)) {
+    return geometry.coordinates.filter(
+      (point): point is [number, number] =>
+        Array.isArray(point) && typeof point[0] === "number" && typeof point[1] === "number"
+    );
+  }
+  if (geometry.type === "MultiLineString" && Array.isArray(geometry.coordinates)) {
+    return geometry.coordinates.flatMap((line) =>
+      Array.isArray(line)
+        ? line.filter(
+            (point): point is [number, number] =>
+              Array.isArray(point) && typeof point[0] === "number" && typeof point[1] === "number"
+          )
+        : []
+    );
+  }
+  return [];
+}
+
+function getBearingBetweenPoints(from: [number, number], to: [number, number]) {
+  const [fromLng, fromLat] = from;
+  const [toLng, toLat] = to;
+  const fromLatRad = (fromLat * Math.PI) / 180;
+  const toLatRad = (toLat * Math.PI) / 180;
+  const deltaLngRad = ((toLng - fromLng) * Math.PI) / 180;
+  const y = Math.sin(deltaLngRad) * Math.cos(toLatRad);
+  const x =
+    Math.cos(fromLatRad) * Math.sin(toLatRad) -
+    Math.sin(fromLatRad) * Math.cos(toLatRad) * Math.cos(deltaLngRad);
+  const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+  return (bearing + 360) % 360;
+}
+
+function toNumeric(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function normalizeTrailToken(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function isPercorso15Trail(sentiero: SentieroInfo | null | undefined) {
+  if (!sentiero) return false;
+  const joined = `${sentiero.id} ${sentiero.name}`;
+  const token = normalizeTrailToken(joined);
+  return token.includes("percorso15") || token.includes("sentiero15") || token.includes("trail15");
+}
+
+function haversineMeters(from: [number, number], to: [number, number]) {
+  const R = 6371000;
+  const dLat = ((to[1] - from[1]) * Math.PI) / 180;
+  const dLng = ((to[0] - from[0]) * Math.PI) / 180;
+  const lat1 = (from[1] * Math.PI) / 180;
+  const lat2 = (to[1] * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function getNearestPathIndex(point: [number, number], path: [number, number][]) {
+  if (path.length === 0) return 0;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let nearestIndex = 0;
+  for (let i = 0; i < path.length; i += 1) {
+    const distance = haversineMeters(point, path[i]);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestIndex = i;
+    }
+  }
+  return nearestIndex;
+}
+
+function parseTrailPhotos(
+  rawProperties: Record<string, unknown>,
+  trailCoordinates: [number, number][],
+  routeId: string
+): TrailPhoto[] {
+  const urlsWithOptionalMeta: Array<{
+    imageUrl: string;
+    maddiNote?: string;
+    coordinates?: [number, number];
+  }> = [];
+
+  const pushPhoto = (entry: {
+    imageUrl: unknown;
+    maddiNote?: unknown;
+    lng?: unknown;
+    lat?: unknown;
+  }) => {
+    if (typeof entry.imageUrl !== "string" || entry.imageUrl.trim().length === 0) return;
+    const lng = toNumeric(entry.lng);
+    const lat = toNumeric(entry.lat);
+    urlsWithOptionalMeta.push({
+      imageUrl: entry.imageUrl.trim(),
+      maddiNote: typeof entry.maddiNote === "string" ? entry.maddiNote.trim() : undefined,
+      coordinates: lng !== null && lat !== null ? [lng, lat] : undefined,
+    });
+  };
+
+  const photosRaw = rawProperties.photos;
+  if (Array.isArray(photosRaw)) {
+    photosRaw.forEach((item) => {
+      if (item && typeof item === "object") {
+        const candidate = item as Record<string, unknown>;
+        pushPhoto({
+          imageUrl: candidate.url ?? candidate.image ?? candidate.src ?? candidate.imageUrl,
+          maddiNote: candidate.caption ?? candidate.title ?? candidate.note ?? candidate.maddiNote,
+          lng: candidate.lng ?? candidate.lon ?? candidate.longitude,
+          lat: candidate.lat ?? candidate.latitude,
+        });
+      }
+    });
+  } else if (typeof photosRaw === "string" && photosRaw.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(photosRaw) as unknown;
+      if (Array.isArray(parsed)) {
+        parsed.forEach((item) => {
+          if (item && typeof item === "object") {
+            const candidate = item as Record<string, unknown>;
+            pushPhoto({
+              imageUrl: candidate.url ?? candidate.image ?? candidate.src ?? candidate.imageUrl,
+              maddiNote: candidate.caption ?? candidate.title ?? candidate.note ?? candidate.maddiNote,
+              lng: candidate.lng ?? candidate.lon ?? candidate.longitude,
+              lat: candidate.lat ?? candidate.latitude,
+            });
+          }
+        });
+      }
+    } catch {
+      // Ignoriamo payload non JSON.
+    }
+  }
+
+  Object.entries(rawProperties).forEach(([key, value]) => {
+    if (!/^photo\d*$/i.test(key)) return;
+    pushPhoto({ imageUrl: value });
+  });
+
+  const safeTrail: [number, number][] =
+    trailCoordinates.length > 0 ? trailCoordinates : [[9.4095, 41.2145]];
+  return urlsWithOptionalMeta.slice(0, 12).map((photo, index) => {
+    const sampled =
+      safeTrail[
+        Math.floor((index / Math.max(1, urlsWithOptionalMeta.length - 1)) * (safeTrail.length - 1))
+      ] ?? safeTrail[0];
+    return {
+      id: `photo-${index}`,
+      coordinates: photo.coordinates ?? sampled,
+      imageUrl: photo.imageUrl,
+      relatedRouteId: routeId,
+      maddiNote: photo.maddiNote ?? "",
+    };
+  });
 }
 
 function getSpiaggeConsigliate(direzioneVento: string): SpiaggiaCompat[] {
@@ -368,6 +617,7 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
         alloggi: "accommodation",
         ristoranti: "restaurants",
         spiagge: "beach",
+          sentieri: "trail",
         banche: "banks & atm",
         supermercati: "supermarkets",
         farmacie: "pharmacies",
@@ -386,6 +636,7 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
         alloggi: "alloggio",
         ristoranti: "ristoranti",
         spiagge: "spiaggia",
+          sentieri: "sentiero",
         banche: "banche & atm",
         supermercati: "supermercati",
         farmacie: "farmacie",
@@ -494,12 +745,23 @@ export function MaddalenaMap({
   zoom = 12.4,
   locale = "it",
 }: MaddalenaMapProps) {
+  const immersiveContainerRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const windCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRegistryRef = useRef<
     Record<string, { marker: mapboxgl.Marker; popup: mapboxgl.Popup }>
   >({});
+  const sentieroCardRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const sentieriByIdRef = useRef<Record<string, SentieroInfo>>({});
+  const hoveredPhotoFeatureIdRef = useRef<string | number | null>(null);
+  const trailPreviewTimersRef = useRef<number[]>([]);
+  const trailPreviewRunIdRef = useRef(0);
+  const trailSwitchWowTimerRef = useRef<number | null>(null);
+  const immersionTimerRef = useRef<number | null>(null);
+  const immersionStepRef = useRef(0);
+  const immersionPathRef = useRef<[number, number][]>([]);
+  const activeImmersionSentieroRef = useRef<SentieroInfo | null>(null);
   const particlesRef = useRef<
     Array<{ x: number; y: number; life: number; maxLife: number }>
   >([]);
@@ -517,9 +779,27 @@ export function MaddalenaMap({
   const [weatherLayerError, setWeatherLayerError] = useState<string | null>(null);
   const [showAllMobileFilters, setShowAllMobileFilters] = useState(false);
   const [showOnlyMaddiFavorites, setShowOnlyMaddiFavorites] = useState(false);
+  const [isDesktopLayout, setIsDesktopLayout] = useState(false);
+  const [isTrailFullscreen, setIsTrailFullscreen] = useState(false);
+  const [isTrailPseudoFullscreen, setIsTrailPseudoFullscreen] = useState(false);
   const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
     [number, number] | null
   >(null);
+  const [sentieriList, setSentieriList] = useState<SentieroInfo[]>([]);
+  const [hoveredSentieroId, setHoveredSentieroId] = useState<string | null>(null);
+  const [selectedSentiero, setSelectedSentiero] = useState<SentieroInfo | null>(null);
+  const [trailConfirmSentiero, setTrailConfirmSentiero] = useState<SentieroInfo | null>(null);
+  const [isTrailPreviewing, setIsTrailPreviewing] = useState(false);
+  const [isTotalImmersionActive, setIsTotalImmersionActive] = useState(false);
+  const [isTotalImmersionPaused, setIsTotalImmersionPaused] = useState(false);
+  const [immersionStepIndex, setImmersionStepIndex] = useState(0);
+  const [immersionPassedShots, setImmersionPassedShots] = useState(0);
+  const [immersionCurrentTitle, setImmersionCurrentTitle] = useState("");
+  const [trail15Photos, setTrail15Photos] = useState<TrailPhoto[] | null>(null);
+  const [visibleImmersionPhotos, setVisibleImmersionPhotos] = useState<
+    Array<{ photo: TrailPhoto; opacity: number; left: number; top: number }>
+  >([]);
+  const [lightboxPhoto, setLightboxPhoto] = useState<TrailPhoto | null>(null);
   const [copiedLocationId, setCopiedLocationId] = useState<string | null>(null);
   const isEnglish = locale === "en";
   const isIOS = useMemo(() => {
@@ -532,6 +812,53 @@ export function MaddalenaMap({
     const timerId = window.setTimeout(() => setCopiedLocationId(null), 1300);
     return () => window.clearTimeout(timerId);
   }, [copiedLocationId]);
+
+  useEffect(() => {
+    const syncViewport = () => {
+      setIsDesktopLayout(window.innerWidth >= 640);
+    };
+    syncViewport();
+    window.addEventListener("resize", syncViewport);
+    return () => window.removeEventListener("resize", syncViewport);
+  }, []);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsTrailFullscreen(document.fullscreenElement === immersiveContainerRef.current);
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isTrailPseudoFullscreen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsTrailPseudoFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isTrailPseudoFullscreen]);
+
+  useEffect(() => {
+    sentieriByIdRef.current = Object.fromEntries(sentieriList.map((sentiero) => [sentiero.id, sentiero]));
+  }, [sentieriList]);
+
+  useEffect(() => {
+    return () => {
+      trailPreviewTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+      trailPreviewTimersRef.current = [];
+      if (trailSwitchWowTimerRef.current !== null) {
+        window.clearTimeout(trailSwitchWowTimerRef.current);
+        trailSwitchWowTimerRef.current = null;
+      }
+      if (immersionTimerRef.current !== null) {
+        window.clearTimeout(immersionTimerRef.current);
+        immersionTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -879,6 +1206,8 @@ export function MaddalenaMap({
       const categoryScopedLocations = allLocations.filter((location) =>
         filtroAttivo === "alloggi"
           ? location.tipo === "alloggi"
+          : filtroAttivo === "sentieri"
+            ? false
           : location.tipo === "alloggi" || location.tipo === filtroAttivo
       );
 
@@ -910,10 +1239,22 @@ export function MaddalenaMap({
     () => visibleLocations.find((location) => location.id === selectedLocationId),
     [selectedLocationId, visibleLocations]
   );
+  const immersionPhotoMilestones = useMemo(() => {
+    if (!selectedSentiero || selectedSentiero.pathCoordinates.length === 0) return [];
+    return selectedSentiero.photoStops
+      .map((photo, index) => ({
+        photo,
+        shotIndex: index + 1,
+        pathIndex: getNearestPathIndex(photo.coordinates, selectedSentiero.pathCoordinates),
+      }))
+      .sort((a, b) => a.pathIndex - b.pathIndex);
+  }, [selectedSentiero]);
+  const immersionTotalShots = immersionPhotoMilestones.length;
   const categoryFilterOptions = [
     { key: "alloggi", label: isEnglish ? "Accommodation" : "Alloggi" },
     { key: "ristoranti", label: isEnglish ? "Restaurants" : "Ristoranti" },
     { key: "spiagge", label: isEnglish ? "Beaches" : "Spiagge" },
+    { key: "sentieri", label: isEnglish ? "Trails" : "Sentieri" },
     { key: "banche", label: "Banche & ATM" },
     { key: "supermercati", label: isEnglish ? "Supermarkets" : "Supermercati" },
     { key: "farmacie", label: isEnglish ? "Pharmacies" : "Farmacie" },
@@ -956,6 +1297,280 @@ export function MaddalenaMap({
     setFiltroAttivo("spiagge");
     setPendingSpiaggiaCoords(coordinates);
   }, []);
+
+  const clearTrailPreviewTimers = useCallback(() => {
+    trailPreviewTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    trailPreviewTimersRef.current = [];
+  }, []);
+
+  const stopTotalImmersion = useCallback((deactivate = true) => {
+    if (immersionTimerRef.current !== null) {
+      window.clearTimeout(immersionTimerRef.current);
+      immersionTimerRef.current = null;
+    }
+    if (deactivate) {
+      setIsTotalImmersionActive(false);
+      setIsTotalImmersionPaused(false);
+      setVisibleImmersionPhotos([]);
+      setImmersionStepIndex(0);
+      setImmersionPassedShots(0);
+      setImmersionCurrentTitle("");
+    }
+  }, []);
+
+  const runNextImmersionStep = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const path = immersionPathRef.current;
+    const sentiero = activeImmersionSentieroRef.current;
+    if (!sentiero || path.length === 0) {
+      stopTotalImmersion(true);
+      return;
+    }
+    const idx = immersionStepRef.current;
+    setImmersionStepIndex(idx);
+    if (idx >= path.length) {
+      stopTotalImmersion(true);
+      setTrailConfirmSentiero(sentiero);
+      return;
+    }
+    const current = path[idx];
+    const next = path[Math.min(idx + 1, path.length - 1)];
+    map.easeTo({
+      center: current,
+      zoom: 15.35,
+      pitch: 60,
+      bearing: getBearingBetweenPoints(current, next),
+      duration: 1200,
+      essential: true,
+    });
+    immersionStepRef.current += 1;
+    immersionTimerRef.current = window.setTimeout(runNextImmersionStep, 1000);
+  }, [stopTotalImmersion]);
+
+  const pauseTotalImmersion = useCallback(() => {
+    if (!isTotalImmersionActive) return;
+    if (immersionTimerRef.current !== null) {
+      window.clearTimeout(immersionTimerRef.current);
+      immersionTimerRef.current = null;
+    }
+    setIsTotalImmersionPaused(true);
+  }, [isTotalImmersionActive]);
+
+  const resumeTotalImmersion = useCallback(() => {
+    if (!isTotalImmersionActive) return;
+    if (!isTotalImmersionPaused) return;
+    setIsTotalImmersionPaused(false);
+    runNextImmersionStep();
+  }, [isTotalImmersionActive, isTotalImmersionPaused, runNextImmersionStep]);
+
+  const scrubTotalImmersion = useCallback(
+    (ratio: number) => {
+      const map = mapRef.current;
+      if (!map || !isTotalImmersionActive) return;
+      const path = immersionPathRef.current;
+      if (path.length === 0) return;
+      const clamped = Math.max(0, Math.min(1, ratio));
+      const targetIndex = Math.round(clamped * (path.length - 1));
+      const target = path[targetIndex];
+      const next = path[Math.min(targetIndex + 1, path.length - 1)] ?? target;
+
+      if (immersionTimerRef.current !== null) {
+        window.clearTimeout(immersionTimerRef.current);
+        immersionTimerRef.current = null;
+      }
+      immersionStepRef.current = targetIndex;
+      setImmersionStepIndex(targetIndex);
+
+      map.jumpTo({
+        center: target,
+        zoom: 15.35,
+        pitch: 60,
+        bearing: getBearingBetweenPoints(target, next),
+      });
+
+      if (!isTotalImmersionPaused) {
+        immersionTimerRef.current = window.setTimeout(runNextImmersionStep, 180);
+      }
+    },
+    [isTotalImmersionActive, isTotalImmersionPaused, runNextImmersionStep]
+  );
+
+  const loadTrail15Photos = useCallback(async () => {
+    if (trail15Photos) return trail15Photos;
+    const response = await fetch("/data/foto-sentiero15.json");
+    if (!response.ok) {
+      throw new Error("foto-sentiero15.json non disponibile");
+    }
+    const payload = (await response.json()) as TrailPhoto[];
+    setTrail15Photos(payload);
+    return payload;
+  }, [trail15Photos]);
+
+  const startTotalImmersion = useCallback(
+    async (sentiero: SentieroInfo) => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      let effectiveSentiero = sentiero;
+      if (isPercorso15Trail(sentiero)) {
+        try {
+          const loaded = await loadTrail15Photos();
+          effectiveSentiero = { ...sentiero, photoStops: loaded };
+          setSelectedSentiero(effectiveSentiero);
+        } catch {
+          // Se il file foto non e disponibile, continuiamo senza timeline foto.
+        }
+      }
+
+      stopTotalImmersion(false);
+      setLightboxPhoto(null);
+      setTrailConfirmSentiero(null);
+      setIsTrailPreviewing(false);
+      setIsTotalImmersionActive(true);
+      setIsTotalImmersionPaused(false);
+      setImmersionStepIndex(0);
+      setImmersionPassedShots(0);
+      setImmersionCurrentTitle("");
+      activeImmersionSentieroRef.current = effectiveSentiero;
+      immersionPathRef.current =
+        effectiveSentiero.pathCoordinates.length > 0
+          ? effectiveSentiero.pathCoordinates
+          : [effectiveSentiero.previewCoordinates, effectiveSentiero.coordinates];
+      immersionStepRef.current = 0;
+      runNextImmersionStep();
+    },
+    [loadTrail15Photos, runNextImmersionStep, stopTotalImmersion]
+  );
+
+  const runTrailCinematicPreview = useCallback(
+    (sentiero: SentieroInfo) => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      trailPreviewRunIdRef.current += 1;
+      const runId = trailPreviewRunIdRef.current;
+      clearTrailPreviewTimers();
+      setIsTrailPreviewing(true);
+      setTrailConfirmSentiero(null);
+
+      map.flyTo({
+        center: sentiero.previewCoordinates,
+        zoom: 14.4,
+        pitch: 60,
+        bearing: sentiero.previewBearing,
+        duration: 2200,
+        essential: true,
+      });
+
+      const secondLegTimer = window.setTimeout(() => {
+        if (trailPreviewRunIdRef.current !== runId) return;
+        map.flyTo({
+          center: sentiero.coordinates,
+          zoom: 15.1,
+          pitch: 60,
+          bearing: sentiero.previewBearing,
+          duration: 1800,
+          essential: true,
+        });
+      }, 1800);
+
+      const confirmTimer = window.setTimeout(() => {
+        if (trailPreviewRunIdRef.current !== runId) return;
+        setIsTrailPreviewing(false);
+        setTrailConfirmSentiero(sentiero);
+      }, 3500);
+
+      trailPreviewTimersRef.current.push(secondLegTimer, confirmTimer);
+    },
+    [clearTrailPreviewTimers]
+  );
+
+  const toggleTrailFullscreen = useCallback(async () => {
+    const container = immersiveContainerRef.current;
+    if (!container) return;
+
+    if (isTrailPseudoFullscreen) {
+      setIsTrailPseudoFullscreen(false);
+      return;
+    }
+
+    if (document.fullscreenElement === container) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        setIsTrailPseudoFullscreen(false);
+      }
+      return;
+    }
+
+    try {
+      const request = (container as HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> })
+        .requestFullscreen
+        ? () => container.requestFullscreen()
+        : (container as HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> })
+              .webkitRequestFullscreen
+          ? () =>
+              (container as HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> })
+                .webkitRequestFullscreen?.()
+          : null;
+
+      if (!request) {
+        setIsTrailPseudoFullscreen(true);
+        return;
+      }
+
+      await request();
+      setIsTrailPseudoFullscreen(false);
+    } catch {
+      // Fallback affidabile quando Fullscreen API non e disponibile (iframe/policy/browser).
+      setIsTrailPseudoFullscreen(true);
+    }
+  }, [isTrailPseudoFullscreen]);
+
+  const focusSentiero = useCallback((sentiero: SentieroInfo) => {
+    setSelectedSentiero(sentiero);
+    setHoveredSentieroId(sentiero.id);
+    runTrailCinematicPreview(sentiero);
+  }, [runTrailCinematicPreview]);
+
+  const focusSentieroWithWow = useCallback(
+    (sentiero: SentieroInfo) => {
+      const map = mapRef.current;
+      if (!map) {
+        focusSentiero(sentiero);
+        return;
+      }
+
+      stopTotalImmersion(true);
+      setIsTrailPreviewing(false);
+      setTrailConfirmSentiero(null);
+      setSelectedSentiero(sentiero);
+      setHoveredSentieroId(sentiero.id);
+
+      if (trailSwitchWowTimerRef.current !== null) {
+        window.clearTimeout(trailSwitchWowTimerRef.current);
+        trailSwitchWowTimerRef.current = null;
+      }
+
+      map.flyTo({
+        center: defaultCenter,
+        zoom: 13.9,
+        pitch: 60,
+        bearing: (sentiero.previewBearing + 130) % 360,
+        duration: 1100,
+        speed: 0.75,
+        curve: 1.45,
+        essential: true,
+      });
+
+      trailSwitchWowTimerRef.current = window.setTimeout(() => {
+        runTrailCinematicPreview(sentiero);
+        trailSwitchWowTimerRef.current = null;
+      }, 900);
+    },
+    [focusSentiero, runTrailCinematicPreview, stopTotalImmersion]
+  );
 
   const focusLocation = useCallback(
     (locationId: string, source: "marker" | "list" = "list") => {
@@ -1195,6 +1810,11 @@ export function MaddalenaMap({
       map.removeSource(OWM_SOURCE_ID);
     }
 
+    if (!windExpertAttivo) {
+      setWeatherLayerError(null);
+      return;
+    }
+
     if (activeWeatherLayer === "none" || activeWeatherLayer === "wind_new") {
       setWeatherLayerError(null);
       return;
@@ -1235,7 +1855,803 @@ export function MaddalenaMap({
     return () => {
       map.off("error", handleMapError);
     };
-  }, [activeWeatherLayer, isEnglish, isMapReady]);
+  }, [activeWeatherLayer, isEnglish, isMapReady, windExpertAttivo]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+
+    const emptyCollection: GeoJSON.FeatureCollection = {
+      type: "FeatureCollection",
+      features: [],
+    };
+
+    if (!map.getSource(SENTIERI_SOURCE_ID)) {
+      map.addSource(SENTIERI_SOURCE_ID, {
+        type: "geojson",
+        data: emptyCollection,
+      });
+    }
+
+    if (!map.getLayer(SENTIERI_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_LAYER_ID,
+        type: "line",
+        source: SENTIERI_SOURCE_ID,
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+          visibility: "none",
+        },
+        paint: {
+          "line-color": "#06b6d4",
+          "line-opacity": 0.8,
+          "line-width": 3,
+        },
+      });
+    }
+
+    if (!map.getLayer(SENTIERI_HIGHLIGHT_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_HIGHLIGHT_LAYER_ID,
+        type: "line",
+        source: SENTIERI_SOURCE_ID,
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+          visibility: "none",
+        },
+        paint: {
+          "line-color": "#22d3ee",
+          "line-opacity": 0.95,
+          "line-width": 5,
+        },
+        filter: ["==", ["get", "trailId"], "__none__"],
+      });
+    }
+
+    if (!map.getSource(SENTIERI_START_SOURCE_ID)) {
+      map.addSource(SENTIERI_START_SOURCE_ID, {
+        type: "geojson",
+        data: emptyCollection,
+      });
+    }
+
+    if (!map.getLayer(SENTIERI_START_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_START_LAYER_ID,
+        type: "circle",
+        source: SENTIERI_START_SOURCE_ID,
+        layout: {
+          visibility: "none",
+          "circle-sort-key": 100,
+        },
+        paint: {
+          "circle-radius": 7,
+          "circle-color": "#f97316",
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 2,
+          "circle-opacity": 0.92,
+          "circle-pitch-scale": "viewport",
+          "circle-pitch-alignment": "viewport",
+        },
+      });
+    }
+
+    if (!map.getLayer(SENTIERI_START_LABEL_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_START_LABEL_LAYER_ID,
+        type: "symbol",
+        source: SENTIERI_START_SOURCE_ID,
+        layout: {
+          "text-field": "START",
+          "text-size": 10,
+          "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+          "text-offset": [0, 1.5],
+          "text-anchor": "top",
+          visibility: "none",
+        },
+        paint: {
+          "text-color": "#ffffff",
+          "text-halo-color": "#0f172a",
+          "text-halo-width": 1,
+        },
+      });
+    }
+
+    if (!map.getSource(SENTIERI_PHOTO_SOURCE_ID)) {
+      map.addSource(SENTIERI_PHOTO_SOURCE_ID, {
+        type: "geojson",
+        data: emptyCollection,
+      });
+    }
+
+    if (!map.hasImage(SENTIERI_PHOTO_ICON_ID)) {
+      const size = 56;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        // Cerchio di base
+        ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, 20, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Corpo camera
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(14, 20, 28, 17);
+        ctx.fillRect(20, 16, 8, 5);
+
+        // Lente
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.arc(size / 2, 28, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        const imageData = ctx.getImageData(0, 0, size, size);
+        map.addImage(SENTIERI_PHOTO_ICON_ID, imageData, { pixelRatio: 2 });
+      }
+    }
+
+    if (!map.getLayer(SENTIERI_PHOTO_DOT_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_PHOTO_DOT_LAYER_ID,
+        type: "circle",
+        source: SENTIERI_PHOTO_SOURCE_ID,
+        layout: {
+          visibility: "none",
+          "circle-sort-key": 200,
+        },
+        paint: {
+          "circle-radius": [
+            "*",
+            [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              10,
+              3.5,
+              12,
+              5.5,
+              15,
+              9.5,
+              18,
+              14
+            ],
+            ["case", ["boolean", ["feature-state", "hover"], false], 1.25, 1]
+          ],
+          "circle-color": "#ffffff",
+          "circle-opacity": 0.96,
+          "circle-stroke-color": "#0f172a",
+          "circle-stroke-width": 1.8,
+          "circle-pitch-scale": "viewport",
+          "circle-pitch-alignment": "viewport",
+        },
+      });
+    }
+
+    if (!map.getLayer(SENTIERI_PHOTO_LAYER_ID)) {
+      map.addLayer({
+        id: SENTIERI_PHOTO_LAYER_ID,
+        type: "symbol",
+        source: SENTIERI_PHOTO_SOURCE_ID,
+        layout: {
+          "icon-image": SENTIERI_PHOTO_ICON_ID,
+          "icon-size": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            0.42,
+            12,
+            0.62,
+            15,
+            1.1,
+            18,
+            1.8,
+          ],
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+          "icon-pitch-alignment": "viewport",
+          "icon-rotation-alignment": "viewport",
+          "symbol-sort-key": 300,
+          visibility: "none",
+        },
+        paint: {
+          "icon-opacity": [
+            "case",
+            ["boolean", ["feature-state", "hover"], false],
+            1,
+            0.92,
+          ],
+          "icon-halo-color": "#ffffff",
+          "icon-halo-width": 1,
+        },
+      });
+    }
+
+    let isCancelled = false;
+
+    const loadTrailSources = async () => {
+      const urls = ["/data/sentieri-caprera.geojson", "/data/sentieri-maddalena.geojson"];
+      const settled = await Promise.allSettled(urls.map((url) => fetch(url)));
+      if (isCancelled) return;
+
+      const lineFeatures: unknown[] = [];
+      const startPointFeatures: unknown[] = [];
+      const parsedSentieri: SentieroInfo[] = [];
+
+      let trailIndex = 0;
+
+      for (let sourceIndex = 0; sourceIndex < settled.length; sourceIndex += 1) {
+        const result = settled[sourceIndex];
+        if (result.status !== "fulfilled" || !result.value.ok) continue;
+
+        const json = (await result.value.json()) as {
+          features?: Array<{
+            type?: string;
+            properties?: Record<string, unknown>;
+            geometry?: { type?: string; coordinates?: unknown };
+          }>;
+        };
+        const features = Array.isArray(json.features) ? json.features : [];
+
+        for (const feature of features) {
+          const geometryType = feature.geometry?.type;
+          if (geometryType !== "LineString" && geometryType !== "MultiLineString") {
+            continue;
+          }
+
+          const featureLike = feature as unknown as mapboxgl.MapboxGeoJSONFeature;
+          const properties = { ...(feature.properties ?? {}) } as Record<string, unknown>;
+          const rawName = getTrailProp(featureLike.properties, ["name"]);
+          const name =
+            rawName || (isEnglish ? `Trail ${trailIndex + 1}` : `Sentiero ${trailIndex + 1}`);
+          const trailId =
+            (typeof properties["@id"] === "string" && properties["@id"]) ||
+            (typeof properties.id === "string" && properties.id) ||
+            `${name}-${trailIndex}`;
+          properties.trailId = trailId;
+          properties.name = name;
+
+          const difficulty =
+            getTrailProp(featureLike.properties, [
+              "difficulty",
+              "difficolta",
+              "level",
+              "grado",
+            ]) || (isEnglish ? "Not specified" : "Non specificata");
+          properties.difficulty = difficulty;
+
+          const duration =
+            getTrailProp(featureLike.properties, [
+              "duration",
+              "tempo_stimato",
+              "tempo",
+              "estimated_time",
+            ]) || (isEnglish ? "Not specified" : "Non specificato");
+          properties.duration = duration;
+
+          const description =
+            getTrailProp(featureLike.properties, [
+              "description",
+              "descrizione",
+              "maddiNote",
+              "note",
+              "details",
+            ]) ||
+            (isEnglish
+              ? "No description yet. Add it in the trail GeoJSON as `description`."
+              : "Nessuna descrizione ancora. Aggiungila nel GeoJSON del sentiero come `description`.");
+          properties.description = description;
+
+          const imageUrl = getTrailProp(featureLike.properties, [
+            "image",
+            "imageUrl",
+            "photo",
+            "preview",
+            "thumbnail",
+          ]);
+          if (imageUrl) properties.image = imageUrl;
+
+          const startCoordinates = getTrailStartCoordinates(featureLike.geometry);
+          if (!startCoordinates) continue;
+          const trailCoordinates = getTrailLineCoordinates(featureLike.geometry);
+          const previewCoordinates =
+            trailCoordinates.length > 2
+              ? trailCoordinates[Math.floor(trailCoordinates.length / 2)]
+              : startCoordinates;
+          const previewBearing =
+            trailCoordinates.length > 1
+              ? getBearingBetweenPoints(trailCoordinates[0], trailCoordinates[1])
+              : 18;
+
+          parsedSentieri.push({
+            id: String(trailId),
+            name,
+            description,
+            difficulty,
+            duration,
+            imageUrl: imageUrl || undefined,
+            coordinates: startCoordinates,
+            pathCoordinates: trailCoordinates,
+            previewCoordinates,
+            previewBearing,
+            photoStops: parseTrailPhotos(feature.properties ?? {}, trailCoordinates, String(trailId)),
+          });
+
+          lineFeatures.push({
+            ...feature,
+            properties,
+          });
+
+          startPointFeatures.push({
+            type: "Feature",
+            properties: {
+              trailId,
+              name,
+              description,
+              difficulty,
+              duration,
+              image: imageUrl,
+              previewBearing,
+              previewLng: previewCoordinates[0],
+              previewLat: previewCoordinates[1],
+            },
+            geometry: {
+              type: "Point",
+              coordinates: startCoordinates,
+            },
+          });
+          trailIndex += 1;
+        }
+      }
+
+      if (isCancelled) return;
+
+      const lineCollection = {
+        type: "FeatureCollection",
+        features: lineFeatures,
+      };
+      const startCollection = {
+        type: "FeatureCollection",
+        features: startPointFeatures,
+      };
+
+      const lineSource = map.getSource(SENTIERI_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
+      lineSource?.setData(lineCollection as GeoJSON.FeatureCollection);
+
+      const startSource = map.getSource(SENTIERI_START_SOURCE_ID) as
+        | mapboxgl.GeoJSONSource
+        | undefined;
+      startSource?.setData(startCollection as GeoJSON.FeatureCollection);
+
+      setSentieriList(parsedSentieri);
+    };
+
+    void loadTrailSources();
+
+    const handleTrailClick = (
+      event: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }
+    ) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      const trailId = getTrailProp(feature.properties, ["trailId"]);
+      const name =
+        getTrailProp(feature.properties, ["name"]) || (isEnglish ? "Unnamed trail" : "Sentiero");
+      const description =
+        getTrailProp(feature.properties, ["description", "descrizione", "maddiNote", "note"]) ||
+        (isEnglish ? "No description available." : "Nessuna descrizione disponibile.");
+      const difficulty =
+        getTrailProp(feature.properties, ["difficulty", "difficolta"]) ||
+        (isEnglish ? "Not specified" : "Non specificata");
+      const duration =
+        getTrailProp(feature.properties, ["duration", "tempo_stimato", "tempo"]) ||
+        (isEnglish ? "Not specified" : "Non specificato");
+      const imageUrl = getTrailProp(feature.properties, [
+        "image",
+        "imageUrl",
+        "photo",
+        "preview",
+        "thumbnail",
+      ]);
+      const startCoordinates = getTrailStartCoordinates(feature.geometry) ?? [
+        event.lngLat.lng,
+        event.lngLat.lat,
+      ];
+      const previewCoordinates = [
+        Number(feature.properties?.previewLng ?? startCoordinates[0]),
+        Number(feature.properties?.previewLat ?? startCoordinates[1]),
+      ] as [number, number];
+      const previewBearing = Number(feature.properties?.previewBearing ?? 18);
+      const pathCoordinates = getTrailLineCoordinates(feature.geometry);
+      const mappedSentiero = trailId ? sentieriByIdRef.current[trailId] : undefined;
+      const sentieroToSelect: SentieroInfo = {
+        id: trailId || name,
+        name,
+        description,
+        difficulty,
+        duration,
+        imageUrl: imageUrl || undefined,
+        coordinates: startCoordinates,
+        pathCoordinates,
+        previewCoordinates,
+        previewBearing,
+        photoStops: mappedSentiero?.photoStops ?? [],
+      };
+      setSelectedSentiero(sentieroToSelect);
+      setHoveredSentieroId(sentieroToSelect.id);
+      const detailsLabel = isEnglish ? "Details" : "Dettagli";
+      const popup = new mapboxgl.Popup({
+        closeButton: true,
+        closeOnClick: true,
+        maxWidth: "240px",
+      });
+
+      const popupContent = document.createElement("div");
+      popupContent.style.display = "grid";
+      popupContent.style.gap = "8px";
+
+      const title = document.createElement("p");
+      title.style.margin = "0";
+      title.style.fontSize = "13px";
+      title.style.fontWeight = "700";
+      title.style.color = "#0f172a";
+      title.textContent = name;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = detailsLabel;
+      button.style.display = "inline-flex";
+      button.style.alignItems = "center";
+      button.style.justifyContent = "center";
+      button.style.minHeight = "30px";
+      button.style.borderRadius = "8px";
+      button.style.border = "1px solid #0891b2";
+      button.style.padding = "4px 10px";
+      button.style.fontSize = "12px";
+      button.style.fontWeight = "700";
+      button.style.color = "#0e7490";
+      button.style.background = "#ecfeff";
+      button.style.cursor = "pointer";
+
+      button.addEventListener("click", () => {
+        setSelectedSentiero(sentieroToSelect);
+        setHoveredSentieroId(sentieroToSelect.id);
+        popup.remove();
+      });
+
+      popupContent.append(title, button);
+      popup.setDOMContent(popupContent).setLngLat(event.lngLat).addTo(map);
+    };
+
+    const handleTrailMouseEnter = () => {
+      map.getCanvas().style.cursor = "pointer";
+    };
+
+    const handleTrailMouseLeave = () => {
+      map.getCanvas().style.cursor = "";
+    };
+
+    const handleStartClick = (
+      event: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }
+    ) => {
+      const feature = event.features?.[0];
+      if (!feature || feature.geometry.type !== "Point") return;
+      const point = feature.geometry.coordinates;
+      if (!Array.isArray(point) || point.length < 2) return;
+      const trailId = getTrailProp(feature.properties, ["trailId"]);
+      const mapped = trailId ? sentieriByIdRef.current[trailId] : undefined;
+      if (mapped) {
+        focusSentiero(mapped);
+        return;
+      }
+      const fallbackSentiero: SentieroInfo = {
+        id: trailId || getTrailProp(feature.properties, ["name"]) || `${point[0]}-${point[1]}`,
+        name: getTrailProp(feature.properties, ["name"]) || (isEnglish ? "Trail start" : "Inizio sentiero"),
+        description:
+          getTrailProp(feature.properties, ["description"]) ||
+          (isEnglish ? "Trail preview." : "Anteprima sentiero."),
+        difficulty:
+          getTrailProp(feature.properties, ["difficulty"]) ||
+          (isEnglish ? "Not specified" : "Non specificata"),
+        duration:
+          getTrailProp(feature.properties, ["duration"]) ||
+          (isEnglish ? "Not specified" : "Non specificato"),
+        imageUrl: getTrailProp(feature.properties, ["image"]) || undefined,
+        coordinates: [Number(point[0]), Number(point[1])],
+        pathCoordinates: [],
+        previewCoordinates: [
+          Number(feature.properties?.previewLng ?? point[0]),
+          Number(feature.properties?.previewLat ?? point[1]),
+        ],
+        previewBearing: Number(feature.properties?.previewBearing ?? 18),
+        photoStops: [],
+      };
+      focusSentiero(fallbackSentiero);
+    };
+
+    const handlePhotoClick = (
+      event: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }
+    ) => {
+      const feature = event.features?.[0];
+      if (!feature || feature.geometry.type !== "Point") return;
+      const imageUrl = getTrailProp(feature.properties, ["imageUrl", "url"]);
+      if (!imageUrl) return;
+      const relatedRouteId = getTrailProp(feature.properties, ["relatedRouteId"]);
+      const photoId = getTrailProp(feature.properties, ["id"]);
+      const point = feature.geometry.coordinates;
+      if (!Array.isArray(point) || point.length < 2) return;
+      if (isTotalImmersionActive) {
+        pauseTotalImmersion();
+      }
+      setLightboxPhoto({
+        id: photoId || `photo-${Number(point[0]).toFixed(5)}-${Number(point[1]).toFixed(5)}`,
+        imageUrl,
+        coordinates: [Number(point[0]), Number(point[1])],
+        relatedRouteId,
+        maddiNote: getTrailProp(feature.properties, ["maddiNote", "caption"]),
+        title: getTrailProp(feature.properties, ["title"]),
+      });
+    };
+
+    const handlePhotoMouseMove = (
+      event: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }
+    ) => {
+      const feature = event.features?.[0];
+      const nextId = feature?.id;
+      const prevId = hoveredPhotoFeatureIdRef.current;
+      if (prevId !== null && prevId !== undefined && prevId !== nextId) {
+        map.setFeatureState(
+          { source: SENTIERI_PHOTO_SOURCE_ID, id: prevId },
+          { hover: false }
+        );
+      }
+      if (nextId !== null && nextId !== undefined && prevId !== nextId) {
+        map.setFeatureState(
+          { source: SENTIERI_PHOTO_SOURCE_ID, id: nextId },
+          { hover: true }
+        );
+      }
+      hoveredPhotoFeatureIdRef.current = nextId ?? null;
+    };
+
+    map.on("click", SENTIERI_LAYER_ID, handleTrailClick);
+    map.on("click", SENTIERI_START_LAYER_ID, handleStartClick);
+    map.on("click", SENTIERI_START_LABEL_LAYER_ID, handleStartClick);
+    map.on("click", SENTIERI_PHOTO_DOT_LAYER_ID, handlePhotoClick);
+    map.on("click", SENTIERI_PHOTO_LAYER_ID, handlePhotoClick);
+    map.on("mouseenter", SENTIERI_LAYER_ID, handleTrailMouseEnter);
+    map.on("mouseleave", SENTIERI_LAYER_ID, handleTrailMouseLeave);
+    map.on("mouseenter", SENTIERI_START_LAYER_ID, handleTrailMouseEnter);
+    map.on("mouseleave", SENTIERI_START_LAYER_ID, handleTrailMouseLeave);
+    map.on("mouseenter", SENTIERI_START_LABEL_LAYER_ID, handleTrailMouseEnter);
+    map.on("mouseleave", SENTIERI_START_LABEL_LAYER_ID, handleTrailMouseLeave);
+    map.on("mouseenter", SENTIERI_PHOTO_DOT_LAYER_ID, handleTrailMouseEnter);
+    map.on("mousemove", SENTIERI_PHOTO_DOT_LAYER_ID, handlePhotoMouseMove);
+    map.on("mouseleave", SENTIERI_PHOTO_DOT_LAYER_ID, handleTrailMouseLeave);
+    map.on("mouseenter", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseEnter);
+    map.on("mousemove", SENTIERI_PHOTO_LAYER_ID, handlePhotoMouseMove);
+    map.on("mouseleave", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseLeave);
+
+    return () => {
+      isCancelled = true;
+      const hoveredId = hoveredPhotoFeatureIdRef.current;
+      if (hoveredId !== null && hoveredId !== undefined) {
+        map.setFeatureState(
+          { source: SENTIERI_PHOTO_SOURCE_ID, id: hoveredId },
+          { hover: false }
+        );
+      }
+      hoveredPhotoFeatureIdRef.current = null;
+      map.off("click", SENTIERI_LAYER_ID, handleTrailClick);
+      map.off("click", SENTIERI_START_LAYER_ID, handleStartClick);
+      map.off("click", SENTIERI_START_LABEL_LAYER_ID, handleStartClick);
+      map.off("click", SENTIERI_PHOTO_DOT_LAYER_ID, handlePhotoClick);
+      map.off("click", SENTIERI_PHOTO_LAYER_ID, handlePhotoClick);
+      map.off("mouseenter", SENTIERI_LAYER_ID, handleTrailMouseEnter);
+      map.off("mouseleave", SENTIERI_LAYER_ID, handleTrailMouseLeave);
+      map.off("mouseenter", SENTIERI_START_LAYER_ID, handleTrailMouseEnter);
+      map.off("mouseleave", SENTIERI_START_LAYER_ID, handleTrailMouseLeave);
+      map.off("mouseenter", SENTIERI_START_LABEL_LAYER_ID, handleTrailMouseEnter);
+      map.off("mouseleave", SENTIERI_START_LABEL_LAYER_ID, handleTrailMouseLeave);
+      map.off("mouseenter", SENTIERI_PHOTO_DOT_LAYER_ID, handleTrailMouseEnter);
+      map.off("mousemove", SENTIERI_PHOTO_DOT_LAYER_ID, handlePhotoMouseMove);
+      map.off("mouseleave", SENTIERI_PHOTO_DOT_LAYER_ID, handleTrailMouseLeave);
+      map.off("mouseenter", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseEnter);
+      map.off("mousemove", SENTIERI_PHOTO_LAYER_ID, handlePhotoMouseMove);
+      map.off("mouseleave", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseLeave);
+      map.getCanvas().style.cursor = "";
+    };
+  }, [focusSentiero, isEnglish, isMapReady, isTotalImmersionActive, pauseTotalImmersion]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+    const visibility = filtroAttivo === "sentieri" ? "visible" : "none";
+    const activePhotoStops =
+      selectedSentiero && isPercorso15Trail(selectedSentiero)
+        ? selectedSentiero.photoStops.length > 0
+          ? selectedSentiero.photoStops
+          : (trail15Photos ?? [])
+        : selectedSentiero?.photoStops ?? [];
+
+    if (map.getLayer(SENTIERI_LAYER_ID)) {
+      map.setLayoutProperty(SENTIERI_LAYER_ID, "visibility", visibility);
+    }
+    if (map.getLayer(SENTIERI_HIGHLIGHT_LAYER_ID)) {
+      map.setLayoutProperty(SENTIERI_HIGHLIGHT_LAYER_ID, "visibility", visibility);
+      const activeTrailId = hoveredSentieroId ?? selectedSentiero?.id ?? "__none__";
+      map.setFilter(SENTIERI_HIGHLIGHT_LAYER_ID, ["==", ["get", "trailId"], activeTrailId]);
+    }
+    if (map.getLayer(SENTIERI_START_LAYER_ID)) {
+      map.setLayoutProperty(SENTIERI_START_LAYER_ID, "visibility", visibility);
+    }
+    if (map.getLayer(SENTIERI_START_LABEL_LAYER_ID)) {
+      map.setLayoutProperty(SENTIERI_START_LABEL_LAYER_ID, "visibility", visibility);
+    }
+    if (map.getLayer(SENTIERI_PHOTO_LAYER_ID)) {
+      const photoVisibility =
+        filtroAttivo === "sentieri" && activePhotoStops.length > 0
+          ? "visible"
+          : "none";
+      map.setLayoutProperty(SENTIERI_PHOTO_LAYER_ID, "visibility", photoVisibility);
+      if (map.getLayer(SENTIERI_PHOTO_DOT_LAYER_ID)) {
+        map.setLayoutProperty(SENTIERI_PHOTO_DOT_LAYER_ID, "visibility", photoVisibility);
+      }
+    }
+  }, [filtroAttivo, hoveredSentieroId, isMapReady, selectedSentiero, trail15Photos]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+    const photoSource = map.getSource(SENTIERI_PHOTO_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
+    if (!photoSource) return;
+    const photoStops =
+      selectedSentiero && isPercorso15Trail(selectedSentiero)
+        ? selectedSentiero.photoStops.length > 0
+          ? selectedSentiero.photoStops
+          : (trail15Photos ?? [])
+        : (selectedSentiero?.photoStops ?? []);
+    const features = photoStops.map((photo) => ({
+      id: photo.id,
+      type: "Feature",
+      properties: {
+        id: photo.id,
+        imageUrl: photo.imageUrl,
+        relatedRouteId: photo.relatedRouteId,
+        maddiNote: photo.maddiNote,
+          title: photo.title ?? "",
+      },
+      geometry: {
+        type: "Point",
+        coordinates: photo.coordinates,
+      },
+    }));
+    photoSource.setData({
+      type: "FeatureCollection",
+      features,
+    } as GeoJSON.FeatureCollection);
+  }, [isMapReady, selectedSentiero, trail15Photos]);
+
+  useEffect(() => {
+    if (filtroAttivo !== "sentieri") {
+      setSelectedSentiero(null);
+      setHoveredSentieroId(null);
+      setTrailConfirmSentiero(null);
+      setIsTrailPreviewing(false);
+      setLightboxPhoto(null);
+      clearTrailPreviewTimers();
+      stopTotalImmersion(true);
+    }
+  }, [clearTrailPreviewTimers, filtroAttivo, stopTotalImmersion]);
+
+  useEffect(() => {
+    if (filtroAttivo !== "sentieri" || !selectedSentiero?.id) return;
+    const targetCard = sentieroCardRefs.current[selectedSentiero.id];
+    targetCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [filtroAttivo, selectedSentiero]);
+
+  useEffect(() => {
+    if (filtroAttivo !== "sentieri" || !selectedSentiero) return;
+    if (!isPercorso15Trail(selectedSentiero)) return;
+    if (selectedSentiero.photoStops.length > 0 && trail15Photos) return;
+
+    let isCancelled = false;
+    const hydrateTrail15Photos = async () => {
+      try {
+        const loaded = await loadTrail15Photos();
+        if (isCancelled) return;
+        setSelectedSentiero((current) => {
+          if (!current || current.id !== selectedSentiero.id) return current;
+          if (current.photoStops.length > 0 && trail15Photos) return current;
+          return { ...current, photoStops: loaded };
+        });
+      } catch {
+        // Se il file non e disponibile lasciamo il comportamento corrente.
+      }
+    };
+
+    void hydrateTrail15Photos();
+    return () => {
+      isCancelled = true;
+    };
+  }, [filtroAttivo, loadTrail15Photos, selectedSentiero, trail15Photos]);
+
+  useEffect(() => {
+    if (!isTotalImmersionActive || !selectedSentiero) {
+      setImmersionPassedShots(0);
+      setImmersionCurrentTitle("");
+      return;
+    }
+    const passed = immersionPhotoMilestones.filter(
+      (milestone) => milestone.pathIndex <= immersionStepIndex
+    );
+    setImmersionPassedShots(passed.length);
+    const titled = [...passed]
+      .reverse()
+      .find(
+        (milestone) =>
+          typeof milestone.photo.title === "string" && milestone.photo.title.trim().length > 0
+      );
+    setImmersionCurrentTitle(titled?.photo.title?.trim() ?? "");
+  }, [immersionPhotoMilestones, immersionStepIndex, isTotalImmersionActive, selectedSentiero]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+    if (!isTotalImmersionActive || isTotalImmersionPaused || lightboxPhoto) {
+      setVisibleImmersionPhotos([]);
+      return;
+    }
+    if (!selectedSentiero || selectedSentiero.photoStops.length === 0) {
+      setVisibleImmersionPhotos([]);
+      return;
+    }
+
+    const updateVisiblePhotos = () => {
+      const camera = map.getCenter();
+      const cameraCoords: [number, number] = [camera.lng, camera.lat];
+      const nearby = selectedSentiero.photoStops
+        .map((photo) => ({
+          photo,
+          distance: haversineMeters(cameraCoords, photo.coordinates),
+        }))
+        .filter((entry) => entry.distance <= 50)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 4)
+        .map((entry) => {
+          const projected = map.project(entry.photo.coordinates);
+          return {
+            photo: entry.photo,
+            opacity: Math.max(0.15, 1 - entry.distance / 50),
+            left: projected.x,
+            top: projected.y,
+          };
+        });
+
+      setVisibleImmersionPhotos(nearby);
+    };
+
+    updateVisiblePhotos();
+    map.on("move", updateVisiblePhotos);
+    map.on("zoom", updateVisiblePhotos);
+    map.on("pitch", updateVisiblePhotos);
+
+    return () => {
+      map.off("move", updateVisiblePhotos);
+      map.off("zoom", updateVisiblePhotos);
+      map.off("pitch", updateVisiblePhotos);
+    };
+  }, [
+    isMapReady,
+    isTotalImmersionActive,
+    isTotalImmersionPaused,
+    lightboxPhoto,
+    selectedSentiero,
+  ]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1272,6 +2688,7 @@ export function MaddalenaMap({
     };
 
     if (
+      !windExpertAttivo ||
       activeWeatherLayer !== "wind_new" ||
       !weather ||
       typeof weather.direction.gradi !== "number"
@@ -1372,7 +2789,52 @@ export function MaddalenaMap({
       map.off("resize", syncCanvasSize);
       clearCanvas();
     };
-  }, [activeWeatherLayer, isMapReady, weather]);
+  }, [activeWeatherLayer, isMapReady, weather, windExpertAttivo]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    const bearing = map.getBearing();
+    const pitch = map.getPitch();
+    const isSentieriMode = filtroAttivo === "sentieri";
+    const isImmersiveMode = isTrailFullscreen || isTrailPseudoFullscreen;
+    const shouldTightenToTrail = isImmersiveMode && isSentieriMode && Boolean(selectedSentiero);
+    const targetCenter = shouldTightenToTrail
+      ? selectedSentiero?.previewCoordinates ?? [center.lng, center.lat]
+      : ([center.lng, center.lat] as [number, number]);
+    const targetZoom = shouldTightenToTrail ? Math.max(zoom, 15.25) : zoom;
+    const targetPitch = shouldTightenToTrail ? Math.max(pitch, 58) : pitch;
+
+    const resizeNow = () => {
+      map.resize();
+      map.jumpTo({
+        center: targetCenter,
+        zoom: targetZoom,
+        bearing,
+        pitch: targetPitch,
+      });
+    };
+
+    const rafId = window.requestAnimationFrame(resizeNow);
+    const timerId = window.setTimeout(() => {
+      map.resize();
+    }, 220);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timerId);
+    };
+  }, [
+    filtroAttivo,
+    isDesktopLayout,
+    isMapReady,
+    isTrailFullscreen,
+    isTrailPseudoFullscreen,
+    selectedSentiero,
+  ]);
 
   if (!mapboxToken) {
     return (
@@ -1385,6 +2847,157 @@ export function MaddalenaMap({
       </div>
     );
   }
+
+  const isSentieriActive = filtroAttivo === "sentieri";
+  const isTrailImmersive = isTrailFullscreen || isTrailPseudoFullscreen;
+  const mapHeightClassName = isSentieriActive
+    ? isTrailImmersive
+      ? "h-[100vh]"
+      : "h-screen sm:h-[78vh]"
+    : heightClassName;
+  const handleTrailConfirmYes = () => {
+    if (!trailConfirmSentiero) return;
+    stopTotalImmersion(true);
+    const url = getGoogleDirectionsUrl(trailConfirmSentiero.coordinates);
+    window.open(url, "_blank", "noopener,noreferrer");
+    setTrailConfirmSentiero(null);
+  };
+
+  const handleTrailConfirmNo = () => {
+    stopTotalImmersion(true);
+    setTrailConfirmSentiero(null);
+    const map = mapRef.current;
+    if (!map) return;
+    map.flyTo({
+      center: defaultCenter,
+      zoom: 12.3,
+      pitch: 0,
+      bearing: 0,
+      duration: 1200,
+      essential: true,
+    });
+  };
+
+  const sentieriPanelContent = (
+    <>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="font-sans text-sm font-semibold text-slate/85">
+          {isEnglish ? "Trail list" : "Lista Sentieri"}
+        </h2>
+        <span className="text-xs font-semibold text-cyan-800">
+          {sentieriList.length} {isEnglish ? "trails" : "sentieri"}
+        </span>
+      </div>
+      <div className="grid gap-2">
+        {sentieriList.map((sentiero) => {
+          const isActive = selectedSentiero?.id === sentiero.id;
+          return (
+            <button
+              key={sentiero.id}
+              ref={(node) => {
+                sentieroCardRefs.current[sentiero.id] = node;
+              }}
+              type="button"
+              onClick={() => focusSentiero(sentiero)}
+              onMouseEnter={() => setHoveredSentieroId(sentiero.id)}
+              onMouseLeave={() => setHoveredSentieroId((prev) => (prev === sentiero.id ? null : prev))}
+              className={`w-full overflow-hidden rounded-xl border text-left transition-colors ${
+                isActive
+                  ? "border-cyan-500 bg-white"
+                  : "border-cyan-200 bg-white/90 hover:border-cyan-400"
+              }`}
+            >
+              {sentiero.imageUrl ? (
+                <img src={sentiero.imageUrl} alt={sentiero.name} className="h-24 w-full object-cover" />
+              ) : null}
+              <div className="p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm font-semibold text-slate">{sentiero.name}</p>
+                  <span
+                    className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-cyan-300 bg-cyan-100 text-cyan-800"
+                    aria-hidden="true"
+                  >
+                    ▶
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-slate/70">
+                  {isEnglish ? "Difficulty" : "Difficolta"}: {sentiero.difficulty}
+                </p>
+                <p className="mt-0.5 text-xs text-slate/70">
+                  {isEnglish ? "Estimated time" : "Tempo stimato"}: {sentiero.duration}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      {selectedSentiero ? (
+        <aside className="mt-3 rounded-xl border border-cyan-200 bg-cyan-100/70 px-4 py-3">
+          <p className="font-[var(--font-handwriting)] text-lg leading-none text-mare">
+            {isEnglish ? "Trail details" : "Dettagli sentiero"}
+          </p>
+          <p className="mt-1 text-sm font-semibold text-slate">{selectedSentiero.name}</p>
+          <p className="mt-1 text-xs text-slate/70">
+            {isEnglish ? "Difficulty" : "Difficolta"}: {selectedSentiero.difficulty}
+          </p>
+          <p className="mt-0.5 text-xs text-slate/70">
+            {isEnglish ? "Estimated time" : "Tempo stimato"}: {selectedSentiero.duration}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate/85">{selectedSentiero.description}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <a
+              href={getGoogleDirectionsUrl(selectedSentiero.coordinates)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-white/55 bg-white/45 px-3 text-xs font-semibold text-slate shadow-sm backdrop-blur-md transition-colors hover:bg-white/65"
+            >
+              Google Maps
+            </a>
+            {isIOS ? (
+              <a
+                href={getAppleMapsUrl(selectedSentiero.coordinates)}
+                className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-white/55 bg-white/45 px-3 text-xs font-semibold text-slate shadow-sm backdrop-blur-md transition-colors hover:bg-white/65"
+              >
+                Apple
+              </a>
+            ) : null}
+            {isPercorso15Trail(selectedSentiero) ? (
+              <button
+                type="button"
+                onClick={() => {
+                  void startTotalImmersion(selectedSentiero);
+                }}
+                className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-cyan-500 bg-cyan-500 px-3 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-cyan-600"
+              >
+                {isEnglish ? "Start total immersion" : "Avvia Immersione"}
+              </button>
+            ) : null}
+            {isTotalImmersionActive ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (isTotalImmersionPaused) {
+                    resumeTotalImmersion();
+                  } else {
+                    pauseTotalImmersion();
+                  }
+                }}
+                className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-slate shadow-sm transition-colors hover:bg-slate-50"
+              >
+                {isTotalImmersionPaused
+                  ? isEnglish
+                    ? "Resume flight"
+                    : "Riprendi volo"
+                  : isEnglish
+                    ? "Pause flight"
+                    : "Pausa volo"}
+              </button>
+            ) : null}
+          </div>
+        </aside>
+      ) : null}
+    </>
+  );
 
   return (
     <section className={`max-w-[100vw] overflow-hidden ${className ?? ""}`}>
@@ -1401,7 +3014,7 @@ export function MaddalenaMap({
           title={isEnglish ? "Maddi favorites" : "Consigliati da Maddi"}
         >
           <span aria-hidden="true">★</span>
-          <span>{isEnglish ? "Maddi picks" : "Consigliati da Maddi"}</span>
+          <span>{isEnglish ? "Maddi picks ⭐" : "I Consigli di Maddi ⭐"}</span>
         </button>
         {categoryFilterOptions.map((item) => {
           const isActive = item.key === "alloggi" || filtroAttivo === item.key;
@@ -1410,7 +3023,12 @@ export function MaddalenaMap({
             <button
               key={item.key}
               type="button"
-              onClick={() => setFiltroAttivo(item.key)}
+              onClick={() => {
+                setFiltroAttivo(item.key);
+                if (item.key !== "spiagge") {
+                  setWindExpertAttivo(false);
+                }
+              }}
               aria-pressed={isActive}
               aria-label={`Filtro ${item.label}`}
               title={item.label}
@@ -1475,6 +3093,9 @@ export function MaddalenaMap({
                       type="button"
                       onClick={() => {
                         setFiltroAttivo(item.key);
+                        if (item.key !== "spiagge") {
+                          setWindExpertAttivo(false);
+                        }
                         setShowAllMobileFilters(false);
                       }}
                       className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-semibold transition-colors ${
@@ -1515,113 +3136,317 @@ export function MaddalenaMap({
         >
           {isEnglish ? "Wind Expert" : "Wind Expert"}
         </button>
-        <select
-          value={direzioneVento}
-          onChange={(event) => {
-            setWindExpertAttivo(true);
-            setDirezioneVento(event.target.value as DirezioneVento);
-          }}
-          className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
-          aria-label={isEnglish ? "Wind direction" : "Direzione vento"}
-        >
-          {VENTI_OPTIONS.map((vento) => (
-            <option key={vento.sigla} value={vento.sigla}>
-              {getNomeVentoByLocale(vento.sigla, locale)}
-            </option>
-          ))}
-        </select>
-        <select
-          value={activeWeatherLayer}
-          onChange={(event) =>
-            setActiveWeatherLayer(event.target.value as WeatherLayerKey)
-          }
-          className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
-          aria-label={isEnglish ? "Weather layer" : "Layer meteo"}
-        >
-          <option value="none">{isEnglish ? "Weather Off" : "Meteo Off"}</option>
-          <option value="wind_new">{isEnglish ? "Wind Layer" : "Layer Vento"}</option>
-          <option value="precipitation_new">
-            {isEnglish ? "Rain Layer" : "Layer Pioggia"}
-          </option>
-          <option value="clouds_new">{isEnglish ? "Cloud Layer" : "Layer Nuvole"}</option>
-        </select>
+        {windExpertAttivo ? (
+          <>
+            <select
+              value={direzioneVento}
+              onChange={(event) => {
+                setWindExpertAttivo(true);
+                setDirezioneVento(event.target.value as DirezioneVento);
+              }}
+              className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
+              aria-label={isEnglish ? "Wind direction" : "Direzione vento"}
+            >
+              {VENTI_OPTIONS.map((vento) => (
+                <option key={vento.sigla} value={vento.sigla}>
+                  {getNomeVentoByLocale(vento.sigla, locale)}
+                </option>
+              ))}
+            </select>
+            <select
+              value={activeWeatherLayer}
+              onChange={(event) =>
+                setActiveWeatherLayer(event.target.value as WeatherLayerKey)
+              }
+              className="w-full rounded-full border border-mare/30 bg-white px-3 py-1.5 text-xs font-semibold text-slate sm:w-auto"
+              aria-label={isEnglish ? "Weather layer" : "Layer meteo"}
+            >
+              <option value="none">{isEnglish ? "Weather Off" : "Meteo Off"}</option>
+              <option value="wind_new">{isEnglish ? "Wind Layer" : "Layer Vento"}</option>
+              <option value="precipitation_new">
+                {isEnglish ? "Rain Layer" : "Layer Pioggia"}
+              </option>
+              <option value="clouds_new">{isEnglish ? "Cloud Layer" : "Layer Nuvole"}</option>
+            </select>
+          </>
+        ) : null}
       </div>
-      {weatherLayerError ? (
+      {windExpertAttivo && weatherLayerError ? (
         <p className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900">
           {weatherLayerError}
         </p>
       ) : null}
 
-      <div className="relative w-full max-w-[100vw] overflow-hidden">
-        <div
-          ref={containerRef}
-          className={`w-full overflow-hidden rounded-2xl border border-mare/20 shadow-sm ${heightClassName}`}
-        />
-        <canvas
-          ref={windCanvasRef}
-          className="pointer-events-none absolute inset-0 z-20 rounded-2xl"
-          aria-hidden="true"
-        />
-        {activeWeatherLayer === "wind_new" && weather ? (
-          <aside className="pointer-events-none absolute left-2 top-20 z-30 rounded-lg border border-white/15 bg-slate-950/60 p-2 text-white/95 backdrop-blur-sm md:left-3 md:top-24">
-            <p className="mb-1 text-xs font-semibold">kts</p>
-            <div className="flex items-stretch gap-2">
-              <div
-                className="relative h-64 w-5 rounded-sm"
-                style={{
-                  background: getWindLegendGradient(),
-                }}
-              >
-                <span
-                  className="absolute left-full ml-1 block h-0.5 w-2 -translate-y-1/2 rounded-full"
-                  style={{
-                    top: `${knotsToLegendPercent(weather.speed)}%`,
-                    backgroundColor: getWindColorByKnots(weather.speed, 1),
-                  }}
-                />
-              </div>
-              <div className="flex h-64 flex-col justify-between py-0.5 text-right text-xs font-semibold">
-                {WIND_SCALE_TICKS.map((tick) => (
-                  <span key={tick}>{tick}</span>
-                ))}
-              </div>
-            </div>
+      <div
+        ref={immersiveContainerRef}
+        className={`relative w-full max-w-[100vw] overflow-hidden ${
+          isSentieriActive && !isTrailImmersive ? "sm:grid sm:grid-cols-[380px_minmax(0,1fr)] sm:gap-4" : ""
+        } ${isTrailImmersive ? "fixed inset-0 z-[95] max-w-none bg-slate-950" : ""}`}
+      >
+        {isSentieriActive && isDesktopLayout && !isTrailImmersive ? (
+          <aside className="h-[78vh] overflow-y-auto rounded-2xl border border-cyan-200/70 bg-cyan-50/70 p-4 shadow-sm">
+            {sentieriPanelContent}
           </aside>
         ) : null}
-        <MaddiConcierge
-          ventoAttuale={weather?.direction.nome ?? getNomeVentoByLocale(direzioneVento, locale)}
-          isStrongWind={(weather?.speed ?? 0) > 15}
-          selectedCategory={getSelectedCategory(filtroAttivo)}
-          selectedLocation={
-            selectedLocation
-              ? {
-                  name: selectedLocation.name,
-                  maddiTip: selectedLocation.maddiTip,
-                  maddiNote: selectedLocation.maddiNote,
-                }
-              : undefined
-          }
-          listaSpiagge={spiaggeTutte}
-          onSpiaggiaClick={handleSpiaggiaClick}
-          locale={locale}
-          className="z-30"
-        />
-        {weather ? (
-          <WeatherWidget
-            weather={{
-              velocitaNodi: weather.speed,
-              temperatura: weather.temperatura,
-              nomeVento: weather.direction.nome,
-              iconaVentoUrl: weather.iconaMeteoUrl,
-              descrizioneCielo: weather.descrizioneCielo,
-            }}
+        <div className="relative">
+          <div
+            ref={containerRef}
+            className={`w-full overflow-hidden rounded-2xl border border-mare/20 shadow-sm ${mapHeightClassName}`}
+          />
+          <canvas
+            ref={windCanvasRef}
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl"
+            aria-hidden="true"
+          />
+          {windExpertAttivo && activeWeatherLayer === "wind_new" && weather ? (
+            <aside className="pointer-events-none absolute left-2 top-20 z-30 rounded-lg border border-white/15 bg-slate-950/60 p-2 text-white/95 backdrop-blur-sm md:left-3 md:top-24">
+              <p className="mb-1 text-xs font-semibold">kts</p>
+              <div className="flex items-stretch gap-2">
+                <div
+                  className="relative h-64 w-5 rounded-sm"
+                  style={{
+                    background: getWindLegendGradient(),
+                  }}
+                >
+                  <span
+                    className="absolute left-full ml-1 block h-0.5 w-2 -translate-y-1/2 rounded-full"
+                    style={{
+                      top: `${knotsToLegendPercent(weather.speed)}%`,
+                      backgroundColor: getWindColorByKnots(weather.speed, 1),
+                    }}
+                  />
+                </div>
+                <div className="flex h-64 flex-col justify-between py-0.5 text-right text-xs font-semibold">
+                  {WIND_SCALE_TICKS.map((tick) => (
+                    <span key={tick}>{tick}</span>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          ) : null}
+          <MaddiConcierge
+            ventoAttuale={weather?.direction.nome ?? getNomeVentoByLocale(direzioneVento, locale)}
+            isStrongWind={(weather?.speed ?? 0) > 15}
+            selectedCategory={getSelectedCategory(filtroAttivo)}
+            selectedLocation={
+              selectedLocation
+                ? {
+                    name: selectedLocation.name,
+                    maddiTip: selectedLocation.maddiTip,
+                    maddiNote: selectedLocation.maddiNote,
+                  }
+                : undefined
+            }
+            listaSpiagge={spiaggeTutte}
+            onSpiaggiaClick={handleSpiaggiaClick}
             locale={locale}
             className="z-30"
           />
-        ) : null}
+          {windExpertAttivo && weather ? (
+            <WeatherWidget
+              weather={{
+                velocitaNodi: weather.speed,
+                temperatura: weather.temperatura,
+                nomeVento: weather.direction.nome,
+                iconaVentoUrl: weather.iconaMeteoUrl,
+                descrizioneCielo: weather.descrizioneCielo,
+              }}
+              locale={locale}
+              className="z-30"
+            />
+          ) : null}
+          {isSentieriActive ? (
+            <button
+              type="button"
+              onClick={() => {
+                void toggleTrailFullscreen();
+              }}
+              className="absolute right-3 top-3 z-40 inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 bg-slate-900/80 px-3 text-xs font-semibold text-white backdrop-blur-md transition-colors hover:bg-slate-800/90"
+            >
+              {isTrailImmersive
+                ? isEnglish
+                  ? "Exit immersive mode"
+                  : "Esci da immersione"
+                : isEnglish
+                  ? "Open immersive full screen"
+                  : "Apri percorso a tutto schermo"}
+            </button>
+          ) : null}
+          {isSentieriActive && isTrailImmersive ? (
+            <div className="absolute left-3 top-14 z-40 w-[290px] rounded-xl border border-cyan-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
+              <p className="mb-1 text-[11px] font-semibold tracking-wide text-cyan-200">
+                {isEnglish ? "Change trail" : "Cambia percorso"}
+              </p>
+              <p className="mb-2 truncate text-sm font-bold text-white">
+                {selectedSentiero?.name ?? (isEnglish ? "No trail selected" : "Nessun sentiero selezionato")}
+              </p>
+              <select
+                value={selectedSentiero?.id ?? ""}
+                onChange={(event) => {
+                  const next = sentieriList.find((item) => item.id === event.target.value);
+                  if (!next) return;
+                  focusSentieroWithWow(next);
+                }}
+                className="w-full rounded-lg border border-cyan-200/70 bg-white px-2 py-2 text-sm font-semibold text-slate shadow-sm"
+                aria-label={isEnglish ? "Change trail in fullscreen" : "Cambia percorso in fullscreen"}
+              >
+                {!selectedSentiero ? (
+                  <option value="">{isEnglish ? "Select a trail" : "Seleziona un sentiero"}</option>
+                ) : null}
+                {sentieriList.map((sentiero) => (
+                  <option
+                    key={`immersive-${sentiero.id}`}
+                    value={sentiero.id}
+                    style={{ color: "#0f172a", backgroundColor: "#ffffff" }}
+                  >
+                    {sentiero.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+          {isSentieriActive && isTrailImmersive ? (
+            <aside className="absolute left-3 top-3 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/70 bg-emerald-500/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md">
+              <span className="inline-block h-2 w-2 rounded-full bg-white/95" aria-hidden="true" />
+              <span>
+                {isTrailFullscreen
+                  ? isEnglish
+                    ? "Immersive mode: native fullscreen"
+                    : "Modalita immersione: fullscreen nativo"
+                  : isEnglish
+                    ? "Immersive mode: compatibility fallback"
+                    : "Modalita immersione: fallback compatibilita"}
+              </span>
+            </aside>
+          ) : null}
+          {isSentieriActive && (isTrailPreviewing || trailConfirmSentiero) ? (
+            <aside className="absolute left-2 right-2 top-3 z-40 rounded-2xl border border-cyan-200/90 bg-white/95 p-3 shadow-xl backdrop-blur-md sm:left-auto sm:right-4 sm:top-auto sm:bottom-4 sm:max-w-[360px]">
+              <p className="text-xs font-semibold text-cyan-800">
+                {isTrailPreviewing
+                  ? isEnglish
+                    ? "Maddi is previewing the trail..."
+                    : "Maddi sta facendo il sorvolo del sentiero..."
+                  : isEnglish
+                    ? "What do you think, inspired? Want me to take you to the trail start with Google Maps?"
+                    : "Che ne dici, ti ispira? Vuoi che ti porti all'inizio del sentiero con Google Maps?"}
+              </p>
+              {!isTrailPreviewing ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleTrailConfirmYes}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-cyan-500 bg-cyan-500 px-3 text-xs font-semibold text-white transition-colors hover:bg-cyan-600"
+                  >
+                    {isEnglish ? "Yes, let's go! 🚗" : "Sì, andiamo! 🚗"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTrailConfirmNo}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-slate transition-colors hover:bg-slate-50"
+                  >
+                    {isEnglish ? "No, just looking" : "No, voglio solo guardare"}
+                  </button>
+                </div>
+              ) : null}
+            </aside>
+          ) : null}
+          {isSentieriActive && isTotalImmersionActive
+            ? visibleImmersionPhotos.map((entry) => (
+                <button
+                  key={entry.photo.id}
+                  type="button"
+                  onClick={() => {
+                    pauseTotalImmersion();
+                    setLightboxPhoto(entry.photo);
+                  }}
+                  className="absolute z-40 w-[138px] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-white/30 bg-slate-900/78 p-1.5 text-left text-white shadow-lg backdrop-blur-md transition-opacity duration-500"
+                  style={{
+                    left: `${entry.left}px`,
+                    top: `${entry.top}px`,
+                    opacity: entry.opacity,
+                  }}
+                >
+                  <img
+                    src={entry.photo.imageUrl}
+                    alt={entry.photo.id}
+                    loading="lazy"
+                    className="h-16 w-full rounded-md object-cover"
+                  />
+                  <p className="mt-1 truncate text-[10px] font-semibold">
+                    {entry.photo.maddiNote || (isEnglish ? "Trail shot" : "Scatto sul percorso")}
+                  </p>
+                </button>
+              ))
+            : null}
+          {isSentieriActive && isTotalImmersionActive && immersionTotalShots > 0 ? (
+            <aside className="absolute bottom-3 left-2 right-2 z-[55] rounded-2xl border border-white/20 bg-slate-900/75 px-3 py-2 text-white shadow-xl backdrop-blur-md sm:left-auto sm:right-4 sm:w-[360px]">
+              {immersionCurrentTitle ? (
+                <p className="mb-1 truncate text-[11px] font-semibold text-cyan-200">
+                  {immersionCurrentTitle}
+                </p>
+              ) : null}
+              <div className="mb-1.5 flex items-center justify-between text-[11px] font-semibold">
+                <span>
+                  {isEnglish ? "Shot" : "Scatto"}{" "}
+                  {Math.max(1, Math.min(immersionTotalShots, immersionPassedShots || 1))} /{" "}
+                  {immersionTotalShots}
+                </span>
+                <span>{Math.round((Math.max(0, immersionStepIndex) / Math.max(1, immersionPathRef.current.length - 1)) * 100)}%</span>
+              </div>
+              <button
+                type="button"
+                onClick={(event) => {
+                  const rect = event.currentTarget.getBoundingClientRect();
+                  const ratio = (event.clientX - rect.left) / Math.max(1, rect.width);
+                  scrubTotalImmersion(ratio);
+                }}
+                className="relative block h-1.5 w-full rounded-full bg-white/25"
+                aria-label={isEnglish ? "Immersion progress" : "Progresso immersione"}
+                title={isEnglish ? "Click to jump in timeline" : "Clicca per saltare nella timeline"}
+              >
+                <span
+                  className="absolute left-0 top-0 h-full rounded-full bg-cyan-300 transition-all duration-200"
+                  style={{
+                    width: `${Math.max(0, Math.min(100, (Math.max(0, immersionStepIndex) / Math.max(1, immersionPathRef.current.length - 1)) * 100))}%`,
+                  }}
+                />
+              </button>
+            </aside>
+          ) : null}
+          {lightboxPhoto ? (
+            <div className="absolute inset-0 z-[70] grid place-items-center bg-slate-950/72 p-4 backdrop-blur-sm">
+              <div className="w-full max-w-xl rounded-2xl border border-white/20 bg-slate-900/92 p-3 text-white shadow-2xl">
+                <img
+                  src={lightboxPhoto.imageUrl}
+                  alt={lightboxPhoto.id}
+                  className="max-h-[70vh] w-full rounded-xl object-contain"
+                />
+                <div className="mt-3 flex flex-wrap justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLightboxPhoto(null);
+                      resumeTotalImmersion();
+                    }}
+                    className="inline-flex min-h-10 items-center justify-center rounded-xl border border-cyan-500 bg-cyan-500 px-3 text-xs font-semibold text-white transition-colors hover:bg-cyan-600"
+                  >
+                    {isEnglish ? "Close and resume" : "Chiudi e riprendi"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+          {isSentieriActive && !isDesktopLayout && !isTrailImmersive ? (
+            <aside className="fixed inset-x-0 bottom-0 z-[60] max-h-[62vh] overflow-y-auto rounded-t-2xl border-t border-cyan-200/80 bg-cyan-50/95 p-4 shadow-2xl backdrop-blur-md">
+              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-cyan-300/80" />
+              {sentieriPanelContent}
+            </aside>
+          ) : null}
+        </div>
       </div>
 
-      <div className="mt-5">
+      {filtroAttivo !== "sentieri" ? (
+        <div className="mt-5">
         <h2 className="font-sans text-sm font-semibold text-slate/80">
           {isEnglish ? "Listed places (click to focus)" : "Luoghi in elenco (clic per centrare)"}
         </h2>
@@ -1721,8 +3546,9 @@ export function MaddalenaMap({
           })}
         </ul>
       </div>
+      ) : null}
 
-      {selectedLocation ? (
+      {selectedLocation && filtroAttivo !== "sentieri" ? (
         <aside className="mt-5 rounded-2xl border border-amber-200/80 bg-amber-50/80 px-5 py-4 shadow-sm">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-base">

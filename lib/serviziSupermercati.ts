@@ -102,7 +102,7 @@ export const serviziSupermercati: readonly Servizio[] = [
       "Negozio di alimentari · V. Principe Amedeo · Tel. 0789 754796. «Ottimo ipermercato.»",
   },
   {
-    name: "Supermercato D3ttoru",
+    name: "Supermercato Dettori",
     category: "Supermercati",
     zona: "Pueblo / Due Strade",
     coordinates: [9.4103245, 41.2160533],
