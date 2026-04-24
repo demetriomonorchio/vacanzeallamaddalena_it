@@ -805,9 +805,12 @@ export function MaddalenaMap({
     Array<{ photo: TrailPhoto; opacity: number; left: number; top: number }>
   >([]);
   const [lightboxPhoto, setLightboxPhoto] = useState<TrailPhoto | null>(null);
+  const [isGalleryPhotoLoading, setIsGalleryPhotoLoading] = useState(false);
   const [copiedLocationId, setCopiedLocationId] = useState<string | null>(null);
   const galleryPrefetchRef = useRef<Set<string>>(new Set());
   const galleryDirectionRef = useRef<1 | -1>(1);
+  const galleryLoadingTimerRef = useRef<number | null>(null);
+  const galleryTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const isEnglish = locale === "en";
   const isIOS = useMemo(() => {
     if (typeof navigator === "undefined") return false;
@@ -3170,6 +3173,34 @@ export function MaddalenaMap({
     [lightboxPhotoIndex, lightboxPhotos]
   );
 
+  const markGalleryPhotoLoaded = useCallback(() => {
+    if (galleryLoadingTimerRef.current !== null) {
+      window.clearTimeout(galleryLoadingTimerRef.current);
+      galleryLoadingTimerRef.current = null;
+    }
+    setIsGalleryPhotoLoading(false);
+  }, []);
+
+  const onGalleryTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    galleryTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const onGalleryTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = galleryTouchStartRef.current;
+      const touch = event.changedTouches?.[0];
+      galleryTouchStartRef.current = null;
+      if (!start || !touch) return;
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      navigateGalleryPhoto(dx > 0 ? -1 : 1);
+    },
+    [navigateGalleryPhoto]
+  );
+
   useEffect(() => {
     if (!lightboxPhoto || lightboxPhotoIndex < 0) return;
     prefetchPhoto(lightboxPhoto);
@@ -3181,12 +3212,31 @@ export function MaddalenaMap({
 
   useEffect(() => {
     if (!lightboxPhoto) return;
+    if (galleryLoadingTimerRef.current !== null) {
+      window.clearTimeout(galleryLoadingTimerRef.current);
+    }
+    setIsGalleryPhotoLoading(false);
+    galleryLoadingTimerRef.current = window.setTimeout(() => {
+      setIsGalleryPhotoLoading(true);
+    }, 200);
+    return () => {
+      if (galleryLoadingTimerRef.current !== null) {
+        window.clearTimeout(galleryLoadingTimerRef.current);
+        galleryLoadingTimerRef.current = null;
+      }
+    };
+  }, [lightboxPhoto?.imageUrl]);
+
+  useEffect(() => {
+    if (!lightboxPhoto) return;
     const map = mapRef.current;
     if (!map) return;
-    map.easeTo({
+    map.flyTo({
       center: lightboxPhoto.coordinates,
       zoom: Math.max(map.getZoom(), 15.2),
-      duration: 700,
+      speed: 1.05,
+      curve: 1.25,
+      duration: 520,
       essential: true,
     });
   }, [lightboxPhoto]);
@@ -3620,6 +3670,15 @@ export function MaddalenaMap({
                   const rect = event.currentTarget.getBoundingClientRect();
                   const ratio = (event.clientX - rect.left) / Math.max(1, rect.width);
                   scrubTotalImmersion(ratio);
+                  if (immersionPhotoMilestones.length > 0) {
+                    const clamped = Math.max(0, Math.min(1, ratio));
+                    const targetShot = Math.round(clamped * (immersionPhotoMilestones.length - 1));
+                    const nextPhoto = immersionPhotoMilestones[targetShot]?.photo;
+                    if (nextPhoto) {
+                      pauseTotalImmersion();
+                      setLightboxPhoto(nextPhoto);
+                    }
+                  }
                 }}
                 className="relative block h-1.5 w-full rounded-full bg-white/25"
                 aria-label={isEnglish ? "Immersion progress" : "Progresso immersione"}
@@ -3637,15 +3696,29 @@ export function MaddalenaMap({
           {lightboxPhoto ? (
             <div className="absolute inset-0 z-[70] grid place-items-center bg-slate-950/72 p-4 backdrop-blur-sm">
               <div className="w-full max-w-3xl rounded-2xl border border-white/20 bg-slate-900/92 p-3 text-white shadow-2xl">
-                <div className="relative overflow-hidden rounded-xl bg-slate-950/65">
+                <div
+                  className="relative overflow-hidden rounded-xl bg-slate-950/65"
+                  onTouchStart={onGalleryTouchStart}
+                  onTouchEnd={onGalleryTouchEnd}
+                >
                   <Image
                     key={lightboxPhoto.id}
                     src={lightboxPhoto.imageUrl}
                     alt={lightboxPhoto.id}
                     width={1400}
                     height={900}
+                    onLoad={markGalleryPhotoLoaded}
+                    onError={markGalleryPhotoLoaded}
                     className="max-h-[70vh] w-full object-contain transition-opacity duration-200"
                   />
+                  {isGalleryPhotoLoading ? (
+                    <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
+                      <span
+                        className="inline-block h-7 w-7 animate-spin rounded-full border-2 border-white/30 border-t-cyan-300"
+                        aria-label={isEnglish ? "Loading photo" : "Caricamento foto"}
+                      />
+                    </div>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => navigateGalleryPhoto(-1)}
