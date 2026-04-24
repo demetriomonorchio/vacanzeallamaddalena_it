@@ -1274,10 +1274,10 @@ export function MaddalenaMap({
   ] as const;
   const primaryMobileFilters: readonly FiltroAttivo[] = [
     "alloggi",
-    "ristoranti",
     "spiagge",
-    "emergenze",
-    "noleggioGommoni",
+    "sentieri",
+    "ristoranti",
+    "banche",
   ];
   const hasHiddenMobileFilters = categoryFilterOptions.some(
     (item) => !primaryMobileFilters.includes(item.key)
