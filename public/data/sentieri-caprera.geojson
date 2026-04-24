@@ -11,7 +11,10 @@
         "name": "Percorso 1",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "61 min",
+        "lengthKm": 2.42
       },
       "geometry": {
         "type": "LineString",
@@ -463,7 +466,10 @@
         "name": "Percorso 2",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "30 min",
+        "lengthKm": 0.6
       },
       "geometry": {
         "type": "LineString",
@@ -787,7 +793,10 @@
         "name": "Percorso 3",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "37 min",
+        "lengthKm": 0.98
       },
       "geometry": {
         "type": "LineString",
@@ -935,7 +944,10 @@
         "name": "Percorso 4",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "54 min",
+        "lengthKm": 1.95
       },
       "geometry": {
         "type": "LineString",
@@ -1223,7 +1235,10 @@
         "name": "Percorso 5",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "33 min",
+        "lengthKm": 0.78
       },
       "geometry": {
         "type": "LineString",
@@ -1443,7 +1458,10 @@
         "name": "Percorso 6",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "50 min",
+        "lengthKm": 1.76
       },
       "geometry": {
         "type": "LineString",
@@ -1707,7 +1725,10 @@
         "name": "Percorso 7",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "34 min",
+        "lengthKm": 0.82
       },
       "geometry": {
         "type": "LineString",
@@ -1991,7 +2012,10 @@
         "name": "Percorso 8",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "51 min",
+        "lengthKm": 1.83
       },
       "geometry": {
         "type": "LineString",
@@ -2463,7 +2487,10 @@
         "name": "Percorso 9",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "31 min",
+        "lengthKm": 0.62
       },
       "geometry": {
         "type": "LineString",
@@ -2719,7 +2746,10 @@
         "name": "Percorso 10",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "45 min",
+        "lengthKm": 1.45
       },
       "geometry": {
         "type": "LineString",
@@ -3211,7 +3241,10 @@
         "name": "Percorso 12",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "38 min",
+        "lengthKm": 1.04
       },
       "geometry": {
         "type": "LineString",
@@ -3359,7 +3392,10 @@
         "name": "Percorso 13",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "33 min",
+        "lengthKm": 0.74
       },
       "geometry": {
         "type": "LineString",
@@ -3563,7 +3599,10 @@
         "name": "Percorso 14",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "37 min",
+        "lengthKm": 0.98
       },
       "geometry": {
         "type": "LineString",
@@ -4043,7 +4082,10 @@
         "name": "Percorso 15",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Escursionistico (E)",
+        "estimatedTime": "49 min",
+        "lengthKm": 1.71
       },
       "geometry": {
         "type": "LineString",
@@ -4335,7 +4377,10 @@
         "name": "Percorso 16",
         "network": "lwn",
         "route": "hiking",
-        "type": "route"
+        "type": "route",
+        "difficulty": "Turistico (T)",
+        "estimatedTime": "42 min",
+        "lengthKm": 1.31
       },
       "geometry": {
         "type": "LineString",

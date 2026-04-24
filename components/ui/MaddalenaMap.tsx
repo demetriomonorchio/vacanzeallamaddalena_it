@@ -2141,6 +2141,7 @@ export function MaddalenaMap({
           const duration =
             getTrailProp(featureLike.properties, [
               "duration",
+              "estimatedTime",
               "tempo_stimato",
               "tempo",
               "estimated_time",
@@ -2261,7 +2262,7 @@ export function MaddalenaMap({
         getTrailProp(feature.properties, ["difficulty", "difficolta"]) ||
         (isEnglish ? "Not specified" : "Non specificata");
       const duration =
-        getTrailProp(feature.properties, ["duration", "tempo_stimato", "tempo"]) ||
+        getTrailProp(feature.properties, ["duration", "estimatedTime", "tempo_stimato", "tempo"]) ||
         (isEnglish ? "Not specified" : "Non specificato");
       const imageUrl = getTrailProp(feature.properties, [
         "image",
@@ -2372,7 +2373,7 @@ export function MaddalenaMap({
           getTrailProp(feature.properties, ["difficulty"]) ||
           (isEnglish ? "Not specified" : "Non specificata"),
         duration:
-          getTrailProp(feature.properties, ["duration"]) ||
+          getTrailProp(feature.properties, ["duration", "estimatedTime"]) ||
           (isEnglish ? "Not specified" : "Non specificato"),
         imageUrl: getTrailProp(feature.properties, ["image"]) || undefined,
         coordinates: [Number(point[0]), Number(point[1])],
@@ -3004,10 +3005,10 @@ export function MaddalenaMap({
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-slate/70">
-                  {isEnglish ? "Difficulty" : "Difficolta"}: {sentiero.difficulty}
+                  ⚑ {isEnglish ? "Difficulty" : "Difficolta"}: {sentiero.difficulty}
                 </p>
                 <p className="mt-0.5 text-xs text-slate/70">
-                  {isEnglish ? "Estimated time" : "Tempo stimato"}: {sentiero.duration}
+                  ⏱ {isEnglish ? "Estimated time" : "Tempo stimato"}: {sentiero.duration}
                 </p>
               </div>
             </button>
@@ -3021,10 +3022,10 @@ export function MaddalenaMap({
           </p>
           <p className="mt-1 text-sm font-semibold text-slate">{selectedSentiero.name}</p>
           <p className="mt-1 text-xs text-slate/70">
-            {isEnglish ? "Difficulty" : "Difficolta"}: {selectedSentiero.difficulty}
+            ⚑ {isEnglish ? "Difficulty" : "Difficolta"}: {selectedSentiero.difficulty}
           </p>
           <p className="mt-0.5 text-xs text-slate/70">
-            {isEnglish ? "Estimated time" : "Tempo stimato"}: {selectedSentiero.duration}
+            ⏱ {isEnglish ? "Estimated time" : "Tempo stimato"}: {selectedSentiero.duration}
           </p>
           <p className="mt-2 text-sm leading-relaxed text-slate/85">{selectedSentiero.description}</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -3119,6 +3120,12 @@ export function MaddalenaMap({
                     <span aria-hidden="true">⚑</span>
                     <span>
                       {isEnglish ? "Difficulty" : "Difficolta"}: {sentiero.difficulty}
+                    </span>
+                  </p>
+                  <p className="mt-0.5 inline-flex items-center gap-1 text-xs text-slate/70">
+                    <span aria-hidden="true">⏱</span>
+                    <span>
+                      {isEnglish ? "Estimated time" : "Tempo stimato"}: {sentiero.duration}
                     </span>
                   </p>
                 </button>
