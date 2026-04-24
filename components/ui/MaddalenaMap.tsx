@@ -2856,6 +2856,12 @@ export function MaddalenaMap({
       ? "h-[100vh]"
       : "h-screen sm:h-[78vh]"
     : heightClassName;
+
+  useEffect(() => {
+    if (filtroAttivo !== "sentieri" || isDesktopLayout || isTrailImmersive) return;
+    immersiveContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [filtroAttivo, isDesktopLayout, isTrailImmersive]);
+
   const handleTrailConfirmYes = () => {
     if (!trailConfirmSentiero) return;
     stopTotalImmersion(true);
