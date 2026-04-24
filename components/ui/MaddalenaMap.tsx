@@ -756,6 +756,7 @@ export function MaddalenaMap({
   const sentieroCardRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const sentieriByIdRef = useRef<Record<string, SentieroInfo>>({});
   const hoveredPhotoFeatureIdRef = useRef<string | number | null>(null);
+  const activeGalleryPhotoFeatureIdRef = useRef<string | number | null>(null);
   const trailPreviewTimersRef = useRef<number[]>([]);
   const trailPreviewRunIdRef = useRef(0);
   const trailSwitchWowTimerRef = useRef<number | null>(null);
@@ -806,6 +807,7 @@ export function MaddalenaMap({
   >([]);
   const [lightboxPhoto, setLightboxPhoto] = useState<TrailPhoto | null>(null);
   const [isGalleryPhotoLoading, setIsGalleryPhotoLoading] = useState(false);
+  const [isGalleryPhotoSwitching, setIsGalleryPhotoSwitching] = useState(false);
   const [copiedLocationId, setCopiedLocationId] = useState<string | null>(null);
   const galleryPrefetchRef = useRef<Set<string>>(new Set());
   const galleryDirectionRef = useRef<1 | -1>(1);
@@ -2458,6 +2460,14 @@ export function MaddalenaMap({
         );
       }
       hoveredPhotoFeatureIdRef.current = null;
+      const activeGalleryId = activeGalleryPhotoFeatureIdRef.current;
+      if (activeGalleryId !== null && activeGalleryId !== undefined) {
+        map.setFeatureState(
+          { source: SENTIERI_PHOTO_SOURCE_ID, id: activeGalleryId },
+          { hover: false }
+        );
+      }
+      activeGalleryPhotoFeatureIdRef.current = null;
       map.off("click", SENTIERI_LAYER_ID, handleTrailClick);
       map.off("click", SENTIERI_START_LAYER_ID, handleStartClick);
       map.off("click", SENTIERI_START_LABEL_LAYER_ID, handleStartClick);
@@ -3228,6 +3238,16 @@ export function MaddalenaMap({
   }, [lightboxPhoto?.imageUrl]);
 
   useEffect(() => {
+    if (!lightboxPhoto) {
+      setIsGalleryPhotoSwitching(false);
+      return;
+    }
+    setIsGalleryPhotoSwitching(true);
+    const timerId = window.setTimeout(() => setIsGalleryPhotoSwitching(false), 80);
+    return () => window.clearTimeout(timerId);
+  }, [lightboxPhoto?.id]);
+
+  useEffect(() => {
     if (!lightboxPhoto) return;
     const map = mapRef.current;
     if (!map) return;
@@ -3256,6 +3276,20 @@ export function MaddalenaMap({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [lightboxPhoto, navigateGalleryPhoto]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady) return;
+    const nextId = lightboxPhoto?.id ?? null;
+    const prevId = activeGalleryPhotoFeatureIdRef.current;
+    if (prevId !== null && prevId !== undefined && prevId !== nextId) {
+      map.setFeatureState({ source: SENTIERI_PHOTO_SOURCE_ID, id: prevId }, { hover: false });
+    }
+    if (nextId !== null && nextId !== undefined && nextId !== prevId) {
+      map.setFeatureState({ source: SENTIERI_PHOTO_SOURCE_ID, id: nextId }, { hover: true });
+    }
+    activeGalleryPhotoFeatureIdRef.current = nextId;
+  }, [isMapReady, lightboxPhoto]);
 
   if (!mapboxToken) {
     return (
@@ -3709,7 +3743,7 @@ export function MaddalenaMap({
                     height={900}
                     onLoad={markGalleryPhotoLoaded}
                     onError={markGalleryPhotoLoaded}
-                    className="max-h-[70vh] w-full object-contain transition-opacity duration-200"
+                    className={`max-h-[70vh] w-full object-contain transition-opacity duration-[80ms] ${isGalleryPhotoSwitching ? "opacity-75" : "opacity-100"}`}
                   />
                   {isGalleryPhotoLoading ? (
                     <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
