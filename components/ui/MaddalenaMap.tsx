@@ -1252,9 +1252,9 @@ export function MaddalenaMap({
   const immersionTotalShots = immersionPhotoMilestones.length;
   const categoryFilterOptions = [
     { key: "alloggi", label: isEnglish ? "Accommodation" : "Alloggi" },
-    { key: "ristoranti", label: isEnglish ? "Restaurants" : "Ristoranti" },
     { key: "spiagge", label: isEnglish ? "Beaches" : "Spiagge" },
     { key: "sentieri", label: isEnglish ? "Trails" : "Sentieri" },
+    { key: "ristoranti", label: isEnglish ? "Restaurants" : "Ristoranti" },
     { key: "banche", label: "Banche & ATM" },
     { key: "supermercati", label: isEnglish ? "Supermarkets" : "Supermercati" },
     { key: "farmacie", label: isEnglish ? "Pharmacies" : "Farmacie" },
@@ -2281,8 +2281,10 @@ export function MaddalenaMap({
         previewBearing,
         photoStops: mappedSentiero?.photoStops ?? [],
       };
-      setSelectedSentiero(sentieroToSelect);
-      setHoveredSentieroId(sentieroToSelect.id);
+      focusSentiero(sentieroToSelect);
+    };
+
+    const openTrailPopupAtStart = (sentiero: SentieroInfo, lngLat: mapboxgl.LngLat) => {
       const detailsLabel = isEnglish ? "Details" : "Dettagli";
       const popup = new mapboxgl.Popup({
         closeButton: true,
@@ -2299,7 +2301,7 @@ export function MaddalenaMap({
       title.style.fontSize = "13px";
       title.style.fontWeight = "700";
       title.style.color = "#0f172a";
-      title.textContent = name;
+      title.textContent = sentiero.name;
 
       const button = document.createElement("button");
       button.type = "button";
@@ -2318,13 +2320,12 @@ export function MaddalenaMap({
       button.style.cursor = "pointer";
 
       button.addEventListener("click", () => {
-        setSelectedSentiero(sentieroToSelect);
-        setHoveredSentieroId(sentieroToSelect.id);
+        focusSentiero(sentiero);
         popup.remove();
       });
 
       popupContent.append(title, button);
-      popup.setDOMContent(popupContent).setLngLat(event.lngLat).addTo(map);
+      popup.setDOMContent(popupContent).setLngLat(lngLat).addTo(map);
     };
 
     const handleTrailMouseEnter = () => {
@@ -2345,7 +2346,7 @@ export function MaddalenaMap({
       const trailId = getTrailProp(feature.properties, ["trailId"]);
       const mapped = trailId ? sentieriByIdRef.current[trailId] : undefined;
       if (mapped) {
-        focusSentiero(mapped);
+        openTrailPopupAtStart(mapped, event.lngLat);
         return;
       }
       const fallbackSentiero: SentieroInfo = {
@@ -2370,7 +2371,7 @@ export function MaddalenaMap({
         previewBearing: Number(feature.properties?.previewBearing ?? 18),
         photoStops: [],
       };
-      focusSentiero(fallbackSentiero);
+      openTrailPopupAtStart(fallbackSentiero, event.lngLat);
     };
 
     const handlePhotoClick = (
@@ -2866,16 +2867,6 @@ export function MaddalenaMap({
   const handleTrailConfirmNo = () => {
     stopTotalImmersion(true);
     setTrailConfirmSentiero(null);
-    const map = mapRef.current;
-    if (!map) return;
-    map.flyTo({
-      center: defaultCenter,
-      zoom: 12.3,
-      pitch: 0,
-      bearing: 0,
-      duration: 1200,
-      essential: true,
-    });
   };
 
   const sentieriPanelContent = (
