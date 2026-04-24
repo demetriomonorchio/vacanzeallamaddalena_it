@@ -806,6 +806,8 @@ export function MaddalenaMap({
   >([]);
   const [lightboxPhoto, setLightboxPhoto] = useState<TrailPhoto | null>(null);
   const [copiedLocationId, setCopiedLocationId] = useState<string | null>(null);
+  const galleryPrefetchRef = useRef<Set<string>>(new Set());
+  const galleryDirectionRef = useRef<1 | -1>(1);
   const isEnglish = locale === "en";
   const isIOS = useMemo(() => {
     if (typeof navigator === "undefined") return false;
@@ -2927,18 +2929,6 @@ export function MaddalenaMap({
     setMobileTrailSheetDragHeight(null);
   }, [filtroAttivo, isDesktopLayout, isTrailImmersive, openMobileTrailSheet]);
 
-  if (!mapboxToken) {
-    return (
-      <div
-        className={`rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 ${className ?? ""}`}
-      >
-        {isEnglish
-          ? "Set `NEXT_PUBLIC_MAPBOX_TOKEN` to display the map."
-          : "Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa."}
-      </div>
-    );
-  }
-
   const handleTrailConfirmYes = () => {
     if (!trailConfirmSentiero) return;
     stopTotalImmersion(true);
@@ -3137,6 +3127,97 @@ export function MaddalenaMap({
       </div>
     </>
   );
+
+  const activeTrailPhotos = useMemo(() => {
+    if (selectedSentiero && isPercorso15Trail(selectedSentiero)) {
+      return selectedSentiero.photoStops.length > 0
+        ? selectedSentiero.photoStops
+        : (trail15Photos ?? []);
+    }
+    return selectedSentiero?.photoStops ?? [];
+  }, [selectedSentiero, trail15Photos]);
+
+  const lightboxPhotos = useMemo(() => {
+    if (activeTrailPhotos.length > 0) return activeTrailPhotos;
+    return lightboxPhoto ? [lightboxPhoto] : [];
+  }, [activeTrailPhotos, lightboxPhoto]);
+
+  const lightboxPhotoIndex = useMemo(() => {
+    if (!lightboxPhoto || lightboxPhotos.length === 0) return -1;
+    return lightboxPhotos.findIndex((photo) => photo.id === lightboxPhoto.id);
+  }, [lightboxPhoto, lightboxPhotos]);
+
+  const canGoPrevPhoto = lightboxPhotoIndex > 0;
+  const canGoNextPhoto = lightboxPhotoIndex >= 0 && lightboxPhotoIndex < lightboxPhotos.length - 1;
+
+  const prefetchPhoto = useCallback((photo?: TrailPhoto) => {
+    if (!photo || typeof window === "undefined") return;
+    const url = photo.imageUrl;
+    if (!url || galleryPrefetchRef.current.has(url)) return;
+    galleryPrefetchRef.current.add(url);
+    const img = new window.Image();
+    img.src = url;
+  }, []);
+
+  const navigateGalleryPhoto = useCallback(
+    (direction: 1 | -1) => {
+      if (lightboxPhotoIndex < 0) return;
+      const nextIndex = Math.max(0, Math.min(lightboxPhotos.length - 1, lightboxPhotoIndex + direction));
+      if (nextIndex === lightboxPhotoIndex) return;
+      galleryDirectionRef.current = direction;
+      setLightboxPhoto(lightboxPhotos[nextIndex]);
+    },
+    [lightboxPhotoIndex, lightboxPhotos]
+  );
+
+  useEffect(() => {
+    if (!lightboxPhoto || lightboxPhotoIndex < 0) return;
+    prefetchPhoto(lightboxPhoto);
+    prefetchPhoto(lightboxPhotos[lightboxPhotoIndex - 1]);
+    prefetchPhoto(lightboxPhotos[lightboxPhotoIndex + 1]);
+    const direction = galleryDirectionRef.current;
+    prefetchPhoto(lightboxPhotos[lightboxPhotoIndex + direction * 2]);
+  }, [lightboxPhoto, lightboxPhotoIndex, lightboxPhotos, prefetchPhoto]);
+
+  useEffect(() => {
+    if (!lightboxPhoto) return;
+    const map = mapRef.current;
+    if (!map) return;
+    map.easeTo({
+      center: lightboxPhoto.coordinates,
+      zoom: Math.max(map.getZoom(), 15.2),
+      duration: 700,
+      essential: true,
+    });
+  }, [lightboxPhoto]);
+
+  useEffect(() => {
+    if (!lightboxPhoto) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        navigateGalleryPhoto(-1);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        navigateGalleryPhoto(1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [lightboxPhoto, navigateGalleryPhoto]);
+
+  if (!mapboxToken) {
+    return (
+      <div
+        className={`rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 ${className ?? ""}`}
+      >
+        {isEnglish
+          ? "Set `NEXT_PUBLIC_MAPBOX_TOKEN` to display the map."
+          : "Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa."}
+      </div>
+    );
+  }
 
   return (
     <section className={`max-w-[100vw] overflow-hidden ${className ?? ""}`}>
@@ -3555,19 +3636,57 @@ export function MaddalenaMap({
           ) : null}
           {lightboxPhoto ? (
             <div className="absolute inset-0 z-[70] grid place-items-center bg-slate-950/72 p-4 backdrop-blur-sm">
-              <div className="w-full max-w-xl rounded-2xl border border-white/20 bg-slate-900/92 p-3 text-white shadow-2xl">
-                <Image
-                  src={lightboxPhoto.imageUrl}
-                  alt={lightboxPhoto.id}
-                  width={1200}
-                  height={800}
-                  className="max-h-[70vh] w-full rounded-xl object-contain"
-                />
+              <div className="w-full max-w-3xl rounded-2xl border border-white/20 bg-slate-900/92 p-3 text-white shadow-2xl">
+                <div className="relative overflow-hidden rounded-xl bg-slate-950/65">
+                  <Image
+                    key={lightboxPhoto.id}
+                    src={lightboxPhoto.imageUrl}
+                    alt={lightboxPhoto.id}
+                    width={1400}
+                    height={900}
+                    className="max-h-[70vh] w-full object-contain transition-opacity duration-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => navigateGalleryPhoto(-1)}
+                    disabled={!canGoPrevPhoto}
+                    className="absolute left-2 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-slate-900/55 text-2xl text-white transition-opacity disabled:opacity-35 sm:h-10 sm:w-10 sm:text-xl"
+                    aria-label={isEnglish ? "Previous photo" : "Foto precedente"}
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigateGalleryPhoto(1)}
+                    disabled={!canGoNextPhoto}
+                    className="absolute right-2 top-1/2 z-10 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-slate-900/55 text-2xl text-white transition-opacity disabled:opacity-35 sm:h-10 sm:w-10 sm:text-xl"
+                    aria-label={isEnglish ? "Next photo" : "Foto successiva"}
+                  >
+                    ›
+                  </button>
+                </div>
+                <div className="mt-2 flex items-center justify-between gap-3">
+                  <p className="truncate text-xs font-semibold text-cyan-100">
+                    {lightboxPhoto.maddiNote || lightboxPhoto.title || lightboxPhoto.id}
+                  </p>
+                  <span className="shrink-0 text-[11px] font-semibold text-white/80">
+                    {Math.max(1, lightboxPhotoIndex + 1)} / {Math.max(1, lightboxPhotos.length)}
+                  </span>
+                </div>
                 <div className="mt-3 flex flex-wrap justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => {
                       setLightboxPhoto(null);
+                      const map = mapRef.current;
+                      if (map) {
+                        map.easeTo({
+                          center: lightboxPhoto.coordinates,
+                          zoom: Math.max(map.getZoom(), 15.2),
+                          duration: 450,
+                          essential: true,
+                        });
+                      }
                       resumeTotalImmersion();
                     }}
                     className="inline-flex min-h-10 items-center justify-center rounded-xl border border-cyan-500 bg-cyan-500 px-3 text-xs font-semibold text-white transition-colors hover:bg-cyan-600"

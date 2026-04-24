@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "openweathermap.org",
+        pathname: "/img/wn/**",
+      },
     ],
   },
 
