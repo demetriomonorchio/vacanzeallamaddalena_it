@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import type { Spiaggia } from "@/types/maddi";
 import type { Locale } from "@/lib/i18n";
 import { servizi } from "@/lib/servizi";
@@ -241,9 +242,11 @@ export function MaddiConcierge({
         onClick={() => setIsExpanded(true)}
         className={`absolute bottom-3 left-3 z-20 inline-flex items-center gap-2 rounded-full border border-white/30 bg-slate-900/80 px-3 py-2 text-left text-white shadow-2xl backdrop-blur-md transition-colors hover:bg-slate-800/85 md:bottom-auto md:left-4 md:top-4 ${className ?? ""}`}
       >
-        <img
+        <Image
           src="/images/maddi-avatar.webp"
           alt="Maddi avatar"
+          width={32}
+          height={32}
           className="h-8 w-8 rounded-full object-cover border border-white/20 shadow-md"
         />
         <span className="text-xs font-semibold">
@@ -259,9 +262,11 @@ export function MaddiConcierge({
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="flex items-center gap-4">
-          <img
+          <Image
             src="/images/maddi-avatar.webp"
             alt="Maddi avatar"
+            width={56}
+            height={56}
             className="w-14 h-14 rounded-full object-cover border-2 border-white/20 shadow-xl"
           />
           <div>

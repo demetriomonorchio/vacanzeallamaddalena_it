@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import mapboxgl from "mapbox-gl";
+import Image from "next/image";
 import { MADDI_LOCATIONS } from "@/src/data/maddi-data";
 import { serviziSpiagge } from "@/lib/serviziSpiagge";
 import { serviziBanche } from "@/lib/serviziBanche";
@@ -762,6 +763,7 @@ export function MaddalenaMap({
   const immersionStepRef = useRef(0);
   const immersionPathRef = useRef<[number, number][]>([]);
   const activeImmersionSentieroRef = useRef<SentieroInfo | null>(null);
+  const mobileTrailSheetTouchRef = useRef<{ startY: number; startHeight: number } | null>(null);
   const particlesRef = useRef<
     Array<{ x: number; y: number; life: number; maxLife: number }>
   >([]);
@@ -780,6 +782,9 @@ export function MaddalenaMap({
   const [showAllMobileFilters, setShowAllMobileFilters] = useState(false);
   const [showOnlyMaddiFavorites, setShowOnlyMaddiFavorites] = useState(false);
   const [isDesktopLayout, setIsDesktopLayout] = useState(false);
+  const [mobileViewportHeight, setMobileViewportHeight] = useState(0);
+  const [mobileTrailSheetState, setMobileTrailSheetState] = useState<"min" | "mid" | "max">("mid");
+  const [mobileTrailSheetDragHeight, setMobileTrailSheetDragHeight] = useState<number | null>(null);
   const [isTrailFullscreen, setIsTrailFullscreen] = useState(false);
   const [isTrailPseudoFullscreen, setIsTrailPseudoFullscreen] = useState(false);
   const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
@@ -816,6 +821,7 @@ export function MaddalenaMap({
   useEffect(() => {
     const syncViewport = () => {
       setIsDesktopLayout(window.innerWidth >= 640);
+      setMobileViewportHeight(window.innerHeight);
     };
     syncViewport();
     window.addEventListener("resize", syncViewport);
@@ -2844,11 +2850,82 @@ export function MaddalenaMap({
       ? "h-[100vh]"
       : "h-screen sm:h-[78vh]"
     : heightClassName;
+  const trailSheetHeights = useMemo(() => {
+    const viewport = mobileViewportHeight || 800;
+    return {
+      min: 74,
+      mid: Math.max(220, Math.round(viewport * 0.3)),
+      max: Math.max(340, Math.round(viewport * 0.8)),
+    };
+  }, [mobileViewportHeight]);
+  const mobileTrailSheetHeight =
+    mobileTrailSheetDragHeight ??
+    (mobileTrailSheetState === "min"
+      ? trailSheetHeights.min
+      : mobileTrailSheetState === "max"
+        ? trailSheetHeights.max
+        : trailSheetHeights.mid);
+
+  const collapseMobileTrailSheet = useCallback(() => {
+    setMobileTrailSheetState("min");
+    setMobileTrailSheetDragHeight(null);
+  }, []);
+
+  const openMobileTrailSheet = useCallback(() => {
+    setMobileTrailSheetState("mid");
+    setMobileTrailSheetDragHeight(null);
+  }, []);
+
+  const startMobileTrailSheetTouch = (event: TouchEvent<HTMLDivElement>) => {
+    if (isDesktopLayout || !isSentieriActive || isTrailImmersive) return;
+    mobileTrailSheetTouchRef.current = {
+      startY: event.touches?.[0]?.clientY ?? 0,
+      startHeight: mobileTrailSheetHeight,
+    };
+  };
+
+  const moveMobileTrailSheetTouch = (event: TouchEvent<HTMLDivElement>) => {
+    const touchState = mobileTrailSheetTouchRef.current;
+    if (!touchState) return;
+    const nextY = event.touches?.[0]?.clientY ?? touchState.startY;
+    const delta = touchState.startY - nextY;
+    const unclampedHeight = touchState.startHeight + delta;
+    const clampedHeight = Math.max(
+      trailSheetHeights.min,
+      Math.min(trailSheetHeights.max, unclampedHeight)
+    );
+    setMobileTrailSheetDragHeight(clampedHeight);
+  };
+
+  const endMobileTrailSheetTouch = () => {
+    const draggingHeight = mobileTrailSheetDragHeight ?? mobileTrailSheetHeight;
+    const snapTargets: Array<["min" | "mid" | "max", number]> = [
+      ["min", trailSheetHeights.min],
+      ["mid", trailSheetHeights.mid],
+      ["max", trailSheetHeights.max],
+    ];
+    const nearest = snapTargets.reduce((best, current) => {
+      return Math.abs(current[1] - draggingHeight) < Math.abs(best[1] - draggingHeight)
+        ? current
+        : best;
+    });
+    setMobileTrailSheetState(nearest[0]);
+    setMobileTrailSheetDragHeight(null);
+    mobileTrailSheetTouchRef.current = null;
+  };
 
   useEffect(() => {
     if (filtroAttivo !== "sentieri" || isDesktopLayout || isTrailImmersive) return;
     immersiveContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [filtroAttivo, isDesktopLayout, isTrailImmersive]);
+
+  useEffect(() => {
+    if (filtroAttivo === "sentieri" && !isDesktopLayout && !isTrailImmersive) {
+      openMobileTrailSheet();
+      return;
+    }
+    setMobileTrailSheetDragHeight(null);
+  }, [filtroAttivo, isDesktopLayout, isTrailImmersive, openMobileTrailSheet]);
 
   if (!mapboxToken) {
     return (
@@ -2905,7 +2982,13 @@ export function MaddalenaMap({
               }`}
             >
               {sentiero.imageUrl ? (
-                <img src={sentiero.imageUrl} alt={sentiero.name} className="h-24 w-full object-cover" />
+                <Image
+                  src={sentiero.imageUrl}
+                  alt={sentiero.name}
+                  width={640}
+                  height={192}
+                  className="h-24 w-full object-cover"
+                />
               ) : null}
               <div className="p-3">
                 <div className="flex items-start justify-between gap-2">
@@ -2993,6 +3076,65 @@ export function MaddalenaMap({
           </div>
         </aside>
       ) : null}
+    </>
+  );
+
+  const sentieriMobileSheetContent = (
+    <>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className="font-sans text-sm font-semibold text-slate/85">
+          {isEnglish ? "Trail list" : "Lista Sentieri"}
+        </h2>
+        <span className="text-xs font-semibold text-cyan-800">
+          {sentieriList.length} {isEnglish ? "trails" : "sentieri"}
+        </span>
+      </div>
+      <div className="grid gap-2">
+        {sentieriList.map((sentiero) => {
+          const isActive = selectedSentiero?.id === sentiero.id;
+          return (
+            <div
+              key={`mobile-sheet-${sentiero.id}`}
+              className={`rounded-2xl border p-3 ${
+                isActive ? "border-cyan-500 bg-white" : "border-cyan-200/90 bg-white/92"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  ref={(node) => {
+                    sentieroCardRefs.current[sentiero.id] = node;
+                  }}
+                  onClick={() => {
+                    focusSentiero(sentiero);
+                    collapseMobileTrailSheet();
+                  }}
+                  className="min-w-0 flex-1 text-left"
+                >
+                  <p className="truncate text-[15px] font-semibold text-slate">{sentiero.name}</p>
+                  <p className="mt-1 inline-flex items-center gap-1 text-xs text-slate/70">
+                    <span aria-hidden="true">⚑</span>
+                    <span>
+                      {isEnglish ? "Difficulty" : "Difficolta"}: {sentiero.difficulty}
+                    </span>
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    focusSentiero(sentiero);
+                    collapseMobileTrailSheet();
+                  }}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-300 bg-cyan-100 text-cyan-800"
+                  aria-label={isEnglish ? `Play ${sentiero.name}` : `Avvia ${sentiero.name}`}
+                >
+                  ▶
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 
@@ -3258,7 +3400,7 @@ export function MaddalenaMap({
               onClick={() => {
                 void toggleTrailFullscreen();
               }}
-              className="absolute right-3 top-3 z-40 inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 bg-slate-900/80 px-3 text-xs font-semibold text-white backdrop-blur-md transition-colors hover:bg-slate-800/90"
+              className="absolute right-3 top-3 z-[90] inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 bg-slate-900/80 px-3 text-xs font-semibold text-white backdrop-blur-md transition-colors hover:bg-slate-800/90"
             >
               {isTrailImmersive
                 ? isEnglish
@@ -3363,10 +3505,11 @@ export function MaddalenaMap({
                     opacity: entry.opacity,
                   }}
                 >
-                  <img
+                  <Image
                     src={entry.photo.imageUrl}
                     alt={entry.photo.id}
-                    loading="lazy"
+                    width={240}
+                    height={120}
                     className="h-16 w-full rounded-md object-cover"
                   />
                   <p className="mt-1 truncate text-[10px] font-semibold">
@@ -3413,9 +3556,11 @@ export function MaddalenaMap({
           {lightboxPhoto ? (
             <div className="absolute inset-0 z-[70] grid place-items-center bg-slate-950/72 p-4 backdrop-blur-sm">
               <div className="w-full max-w-xl rounded-2xl border border-white/20 bg-slate-900/92 p-3 text-white shadow-2xl">
-                <img
+                <Image
                   src={lightboxPhoto.imageUrl}
                   alt={lightboxPhoto.id}
+                  width={1200}
+                  height={800}
                   className="max-h-[70vh] w-full rounded-xl object-contain"
                 />
                 <div className="mt-3 flex flex-wrap justify-end gap-2">
@@ -3434,9 +3579,48 @@ export function MaddalenaMap({
             </div>
           ) : null}
           {isSentieriActive && !isDesktopLayout && !isTrailImmersive ? (
-            <aside className="fixed inset-x-0 bottom-0 z-[60] max-h-[62vh] overflow-y-auto rounded-t-2xl border-t border-cyan-200/80 bg-cyan-50/95 p-4 shadow-2xl backdrop-blur-md">
-              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-cyan-300/80" />
-              {sentieriPanelContent}
+            <aside
+              className="fixed inset-x-0 bottom-0 z-[80] rounded-t-2xl border-t border-cyan-200/80 bg-cyan-50/95 shadow-2xl backdrop-blur-md transition-[height] duration-300 ease-out"
+              style={{ height: `${mobileTrailSheetHeight}px` }}
+            >
+              <div
+                className="px-4 pt-3"
+                onTouchStart={startMobileTrailSheetTouch}
+                onTouchMove={moveMobileTrailSheetTouch}
+                onTouchEnd={endMobileTrailSheetTouch}
+                onTouchCancel={endMobileTrailSheetTouch}
+              >
+                <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-cyan-300/80" />
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate">
+                    {isEnglish ? "Explore Trails" : "Esplora Sentieri"} ({sentieriList.length})
+                  </p>
+                  {mobileTrailSheetState !== "min" ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMobileTrailSheetState((prev) =>
+                          prev === "max" ? "mid" : prev === "mid" ? "min" : "max"
+                        )
+                      }
+                      className="rounded-full border border-cyan-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-cyan-800"
+                    >
+                      {mobileTrailSheetState === "max"
+                        ? isEnglish
+                          ? "Collapse"
+                          : "Riduci"
+                        : isEnglish
+                          ? "Expand"
+                          : "Espandi"}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+              <div
+                className={`${mobileTrailSheetState === "min" ? "hidden" : "block"} h-[calc(100%-64px)] overflow-y-auto px-4 pb-4`}
+              >
+                {sentieriMobileSheetContent}
+              </div>
             </aside>
           ) : null}
         </div>

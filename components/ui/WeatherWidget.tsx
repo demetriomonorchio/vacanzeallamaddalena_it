@@ -1,5 +1,6 @@
 "use client";
 import type { Locale } from "@/lib/i18n";
+import Image from "next/image";
 
 type WeatherData = {
   velocitaNodi: number;
@@ -60,9 +61,11 @@ export function WeatherWidget({ weather, className, locale = "it" }: WeatherWidg
         <div className="sm:min-w-[124px]">
           <div className="flex items-center gap-2">
             {weather.iconaVentoUrl ? (
-              <img
+              <Image
                 src={weather.iconaVentoUrl}
                 alt={locale === "en" ? "Weather icon" : "Icona meteo"}
+                width={32}
+                height={32}
                 className="h-7 w-7 object-contain sm:h-8 sm:w-8"
               />
             ) : (
