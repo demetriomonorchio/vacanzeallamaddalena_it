@@ -2837,18 +2837,6 @@ export function MaddalenaMap({
     selectedSentiero,
   ]);
 
-  if (!mapboxToken) {
-    return (
-      <div
-        className={`rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 ${className ?? ""}`}
-      >
-        {isEnglish
-          ? "Set `NEXT_PUBLIC_MAPBOX_TOKEN` to display the map."
-          : "Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa."}
-      </div>
-    );
-  }
-
   const isSentieriActive = filtroAttivo === "sentieri";
   const isTrailImmersive = isTrailFullscreen || isTrailPseudoFullscreen;
   const mapHeightClassName = isSentieriActive
@@ -2861,6 +2849,18 @@ export function MaddalenaMap({
     if (filtroAttivo !== "sentieri" || isDesktopLayout || isTrailImmersive) return;
     immersiveContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [filtroAttivo, isDesktopLayout, isTrailImmersive]);
+
+  if (!mapboxToken) {
+    return (
+      <div
+        className={`rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 ${className ?? ""}`}
+      >
+        {isEnglish
+          ? "Set `NEXT_PUBLIC_MAPBOX_TOKEN` to display the map."
+          : "Imposta `NEXT_PUBLIC_MAPBOX_TOKEN` per visualizzare la mappa."}
+      </div>
+    );
+  }
 
   const handleTrailConfirmYes = () => {
     if (!trailConfirmSentiero) return;
