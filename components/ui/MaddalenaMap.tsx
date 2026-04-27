@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import mapboxgl from "mapbox-gl";
 import Image from "next/image";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { MADDI_LOCATIONS } from "@/src/data/maddi-data";
 import { serviziSpiagge } from "@/lib/serviziSpiagge";
 import { serviziBanche } from "@/lib/serviziBanche";
@@ -3572,8 +3573,16 @@ export function MaddalenaMap({
               onClick={() => {
                 void toggleTrailFullscreen();
               }}
-              className="absolute right-3 top-3 z-[90] inline-flex min-h-10 items-center justify-center rounded-full border border-white/35 bg-slate-900/80 px-3 text-xs font-semibold text-white backdrop-blur-md transition-colors hover:bg-slate-800/90"
+              className={`absolute right-5 top-5 inline-flex h-10 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 text-xs font-medium text-slate-800 shadow-md backdrop-blur-md transition-colors hover:bg-white ${
+                isTrailImmersive ? "z-[100]" : "z-[40]"
+              }`}
             >
+              {isTrailImmersive ? (
+                <Minimize2 className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Maximize2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              <span className="hidden sm:inline">
               {isTrailImmersive
                 ? isEnglish
                   ? "Exit immersive mode"
@@ -3581,6 +3590,7 @@ export function MaddalenaMap({
                 : isEnglish
                   ? "Open immersive full screen"
                   : "Apri percorso a tutto schermo"}
+              </span>
             </button>
           ) : null}
           {isSentieriActive && isTrailImmersive ? (

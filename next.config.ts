@@ -21,9 +21,21 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/:path*",
+        has: [
+          {
+            type: "header",
+            key: "host",
+            value: "www\\.vacanzeallamaddalena\\.it",
+          },
+        ],
+        destination: "https://vacanzeallamaddalena.it/:path*",
+        permanent: true,
+      },
+      {
         source: "/",
         destination: "/it",
-        permanent: false,
+        permanent: true,
       },
     ];
   },
