@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { categories, categoryLabels } from "@/lib/categories";
+import { useEffect, useMemo, useState } from "react";
+import { categories, categoryLabels, guidesByCategory } from "@/lib/categories";
 import type { Locale } from "@/lib/i18n";
 
 const siteTitle: Record<Locale, string> = {
@@ -20,6 +20,7 @@ const copy: Record<
   {
     tagline: string;
     explore: string;
+    discoverMore: string;
     apartments: string;
     services: string;
     bookTitle: string;
@@ -32,6 +33,7 @@ const copy: Record<
     tagline:
       "Guida lenta all'arcipelago — testi e ospitalità di chi vive l'isola.",
     explore: "Esplora",
+    discoverMore: "Approfondimenti",
     apartments: "Appartamenti",
     services: "Servizi",
     bookTitle: "Prenotazioni",
@@ -43,6 +45,7 @@ const copy: Record<
     tagline:
       "A slow guide to the archipelago — written and hosted by people who live here.",
     explore: "Explore",
+    discoverMore: "Deep links",
     apartments: "Apartments",
     services: "Services",
     bookTitle: "Bookings",
@@ -56,6 +59,25 @@ const langSwitchLabel: Record<Locale, string> = {
   it: "English",
   en: "Italiano",
 };
+
+const seoPrioritySlugs = [
+  "diving-snorkeling",
+  "kayak-sport-acquatici",
+  "tour-barca",
+  "trekking",
+  "vela",
+  "food",
+  "luce-fotografia",
+  "quando-venire",
+  "spiagge",
+  "isole-minori",
+  "la-maddalena",
+  "spiagge-budelli-spargi",
+  "come-arrivare",
+  "ecologia",
+  "parco-nazionale",
+  "servizi",
+] as const;
 
 export function SiteFooter({ locale }: Props) {
   const pathname = usePathname() ?? "";
@@ -72,6 +94,19 @@ export function SiteFooter({ locale }: Props) {
   const languageSwitchHref = `${otherPath}${queryString}`;
   const t = copy[locale];
   const year = new Date().getFullYear();
+  const seoLinks = useMemo(() => {
+    const allGuides = Object.entries(guidesByCategory).flatMap(([category, entries]) =>
+      entries.map((entry) => ({
+        href: `/${locale}/${category}/${entry.slug}`,
+        label: entry.title[locale],
+        slug: entry.slug,
+      }))
+    );
+    return seoPrioritySlugs
+      .map((slug) => allGuides.find((guide) => guide.slug === slug))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+      .slice(0, 10);
+  }, [locale]);
 
   return (
     <footer className="border-t border-mare/10 bg-sabbia">
@@ -119,6 +154,18 @@ export function SiteFooter({ locale }: Props) {
                   {t.services}
                 </Link>
               </li>
+            </ul>
+            <p className="mt-6 font-sans text-[11px] font-bold uppercase tracking-widest text-slate/45">
+              {t.discoverMore}
+            </p>
+            <ul className="mt-3 grid grid-cols-1 gap-2 font-sans text-xs text-slate/75">
+              {seoLinks.map((item) => (
+                <li key={`seo-${item.href}`}>
+                  <Link href={item.href} className="transition-colors hover:text-mare">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
