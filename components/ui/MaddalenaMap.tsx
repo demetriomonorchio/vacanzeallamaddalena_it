@@ -225,25 +225,21 @@ type SpiaggiaCompat = Spiaggia & {
   zona: Servizio["zona"];
   isFavorite?: boolean;
   maddiNote?: string;
+  sourceIndex: number;
 };
 
-function createBeachId(name: string, index: number) {
+function createBeachId(name: string, coordinates: [number, number], sourceIndex: number) {
   const slug = name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-  return `spiaggia-${slug}-${index}`;
-}
-
-function isSpiaggia(servizio: Servizio): servizio is SpiaggiaCompat {
-  return (
-    servizio.category === "Spiagge" &&
-    Array.isArray(servizio.coordinates) &&
-    Array.isArray(servizio.esposizione) &&
-    typeof servizio.maddiTip === "string"
-  );
+  const [lng, lat] = coordinates;
+  const coordToken = `${lng.toFixed(5)}-${lat.toFixed(5)}`
+    .replace(/\./g, "_")
+    .replace(/-/g, "m");
+  return `spiaggia-${slug}-${coordToken}-${sourceIndex}`;
 }
 
 function hasCoordinates(
@@ -484,12 +480,9 @@ function parseTrailPhotos(
   });
 }
 
-function getSpiaggeConsigliate(direzioneVento: string): SpiaggiaCompat[] {
+function getSpiaggeConsigliate(spiagge: SpiaggiaCompat[], direzioneVento: string): SpiaggiaCompat[] {
   const vento = direzioneVento.toUpperCase();
-  return serviziSpiagge.filter(
-    (spiaggia): spiaggia is SpiaggiaCompat =>
-      isSpiaggia(spiaggia) && !spiaggia.esposizione.includes(vento)
-  );
+  return spiagge.filter((spiaggia) => !spiaggia.esposizione.includes(vento));
 }
 
 function getNomeVento(sigla: DirezioneVento) {
@@ -790,10 +783,6 @@ export function MaddalenaMap({
   const [mobileTrailSheetDragHeight, setMobileTrailSheetDragHeight] = useState<number | null>(null);
   const [isTrailFullscreen, setIsTrailFullscreen] = useState(false);
   const [isTrailPseudoFullscreen, setIsTrailPseudoFullscreen] = useState(false);
-  const [pendingSpiaggiaSelection, setPendingSpiaggiaSelection] = useState<{
-    name: string;
-    coordinates: [number, number];
-  } | null>(null);
   const [sentieriList, setSentieriList] = useState<SentieroInfo[]>([]);
   const [hoveredSentieroId, setHoveredSentieroId] = useState<string | null>(null);
   const [selectedSentiero, setSelectedSentiero] = useState<SentieroInfo | null>(null);
@@ -821,6 +810,40 @@ export function MaddalenaMap({
     if (typeof navigator === "undefined") return false;
     return /iPad|iPhone|iPod/.test(navigator.userAgent);
   }, []);
+  const shouldDebugMap = process.env.NODE_ENV !== "production";
+  const debugMap = useCallback(
+    (event: string, payload?: Record<string, unknown>) => {
+      if (!shouldDebugMap) return;
+      // eslint-disable-next-line no-console
+      console.log(`[MaddiMap] ${event}`, payload ?? {});
+    },
+    [shouldDebugMap]
+  );
+  const stabilizeMapViewport = useCallback((reason: string) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const container = map.getContainer();
+    const runResize = (label: string) => {
+      map.resize();
+      debugMap("stabilize.resize", {
+        reason,
+        label,
+        width: container?.clientWidth,
+        height: container?.clientHeight,
+      });
+    };
+    runResize("immediate");
+    const rafA = window.requestAnimationFrame(() => runResize("raf-1"));
+    const rafB = window.requestAnimationFrame(() => runResize("raf-2"));
+    const t1 = window.setTimeout(() => runResize("t+180"), 180);
+    const t2 = window.setTimeout(() => runResize("t+420"), 420);
+    window.setTimeout(() => {
+      window.cancelAnimationFrame(rafA);
+      window.cancelAnimationFrame(rafB);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    }, 700);
+  }, [debugMap]);
 
   useEffect(() => {
     if (!copiedLocationId) return;
@@ -921,13 +944,22 @@ export function MaddalenaMap({
   );
 
   const spiaggeTutte = useMemo<SpiaggiaCompat[]>(
-    () => serviziSpiagge.filter(isSpiaggia),
+    () =>
+      serviziSpiagge
+        .filter(
+          (servizio): servizio is Spiaggia & { zona: Servizio["zona"] } =>
+            servizio.category === "Spiagge" &&
+            Array.isArray(servizio.coordinates) &&
+            Array.isArray(servizio.esposizione) &&
+            typeof servizio.maddiTip === "string"
+        )
+        .map((spiaggia, sourceIndex) => ({ ...spiaggia, sourceIndex })),
     []
   );
   const spiaggeVisibili = useMemo(
     () =>
       windExpertAttivo
-        ? getSpiaggeConsigliate(direzioneVento)
+        ? getSpiaggeConsigliate(spiaggeTutte, direzioneVento)
         : spiaggeTutte,
     [direzioneVento, spiaggeTutte, windExpertAttivo]
   );
@@ -1189,8 +1221,8 @@ export function MaddalenaMap({
       ...gelaterieLocations,
       ...noleggioGommoniLocations,
       ...noleggioScooterBikeLocations,
-      ...spiaggeVisibili.map((spiaggia, index) => ({
-        id: createBeachId(spiaggia.name, index),
+      ...spiaggeVisibili.map((spiaggia) => ({
+        id: createBeachId(spiaggia.name, spiaggia.coordinates, spiaggia.sourceIndex),
         name: spiaggia.name,
         tipo: "spiagge" as const,
         coordinates: spiaggia.coordinates,
@@ -1313,14 +1345,52 @@ export function MaddalenaMap({
   }, [showAllMobileFilters]);
 
   const handleSpiaggiaClick = useCallback((spiaggia: Spiaggia) => {
+    debugMap("maddi.click", {
+      name: spiaggia.name,
+      coordinates: Array.isArray(spiaggia.coordinates)
+        ? `${spiaggia.coordinates[0]},${spiaggia.coordinates[1]}`
+        : "invalid",
+    });
     setWindExpertAttivo(false);
     setFiltroAttivo("spiagge");
-    if (!Array.isArray(spiaggia.coordinates) || spiaggia.coordinates.length < 2) return;
-    setPendingSpiaggiaSelection({
-      name: spiaggia.name,
-      coordinates: spiaggia.coordinates,
+    if (!Array.isArray(spiaggia.coordinates) || spiaggia.coordinates.length < 2) {
+      debugMap("maddi.click.invalid-coordinates");
+      return;
+    }
+    const [targetLng, targetLat] = spiaggia.coordinates;
+    const matched = allLocations.find((location) => {
+      if (location.tipo !== "spiagge") return false;
+      if (location.name === spiaggia.name) return true;
+      const [lng, lat] = location.coordinates;
+      return Math.abs(lng - targetLng) < 0.00001 && Math.abs(lat - targetLat) < 0.00001;
     });
-  }, []);
+    if (!matched) {
+      debugMap("maddi.click.no-match", { name: spiaggia.name });
+      return;
+    }
+    debugMap("maddi.click.match", { locationId: matched.id, locationName: matched.name });
+    const map = mapRef.current;
+    if (!map) {
+      debugMap("maddi.click.no-map");
+      return;
+    }
+    map.stop();
+    stabilizeMapViewport("maddi-click-before-flyto");
+    map.flyTo({
+      center: matched.coordinates,
+      zoom: 15,
+      pitch: 45,
+      bearing: 0,
+      essential: true,
+      duration: 1000,
+      speed: 0.95,
+      curve: 1.35,
+    });
+    stabilizeMapViewport("maddi-click-after-flyto");
+    const latestMarkerEntry = markerRegistryRef.current[matched.id];
+    latestMarkerEntry?.popup.setLngLat(matched.coordinates).addTo(map);
+    setSelectedLocationId(matched.id);
+  }, [allLocations, debugMap, stabilizeMapViewport]);
 
   const clearTrailPreviewTimers = useCallback(() => {
     trailPreviewTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -1597,17 +1667,61 @@ export function MaddalenaMap({
   );
 
   const focusLocation = useCallback(
-    (locationId: string, source: "marker" | "list" = "list") => {
+    (locationId: string, source: "marker" | "list" | "maddi" = "list") => {
       const map = mapRef.current;
-      const target = visibleLocations.find((loc) => loc.id === locationId);
-      if (!map || !target) return;
+      const target = allLocations.find((loc) => loc.id === locationId);
+      if (!map || !target) {
+        debugMap("focus.skip", {
+          source,
+          locationId,
+          mapReady: Boolean(map),
+          targetFound: Boolean(target),
+        });
+        return;
+      }
 
       Object.values(markerRegistryRef.current).forEach(({ popup }) => popup.remove());
 
       const isTeggeView = target.id === "casa-tegge";
       const isSpiaggiaMarkerView = source === "marker" && target.tipo === "spiagge";
-      const isSpiaggiaWowView = source !== "marker" && target.tipo === "spiagge";
+      const isMaddiFocus = source === "maddi" && target.tipo === "spiagge";
+      const isSpiaggiaWowView = source === "list" && target.tipo === "spiagge";
       const isImmersiveMode = isTrailFullscreen || isTrailPseudoFullscreen;
+      const container = map.getContainer();
+      debugMap("focus.start", {
+        source,
+        locationId,
+        target: target.name,
+        tipo: target.tipo,
+        immersive: isImmersiveMode,
+        containerWidth: container?.clientWidth,
+        containerHeight: container?.clientHeight,
+      });
+
+      if (isMaddiFocus) {
+        map.stop();
+        stabilizeMapViewport("maddi-focus-before-flyto");
+        debugMap("focus.maddi.after-resize", {
+          containerWidth: container?.clientWidth,
+          containerHeight: container?.clientHeight,
+        });
+        map.flyTo({
+          center: target.coordinates,
+          zoom: 15,
+          pitch: 45,
+          bearing: 0,
+          essential: true,
+          duration: 1000,
+          speed: 0.95,
+          curve: 1.35,
+        });
+        stabilizeMapViewport("maddi-focus-after-flyto");
+        const latestMarkerEntry = markerRegistryRef.current[locationId];
+        latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
+        setSelectedLocationId(locationId);
+        debugMap("focus.maddi.done", { locationId, target: target.name });
+        return;
+      }
 
       if (isSpiaggiaWowView) {
         if (beachSwitchWowTimerRef.current !== null) {
@@ -1660,6 +1774,7 @@ export function MaddalenaMap({
         }
 
         setSelectedLocationId(locationId);
+        debugMap("focus.wow.done", { locationId, target: target.name, immersive: isImmersiveMode });
         return;
       }
 
@@ -1684,8 +1799,9 @@ export function MaddalenaMap({
         markerEntry.popup.setLngLat(popupCoordinates).addTo(map);
       }
       setSelectedLocationId(locationId);
+      debugMap("focus.standard.done", { locationId, source, target: target.name });
     },
-    [isTrailFullscreen, isTrailPseudoFullscreen, visibleLocations]
+    [allLocations, debugMap, isTrailFullscreen, isTrailPseudoFullscreen, stabilizeMapViewport]
   );
 
   useEffect(() => {
@@ -1837,25 +1953,37 @@ export function MaddalenaMap({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !isMapReady || !pendingSpiaggiaSelection) return;
+    const container = containerRef.current;
+    if (!map || !container || !isMapReady) return;
 
-    const [pendingLng, pendingLat] = pendingSpiaggiaSelection.coordinates;
-    const target = visibleLocations.find(
-      (location) => {
-        if (location.tipo !== "spiagge") return false;
-        if (location.name === pendingSpiaggiaSelection.name) return true;
-        const [lng, lat] = location.coordinates;
-        return Math.abs(lng - pendingLng) < 0.00001 && Math.abs(lat - pendingLat) < 0.00001;
+    let rafId: number | null = null;
+    const runResize = (reason: string) => {
+      map.resize();
+      debugMap("resize.observer", {
+        reason,
+        width: container.clientWidth,
+        height: container.clientHeight,
+      });
+    };
+
+    const observer = new ResizeObserver(() => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      rafId = window.requestAnimationFrame(() => {
+        runResize("observer");
+        rafId = null;
+      });
+    });
+
+    observer.observe(container);
+    runResize("observer-initial");
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
       }
-    );
-    if (!target) {
-      setPendingSpiaggiaSelection(null);
-      return;
-    }
-
-    focusLocation(target.id, "list");
-    setPendingSpiaggiaSelection(null);
-  }, [focusLocation, isMapReady, pendingSpiaggiaSelection, visibleLocations]);
+      observer.disconnect();
+    };
+  }, [debugMap, isMapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -2898,12 +3026,23 @@ export function MaddalenaMap({
     const targetPitch = shouldTightenToTrail ? Math.max(pitch, 58) : pitch;
 
     const resizeNow = () => {
+      const container = map.getContainer();
+      debugMap("resize.effect.before", {
+        filtroAttivo,
+        immersive: isImmersiveMode,
+        width: container?.clientWidth,
+        height: container?.clientHeight,
+      });
       map.resize();
       map.jumpTo({
         center: targetCenter,
         zoom: targetZoom,
         bearing,
         pitch: targetPitch,
+      });
+      debugMap("resize.effect.after", {
+        width: container?.clientWidth,
+        height: container?.clientHeight,
       });
     };
 

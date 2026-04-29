@@ -442,4 +442,21 @@ export const serviziSpiagge: readonly Servizio[] = [
     rating: 4.3,
     reviews: 35,
   },
-].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));
+]
+  .map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }))
+  .reduce<Servizio[]>((acc, servizio) => {
+    if (acc.some((item) => {
+      if (!Array.isArray(item.coordinates) || !Array.isArray(servizio.coordinates)) {
+        return item.name.toLowerCase() === servizio.name.toLowerCase();
+      }
+      return (
+        item.coordinates[0].toFixed(6) === servizio.coordinates[0].toFixed(6) &&
+        item.coordinates[1].toFixed(6) === servizio.coordinates[1].toFixed(6)
+      );
+    })) {
+      return acc;
+    }
+    // Memorizziamo la prima occorrenza per mantenere ordine e contenuti coerenti.
+    acc.push(servizio);
+    return acc;
+  }, []);
