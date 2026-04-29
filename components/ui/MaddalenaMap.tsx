@@ -753,8 +753,12 @@ export function MaddalenaMap({
   const activeGalleryPhotoFeatureIdRef = useRef<string | number | null>(null);
   const trailPreviewTimersRef = useRef<number[]>([]);
   const trailPreviewRunIdRef = useRef(0);
+  const beachFocusRunIdRef = useRef(0);
   const trailSwitchWowTimerRef = useRef<number | null>(null);
   const beachSwitchWowTimerRef = useRef<number | null>(null);
+  const maddiFocusInFlightRef = useRef(false);
+  const immersiveBeachFocusInFlightRef = useRef(false);
+  const immersiveBeachPendingTargetRef = useRef<string | null>(null);
   const immersionTimerRef = useRef<number | null>(null);
   const immersionStepRef = useRef(0);
   const immersionPathRef = useRef<[number, number][]>([]);
@@ -823,26 +827,13 @@ export function MaddalenaMap({
     const map = mapRef.current;
     if (!map) return;
     const container = map.getContainer();
-    const runResize = (label: string) => {
-      map.resize();
-      debugMap("stabilize.resize", {
-        reason,
-        label,
-        width: container?.clientWidth,
-        height: container?.clientHeight,
-      });
-    };
-    runResize("immediate");
-    const rafA = window.requestAnimationFrame(() => runResize("raf-1"));
-    const rafB = window.requestAnimationFrame(() => runResize("raf-2"));
-    const t1 = window.setTimeout(() => runResize("t+180"), 180);
-    const t2 = window.setTimeout(() => runResize("t+420"), 420);
-    window.setTimeout(() => {
-      window.cancelAnimationFrame(rafA);
-      window.cancelAnimationFrame(rafB);
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    }, 700);
+    map.resize();
+    debugMap("stabilize.resize", {
+      reason,
+      label: "single",
+      width: container?.clientWidth,
+      height: container?.clientHeight,
+    });
   }, [debugMap]);
 
   useEffect(() => {
@@ -1374,21 +1365,45 @@ export function MaddalenaMap({
       debugMap("maddi.click.no-map");
       return;
     }
+    if (maddiFocusInFlightRef.current) {
+      debugMap("maddi.click.skipped.in-flight", { locationId: matched.id });
+      return;
+    }
+    if (beachSwitchWowTimerRef.current !== null) {
+      window.clearTimeout(beachSwitchWowTimerRef.current);
+      beachSwitchWowTimerRef.current = null;
+      debugMap("maddi.click.cleared-list-wow-timer");
+    }
+    maddiFocusInFlightRef.current = true;
+    let isUnlocked = false;
+    const unlockMaddiFocus = () => {
+      if (isUnlocked) return;
+      isUnlocked = true;
+      maddiFocusInFlightRef.current = false;
+      debugMap("maddi.click.unlocked", { locationId: matched.id });
+    };
+    map.once("moveend", unlockMaddiFocus);
+    window.setTimeout(unlockMaddiFocus, 1400);
     map.stop();
     stabilizeMapViewport("maddi-click-before-flyto");
+    beachFocusRunIdRef.current += 1;
+    const runId = beachFocusRunIdRef.current;
     map.flyTo({
       center: matched.coordinates,
       zoom: 15,
-      pitch: 45,
+      pitch: 0,
       bearing: 0,
       essential: true,
-      duration: 1000,
-      speed: 0.95,
-      curve: 1.35,
+      duration: 850,
+      speed: 1.0,
+      curve: 1.2,
     });
-    stabilizeMapViewport("maddi-click-after-flyto");
-    const latestMarkerEntry = markerRegistryRef.current[matched.id];
-    latestMarkerEntry?.popup.setLngLat(matched.coordinates).addTo(map);
+    map.once("moveend", () => {
+      if (beachFocusRunIdRef.current !== runId) return;
+      const latestMarkerEntry = markerRegistryRef.current[matched.id];
+      latestMarkerEntry?.popup.setLngLat(matched.coordinates).addTo(map);
+      debugMap("maddi.click.moveend.popup", { locationId: matched.id, runId });
+    });
     setSelectedLocationId(matched.id);
   }, [allLocations, debugMap, stabilizeMapViewport]);
 
@@ -1685,8 +1700,9 @@ export function MaddalenaMap({
       const isTeggeView = target.id === "casa-tegge";
       const isSpiaggiaMarkerView = source === "marker" && target.tipo === "spiagge";
       const isMaddiFocus = source === "maddi" && target.tipo === "spiagge";
-      const isSpiaggiaWowView = source === "list" && target.tipo === "spiagge";
       const isImmersiveMode = isTrailFullscreen || isTrailPseudoFullscreen;
+      const isSpiaggiaWowView =
+        source === "list" && target.tipo === "spiagge" && !isImmersiveMode;
       const container = map.getContainer();
       debugMap("focus.start", {
         source,
@@ -1708,18 +1724,68 @@ export function MaddalenaMap({
         map.flyTo({
           center: target.coordinates,
           zoom: 15,
-          pitch: 45,
+          pitch: 0,
           bearing: 0,
           essential: true,
-          duration: 1000,
-          speed: 0.95,
-          curve: 1.35,
+          duration: 850,
+          speed: 1.0,
+          curve: 1.2,
         });
-        stabilizeMapViewport("maddi-focus-after-flyto");
         const latestMarkerEntry = markerRegistryRef.current[locationId];
         latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
         setSelectedLocationId(locationId);
         debugMap("focus.maddi.done", { locationId, target: target.name });
+        return;
+      }
+
+      if (source === "list" && target.tipo === "spiagge" && isImmersiveMode) {
+        if (immersiveBeachFocusInFlightRef.current) {
+          immersiveBeachPendingTargetRef.current = locationId;
+          debugMap("focus.immersive-list-beach.queued", { locationId, target: target.name });
+          return;
+        }
+        immersiveBeachFocusInFlightRef.current = true;
+        if (beachSwitchWowTimerRef.current !== null) {
+          window.clearTimeout(beachSwitchWowTimerRef.current);
+          beachSwitchWowTimerRef.current = null;
+        }
+        map.flyTo({
+          center: target.coordinates,
+          zoom: 15,
+          pitch: 0,
+          bearing: 0,
+          essential: true,
+          duration: 700,
+          speed: 1.1,
+          curve: 1.15,
+        });
+        beachFocusRunIdRef.current += 1;
+        const runId = beachFocusRunIdRef.current;
+        map.once("moveend", () => {
+          if (beachFocusRunIdRef.current !== runId) return;
+          const latestMarkerEntry = markerRegistryRef.current[locationId];
+          latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
+          debugMap("focus.immersive-list-beach.popup", { locationId, runId });
+        });
+        setSelectedLocationId(locationId);
+        debugMap("focus.immersive-list-beach.done", { locationId, target: target.name });
+
+        let unlocked = false;
+        const releaseAndDrainQueue = () => {
+          if (unlocked) return;
+          unlocked = true;
+          immersiveBeachFocusInFlightRef.current = false;
+          const queuedId = immersiveBeachPendingTargetRef.current;
+          immersiveBeachPendingTargetRef.current = null;
+          if (queuedId && queuedId !== locationId) {
+            debugMap("focus.immersive-list-beach.dequeue", { queuedId });
+            window.setTimeout(() => {
+              focusLocation(queuedId, "list");
+            }, 0);
+          }
+        };
+        map.once("moveend", releaseAndDrainQueue);
+        window.setTimeout(releaseAndDrainQueue, 1200);
         return;
       }
 
@@ -3011,6 +3077,9 @@ export function MaddalenaMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isMapReady) return;
+    // Questa routine e pensata per mantenere l'inquadratura dei sentieri.
+    // Sulle spiagge puo introdurre ricalcoli camera/resize non necessari.
+    if (filtroAttivo !== "sentieri") return;
 
     const center = map.getCenter();
     const zoom = map.getZoom();
@@ -3359,6 +3428,53 @@ export function MaddalenaMap({
   const spiaggeMobileList = useMemo(
     () => visibleLocations.filter((location) => location.tipo === "spiagge"),
     [visibleLocations]
+  );
+  const spiaggePanelContent = (
+    <>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="font-sans text-sm font-semibold text-slate/85">
+          {isEnglish ? "Beach list" : "Lista Spiagge"}
+        </h2>
+        <span className="text-xs font-semibold text-sky-800">
+          {spiaggeMobileList.length} {isEnglish ? "beaches" : "spiagge"}
+        </span>
+      </div>
+      <div className="grid gap-2">
+        {spiaggeMobileList.map((location) => {
+          const isActive = selectedLocationId === location.id;
+          return (
+            <button
+              key={`desktop-beach-${location.id}`}
+              type="button"
+              onClick={() => focusLocation(location.id, "list")}
+              className={`w-full rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                isActive
+                  ? "border-sky-500 bg-white"
+                  : "border-sky-200/90 bg-white/95 hover:border-sky-300"
+              }`}
+            >
+              <span className="inline-flex items-center gap-2 text-xs text-slate/65">
+                <span
+                  className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                  style={{ backgroundColor: markerColorByType[location.tipo] }}
+                >
+                  {markerSymbolByType[location.tipo]}
+                </span>
+                {isEnglish ? "Beach" : "Spiaggia"}
+              </span>
+              <p className="mt-1 text-sm font-semibold text-slate">{location.name}</p>
+              <p className="mt-1 text-xs text-slate/70">{location.description}</p>
+              {typeof location.rating === "number" ? (
+                <p className="mt-1 text-xs font-medium text-amber-700">
+                  {getStarsFromRating(location.rating)} {location.rating.toFixed(1)}
+                  {typeof location.reviews === "number" ? ` (${location.reviews})` : ""}
+                </p>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </>
   );
   const spiaggeMobileSheetContent = (
     <>
@@ -3750,12 +3866,18 @@ export function MaddalenaMap({
       <div
         ref={immersiveContainerRef}
         className={`relative w-full max-w-[100vw] overflow-hidden ${
-          isSentieriActive && !isTrailImmersive ? "sm:grid sm:grid-cols-[380px_minmax(0,1fr)] sm:gap-4" : ""
+          (isSentieriActive || isSpiaggeActive) && !isTrailImmersive
+            ? "sm:grid sm:grid-cols-[380px_minmax(0,1fr)] sm:gap-4"
+            : ""
         } ${isFullscreenEligibleCategory && isTrailImmersive ? "fixed inset-0 z-[95] max-w-none bg-slate-950" : ""}`}
       >
         {isSentieriActive && isDesktopLayout && !isTrailImmersive ? (
           <aside className="h-[78vh] overflow-y-auto rounded-2xl border border-cyan-200/70 bg-cyan-50/70 p-4 shadow-sm">
             {sentieriPanelContent}
+          </aside>
+        ) : isSpiaggeActive && isDesktopLayout && !isTrailImmersive ? (
+          <aside className="h-[78vh] overflow-y-auto rounded-2xl border border-sky-200/70 bg-sky-50/70 p-4 shadow-sm">
+            {spiaggePanelContent}
           </aside>
         ) : null}
         <div className="relative">
@@ -3854,7 +3976,7 @@ export function MaddalenaMap({
             </button>
           ) : null}
           {isSentieriActive && isTrailImmersive ? (
-            <div className="absolute left-3 top-14 z-40 w-[290px] rounded-xl border border-cyan-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
+            <div className="absolute left-3 top-20 z-40 w-[290px] rounded-xl border border-cyan-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
               <p className="mb-1 text-[11px] font-semibold tracking-wide text-cyan-200">
                 {isEnglish ? "Change trail" : "Cambia percorso"}
               </p>
@@ -3887,7 +4009,7 @@ export function MaddalenaMap({
             </div>
           ) : null}
           {isSpiaggeActive && isTrailImmersive ? (
-            <div className="absolute left-3 top-14 z-40 w-[290px] rounded-xl border border-sky-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
+            <div className="absolute left-3 top-20 z-40 w-[290px] rounded-xl border border-sky-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
               <p className="mb-1 text-[11px] font-semibold tracking-wide text-sky-200">
                 {isEnglish ? "Change beach" : "Cambia spiaggia"}
               </p>
@@ -3924,7 +4046,7 @@ export function MaddalenaMap({
             </div>
           ) : null}
           {isFullscreenEligibleCategory && isTrailImmersive ? (
-            <aside className="absolute left-3 top-3 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/70 bg-emerald-500/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md">
+            <aside className="absolute bottom-3 left-1/2 z-40 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-300/70 bg-emerald-500/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md">
               <span className="inline-block h-2 w-2 rounded-full bg-white/95" aria-hidden="true" />
               <span>
                 {isTrailFullscreen
@@ -4180,7 +4302,9 @@ export function MaddalenaMap({
         </div>
       </div>
 
-      {filtroAttivo !== "sentieri" && !(isSpiaggeActive && !isDesktopLayout && !isTrailImmersive) ? (
+      {filtroAttivo !== "sentieri" &&
+      !(isSpiaggeActive && !isDesktopLayout && !isTrailImmersive) &&
+      !(isSpiaggeActive && isDesktopLayout && !isTrailImmersive) ? (
         <div className="mt-5">
         <h2 className="font-sans text-sm font-semibold text-slate/80">
           {isEnglish ? "Listed places (click to focus)" : "Luoghi in elenco (clic per centrare)"}
