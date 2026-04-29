@@ -1594,9 +1594,8 @@ export function MaddalenaMap({
   const focusLocation = useCallback(
     (locationId: string, source: "marker" | "list" = "list") => {
       const map = mapRef.current;
-      const markerEntry = markerRegistryRef.current[locationId];
       const target = visibleLocations.find((loc) => loc.id === locationId);
-      if (!map || !markerEntry || !target) return;
+      if (!map || !target) return;
 
       Object.values(markerRegistryRef.current).forEach(({ popup }) => popup.remove());
 
@@ -1632,7 +1631,8 @@ export function MaddalenaMap({
             speed: 0.95,
             curve: 1.35,
           });
-          markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+          const latestMarkerEntry = markerRegistryRef.current[locationId];
+          latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
           beachSwitchWowTimerRef.current = null;
         }, 900);
 
@@ -1651,12 +1651,15 @@ export function MaddalenaMap({
         curve: isTeggeView ? 1.65 : 1.3,
       });
 
-      const markerLngLat = markerEntry.marker.getLngLat();
-      const popupCoordinates: [number, number] =
-        source === "marker"
-          ? [markerLngLat.lng, markerLngLat.lat]
-          : target.coordinates;
-      markerEntry.popup.setLngLat(popupCoordinates).addTo(map);
+      const markerEntry = markerRegistryRef.current[locationId];
+      if (markerEntry) {
+        const markerLngLat = markerEntry.marker.getLngLat();
+        const popupCoordinates: [number, number] =
+          source === "marker"
+            ? [markerLngLat.lng, markerLngLat.lat]
+            : target.coordinates;
+        markerEntry.popup.setLngLat(popupCoordinates).addTo(map);
+      }
       setSelectedLocationId(locationId);
     },
     [visibleLocations]
