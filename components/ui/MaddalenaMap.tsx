@@ -761,6 +761,7 @@ export function MaddalenaMap({
   const trailPreviewTimersRef = useRef<number[]>([]);
   const trailPreviewRunIdRef = useRef(0);
   const trailSwitchWowTimerRef = useRef<number | null>(null);
+  const beachSwitchWowTimerRef = useRef<number | null>(null);
   const immersionTimerRef = useRef<number | null>(null);
   const immersionStepRef = useRef(0);
   const immersionPathRef = useRef<[number, number][]>([]);
@@ -866,6 +867,10 @@ export function MaddalenaMap({
       if (trailSwitchWowTimerRef.current !== null) {
         window.clearTimeout(trailSwitchWowTimerRef.current);
         trailSwitchWowTimerRef.current = null;
+      }
+      if (beachSwitchWowTimerRef.current !== null) {
+        window.clearTimeout(beachSwitchWowTimerRef.current);
+        beachSwitchWowTimerRef.current = null;
       }
       if (immersionTimerRef.current !== null) {
         window.clearTimeout(immersionTimerRef.current);
@@ -1597,6 +1602,43 @@ export function MaddalenaMap({
 
       const isTeggeView = target.id === "casa-tegge";
       const isSpiaggiaMarkerView = source === "marker" && target.tipo === "spiagge";
+      const isSpiaggiaWowView = source !== "marker" && target.tipo === "spiagge";
+
+      if (isSpiaggiaWowView) {
+        if (beachSwitchWowTimerRef.current !== null) {
+          window.clearTimeout(beachSwitchWowTimerRef.current);
+          beachSwitchWowTimerRef.current = null;
+        }
+
+        map.flyTo({
+          center: defaultCenter,
+          zoom: 13.9,
+          pitch: 60,
+          bearing: 138,
+          duration: 1100,
+          speed: 0.75,
+          curve: 1.45,
+          essential: true,
+        });
+
+        beachSwitchWowTimerRef.current = window.setTimeout(() => {
+          map.flyTo({
+            center: target.coordinates,
+            zoom: 15,
+            pitch: 45,
+            bearing: 0,
+            essential: true,
+            duration: 1700,
+            speed: 0.95,
+            curve: 1.35,
+          });
+          markerEntry.popup.setLngLat(target.coordinates).addTo(map);
+          beachSwitchWowTimerRef.current = null;
+        }, 900);
+
+        setSelectedLocationId(locationId);
+        return;
+      }
 
       map.flyTo({
         center: target.coordinates,
@@ -1782,20 +1824,9 @@ export function MaddalenaMap({
     const markerEntry = markerRegistryRef.current[target.id];
     if (!markerEntry) return;
 
-    Object.values(markerRegistryRef.current).forEach(({ popup }) => popup.remove());
-
-    map.flyTo({
-      center: pendingSpiaggiaCoords,
-      zoom: 15,
-      pitch: 45,
-      essential: true,
-      duration: 900,
-    });
-
-    markerEntry.popup.setLngLat(target.coordinates).addTo(map);
-    setSelectedLocationId(target.id);
+    focusLocation(target.id, "list");
     setPendingSpiaggiaCoords(null);
-  }, [isMapReady, pendingSpiaggiaCoords, visibleLocations]);
+  }, [focusLocation, isMapReady, pendingSpiaggiaCoords, visibleLocations]);
 
   useEffect(() => {
     const map = mapRef.current;
