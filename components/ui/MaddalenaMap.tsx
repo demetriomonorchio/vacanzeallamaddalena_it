@@ -601,6 +601,7 @@ function createMarkerElement(location: MappaLocation) {
 
 function buildPopupContent(location: MappaLocation, locale: Locale) {
   const isEnglish = locale === "en";
+  const isCompactPopup = typeof window !== "undefined" && window.innerWidth < 640;
   const showAppleDirections =
     typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [lng, lat] = location.coordinates;
@@ -663,7 +664,7 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
   const ratingInfo =
     typeof location.rating === "number"
       ? `
-      <p style="margin: 0 0 6px; font-size: 12px; color: #b45309;">
+      <p style="margin: 0 0 6px; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #b45309;">
         ${getStarsFromRating(location.rating)} ${location.rating.toFixed(1)}${
           typeof location.reviews === "number" ? ` (${location.reviews})` : ""
         }
@@ -671,12 +672,12 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
       `
       : "";
   const navigationLinks = `
-      <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-top:10px;">
+      <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-top:${isCompactPopup ? "8px" : "10px"};">
         <a
           href="${googleDirections}"
           target="_blank"
           rel="noopener noreferrer"
-          style="display:inline-flex; align-items:center; justify-content:center; min-height:34px; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; text-decoration:none; color:#ffffff; background:#1d4ed8;"
+          style="display:inline-flex; align-items:center; justify-content:center; min-height:${isCompactPopup ? "30px" : "34px"}; border-radius:8px; padding:${isCompactPopup ? "5px 7px" : "6px 8px"}; font-size:${isCompactPopup ? "10px" : "11px"}; font-weight:700; text-decoration:none; color:#ffffff; background:#1d4ed8;"
         >
           ${isEnglish ? "Directions" : "Indicazioni"}
         </a>
@@ -685,7 +686,7 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
             ? `
         <a
           href="${appleDirections}"
-          style="display:inline-flex; align-items:center; justify-content:center; min-height:34px; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; text-decoration:none; color:#0f172a; background:#e2e8f0;"
+          style="display:inline-flex; align-items:center; justify-content:center; min-height:${isCompactPopup ? "30px" : "34px"}; border-radius:8px; padding:${isCompactPopup ? "5px 7px" : "6px 8px"}; font-size:${isCompactPopup ? "10px" : "11px"}; font-weight:700; text-decoration:none; color:#0f172a; background:#e2e8f0;"
         >
           Apple Maps
         </a>
@@ -695,7 +696,7 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
         <button
           type="button"
           onclick="navigator.clipboard&&navigator.clipboard.writeText('${latLng}')"
-          style="grid-column:1/-1; display:inline-flex; align-items:center; justify-content:center; min-height:32px; border-radius:8px; border:1px solid #cbd5e1; padding:6px 8px; font-size:11px; font-weight:700; color:#0f172a; background:#f8fafc; cursor:pointer;"
+          style="grid-column:1/-1; display:inline-flex; align-items:center; justify-content:center; min-height:${isCompactPopup ? "29px" : "32px"}; border-radius:8px; border:1px solid #cbd5e1; padding:${isCompactPopup ? "5px 7px" : "6px 8px"}; font-size:${isCompactPopup ? "10px" : "11px"}; font-weight:700; color:#0f172a; background:#f8fafc; cursor:pointer;"
         >
           ${isEnglish ? "Copy coordinates" : "Copia coordinate"}
         </button>
@@ -704,24 +705,24 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
   const maddiFavoriteNote =
     location.isFavorite && location.maddiNote
       ? `
-      <div style="margin-top: 8px; border-radius: 8px; background: #fef3c7; border: 1px solid #fcd34d; padding: 7px 8px; font-size: 12px; color: #78350f;">
+      <div style="margin-top: 8px; border-radius: 8px; background: #fef3c7; border: 1px solid #fcd34d; padding: ${isCompactPopup ? "6px 7px" : "7px 8px"}; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #78350f;">
         <strong>${isEnglish ? "Maddi's tip:" : "Consiglio di Maddi:"}</strong> ${location.maddiNote}
       </div>
       `
       : "";
   return `
-    <div style="width: 280px; max-width: 100%; font-family: ui-sans-serif, system-ui, sans-serif;">
-      <p style="margin: 0 0 4px; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">
+    <div style="width: ${isCompactPopup ? "236px" : "280px"}; max-width: 100%; font-family: ui-sans-serif, system-ui, sans-serif;">
+      <p style="margin: 0 0 4px; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">
         ${categoriaLabel}
       </p>
-      <h3 style="margin: 0 0 6px; font-size: 16px; line-height: 1.2; color: #0f172a;">
+      <h3 style="margin: 0 0 6px; font-size: ${isCompactPopup ? "14px" : "16px"}; line-height: 1.2; color: #0f172a;">
         ${location.name}
       </h3>
-      <p style="margin: 0 0 6px; font-size: 13px; line-height: 1.45; color: #334155;">
+      <p style="margin: 0 0 6px; font-size: ${isCompactPopup ? "12px" : "13px"}; line-height: 1.4; color: #334155;">
         ${location.description}
       </p>
       ${ratingInfo}
-      <p style="margin: 0; font-size: 12px; line-height: 1.45; color: #0f172a;">
+      <p style="margin: 0; font-size: ${isCompactPopup ? "11px" : "12px"}; line-height: 1.4; color: #0f172a;">
         <strong>Maddi tip:</strong> ${location.maddiTip}
       </p>
       ${navigationLinks}
