@@ -1602,6 +1602,7 @@ export function MaddalenaMap({
       const isTeggeView = target.id === "casa-tegge";
       const isSpiaggiaMarkerView = source === "marker" && target.tipo === "spiagge";
       const isSpiaggiaWowView = source !== "marker" && target.tipo === "spiagge";
+      const isImmersiveMode = isTrailFullscreen || isTrailPseudoFullscreen;
 
       if (isSpiaggiaWowView) {
         if (beachSwitchWowTimerRef.current !== null) {
@@ -1609,32 +1610,49 @@ export function MaddalenaMap({
           beachSwitchWowTimerRef.current = null;
         }
 
-        map.flyTo({
-          center: defaultCenter,
-          zoom: 13.9,
-          pitch: 60,
-          bearing: 138,
-          duration: 1100,
-          speed: 0.75,
-          curve: 1.45,
-          essential: true,
-        });
-
-        beachSwitchWowTimerRef.current = window.setTimeout(() => {
+        if (isImmersiveMode) {
+          map.stop();
+          map.resize();
           map.flyTo({
             center: target.coordinates,
             zoom: 15,
             pitch: 45,
             bearing: 0,
             essential: true,
-            duration: 1700,
+            duration: 1000,
             speed: 0.95,
             curve: 1.35,
           });
           const latestMarkerEntry = markerRegistryRef.current[locationId];
           latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
-          beachSwitchWowTimerRef.current = null;
-        }, 900);
+        } else {
+          map.flyTo({
+            center: defaultCenter,
+            zoom: 13.9,
+            pitch: 60,
+            bearing: 138,
+            duration: 1100,
+            speed: 0.75,
+            curve: 1.45,
+            essential: true,
+          });
+
+          beachSwitchWowTimerRef.current = window.setTimeout(() => {
+            map.flyTo({
+              center: target.coordinates,
+              zoom: 15,
+              pitch: 45,
+              bearing: 0,
+              essential: true,
+              duration: 1700,
+              speed: 0.95,
+              curve: 1.35,
+            });
+            const latestMarkerEntry = markerRegistryRef.current[locationId];
+            latestMarkerEntry?.popup.setLngLat(target.coordinates).addTo(map);
+            beachSwitchWowTimerRef.current = null;
+          }, 900);
+        }
 
         setSelectedLocationId(locationId);
         return;
@@ -1662,7 +1680,7 @@ export function MaddalenaMap({
       }
       setSelectedLocationId(locationId);
     },
-    [visibleLocations]
+    [isTrailFullscreen, isTrailPseudoFullscreen, visibleLocations]
   );
 
   useEffect(() => {
