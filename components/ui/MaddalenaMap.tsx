@@ -2869,6 +2869,8 @@ export function MaddalenaMap({
   const isSpiaggeActive = filtroAttivo === "spiagge";
   const isFullscreenEligibleCategory = isSentieriActive || isSpiaggeActive;
   const isTrailImmersive = isTrailFullscreen || isTrailPseudoFullscreen;
+  const isMobileBottomSheetActive =
+    (isSentieriActive || isSpiaggeActive) && !isDesktopLayout && !isTrailImmersive;
   const mapHeightClassName = isFullscreenEligibleCategory
     ? isTrailImmersive
       ? "h-[100vh]"
@@ -2901,7 +2903,7 @@ export function MaddalenaMap({
   }, []);
 
   const startMobileTrailSheetTouch = (event: TouchEvent<HTMLDivElement>) => {
-    if (isDesktopLayout || !isSentieriActive || isTrailImmersive) return;
+    if (!isMobileBottomSheetActive) return;
     mobileTrailSheetTouchRef.current = {
       startY: event.touches?.[0]?.clientY ?? 0,
       startHeight: mobileTrailSheetHeight,
@@ -2939,17 +2941,17 @@ export function MaddalenaMap({
   };
 
   useEffect(() => {
-    if (filtroAttivo !== "sentieri" || isDesktopLayout || isTrailImmersive) return;
+    if (!(isSentieriActive || isSpiaggeActive) || isDesktopLayout || isTrailImmersive) return;
     immersiveContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [filtroAttivo, isDesktopLayout, isTrailImmersive]);
+  }, [isDesktopLayout, isSentieriActive, isSpiaggeActive, isTrailImmersive]);
 
   useEffect(() => {
-    if (filtroAttivo === "sentieri" && !isDesktopLayout && !isTrailImmersive) {
+    if ((isSentieriActive || isSpiaggeActive) && !isDesktopLayout && !isTrailImmersive) {
       openMobileTrailSheet();
       return;
     }
     setMobileTrailSheetDragHeight(null);
-  }, [filtroAttivo, isDesktopLayout, isTrailImmersive, openMobileTrailSheet]);
+  }, [isDesktopLayout, isSentieriActive, isSpiaggeActive, isTrailImmersive, openMobileTrailSheet]);
 
   const handleTrailConfirmYes = () => {
     if (!trailConfirmSentiero) return;
@@ -3150,6 +3152,60 @@ export function MaddalenaMap({
                 </button>
               </div>
             </div>
+          );
+        })}
+      </div>
+    </>
+  );
+  const spiaggeMobileList = useMemo(
+    () => visibleLocations.filter((location) => location.tipo === "spiagge"),
+    [visibleLocations]
+  );
+  const spiaggeMobileSheetContent = (
+    <>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className="font-sans text-sm font-semibold text-slate/85">
+          {isEnglish ? "Beach list" : "Lista Spiagge"}
+        </h2>
+        <span className="text-xs font-semibold text-sky-800">
+          {spiaggeMobileList.length} {isEnglish ? "beaches" : "spiagge"}
+        </span>
+      </div>
+      <div className="grid gap-2">
+        {spiaggeMobileList.map((location) => {
+          const isActive = selectedLocationId === location.id;
+          return (
+            <button
+              key={`mobile-beach-${location.id}`}
+              type="button"
+              onClick={() => {
+                focusLocation(location.id, "list");
+                collapseMobileTrailSheet();
+              }}
+              className={`w-full rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                isActive
+                  ? "border-sky-500 bg-white"
+                  : "border-sky-200/90 bg-white/95 hover:border-sky-300"
+              }`}
+            >
+              <span className="inline-flex items-center gap-2 text-xs text-slate/65">
+                <span
+                  className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                  style={{ backgroundColor: markerColorByType[location.tipo] }}
+                >
+                  {markerSymbolByType[location.tipo]}
+                </span>
+                {isEnglish ? "Beach" : "Spiaggia"}
+              </span>
+              <p className="mt-1 text-sm font-semibold text-slate">{location.name}</p>
+              <p className="mt-1 text-xs text-slate/70">{location.description}</p>
+              {typeof location.rating === "number" ? (
+                <p className="mt-1 text-xs font-medium text-amber-700">
+                  {getStarsFromRating(location.rating)} {location.rating.toFixed(1)}
+                  {typeof location.reviews === "number" ? ` (${location.reviews})` : ""}
+                </p>
+              ) : null}
+            </button>
           );
         })}
       </div>
@@ -3826,9 +3882,13 @@ export function MaddalenaMap({
               </div>
             </div>
           ) : null}
-          {isSentieriActive && !isDesktopLayout && !isTrailImmersive ? (
+          {isMobileBottomSheetActive ? (
             <aside
-              className="fixed inset-x-0 bottom-0 z-[80] rounded-t-2xl border-t border-cyan-200/80 bg-cyan-50/95 shadow-2xl backdrop-blur-md transition-[height] duration-300 ease-out"
+              className={`fixed inset-x-0 bottom-0 z-[80] rounded-t-2xl border-t shadow-2xl backdrop-blur-md transition-[height] duration-300 ease-out ${
+                isSentieriActive
+                  ? "border-cyan-200/80 bg-cyan-50/95"
+                  : "border-sky-200/80 bg-sky-50/95"
+              }`}
               style={{ height: `${mobileTrailSheetHeight}px` }}
             >
               <div
@@ -3838,10 +3898,16 @@ export function MaddalenaMap({
                 onTouchEnd={endMobileTrailSheetTouch}
                 onTouchCancel={endMobileTrailSheetTouch}
               >
-                <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-cyan-300/80" />
+                <div
+                  className={`mx-auto mb-2 h-1.5 w-12 rounded-full ${
+                    isSentieriActive ? "bg-cyan-300/80" : "bg-sky-300/80"
+                  }`}
+                />
                 <div className="mb-2 flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate">
-                    {isEnglish ? "Explore Trails" : "Esplora Sentieri"} ({sentieriList.length})
+                    {isSentieriActive
+                      ? `${isEnglish ? "Explore Trails" : "Esplora Sentieri"} (${sentieriList.length})`
+                      : `${isEnglish ? "Explore Beaches" : "Esplora Spiagge"} (${spiaggeMobileList.length})`}
                   </p>
                   {mobileTrailSheetState !== "min" ? (
                     <button
@@ -3851,7 +3917,11 @@ export function MaddalenaMap({
                           prev === "max" ? "mid" : prev === "mid" ? "min" : "max"
                         )
                       }
-                      className="rounded-full border border-cyan-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-cyan-800"
+                      className={`rounded-full border bg-white px-2.5 py-1 text-[11px] font-semibold ${
+                        isSentieriActive
+                          ? "border-cyan-300 text-cyan-800"
+                          : "border-sky-300 text-sky-800"
+                      }`}
                     >
                       {mobileTrailSheetState === "max"
                         ? isEnglish
@@ -3867,14 +3937,14 @@ export function MaddalenaMap({
               <div
                 className={`${mobileTrailSheetState === "min" ? "hidden" : "block"} h-[calc(100%-64px)] overflow-y-auto px-4 pb-4`}
               >
-                {sentieriMobileSheetContent}
+                {isSentieriActive ? sentieriMobileSheetContent : spiaggeMobileSheetContent}
               </div>
             </aside>
           ) : null}
         </div>
       </div>
 
-      {filtroAttivo !== "sentieri" ? (
+      {filtroAttivo !== "sentieri" && !(isSpiaggeActive && !isDesktopLayout && !isTrailImmersive) ? (
         <div className="mt-5">
         <h2 className="font-sans text-sm font-semibold text-slate/80">
           {isEnglish ? "Listed places (click to focus)" : "Luoghi in elenco (clic per centrare)"}
