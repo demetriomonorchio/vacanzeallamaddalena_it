@@ -17,7 +17,7 @@ type MaddiConciergeProps = {
     maddiNote?: string;
   };
   listaSpiagge: Spiaggia[];
-  onSpiaggiaClick?: (coordinates: [number, number]) => void;
+  onSpiaggiaClick?: (spiaggia: Spiaggia) => void;
   className?: string;
   locale?: Locale;
 };
@@ -299,7 +299,7 @@ export function MaddiConcierge({
             <button
               key={`${spiaggia.name}-${spiaggia.coordinates[0]}-${spiaggia.coordinates[1]}-${index}`}
               type="button"
-              onClick={() => onSpiaggiaClick?.(spiaggia.coordinates)}
+              onClick={() => onSpiaggiaClick?.(spiaggia)}
               className="min-w-[180px] rounded-xl border border-white/40 bg-white/55 p-2 text-left shadow-sm transition-colors hover:bg-white/70"
             >
               <p className="truncate text-xs font-semibold text-slate">{spiaggia.name}</p>

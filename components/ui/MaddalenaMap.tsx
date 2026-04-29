@@ -790,9 +790,10 @@ export function MaddalenaMap({
   const [mobileTrailSheetDragHeight, setMobileTrailSheetDragHeight] = useState<number | null>(null);
   const [isTrailFullscreen, setIsTrailFullscreen] = useState(false);
   const [isTrailPseudoFullscreen, setIsTrailPseudoFullscreen] = useState(false);
-  const [pendingSpiaggiaCoords, setPendingSpiaggiaCoords] = useState<
-    [number, number] | null
-  >(null);
+  const [pendingSpiaggiaSelection, setPendingSpiaggiaSelection] = useState<{
+    name: string;
+    coordinates: [number, number];
+  } | null>(null);
   const [sentieriList, setSentieriList] = useState<SentieroInfo[]>([]);
   const [hoveredSentieroId, setHoveredSentieroId] = useState<string | null>(null);
   const [selectedSentiero, setSelectedSentiero] = useState<SentieroInfo | null>(null);
@@ -1311,10 +1312,14 @@ export function MaddalenaMap({
     };
   }, [showAllMobileFilters]);
 
-  const handleSpiaggiaClick = useCallback((coordinates: [number, number]) => {
+  const handleSpiaggiaClick = useCallback((spiaggia: Spiaggia) => {
     setWindExpertAttivo(false);
     setFiltroAttivo("spiagge");
-    setPendingSpiaggiaCoords(coordinates);
+    if (!Array.isArray(spiaggia.coordinates) || spiaggia.coordinates.length < 2) return;
+    setPendingSpiaggiaSelection({
+      name: spiaggia.name,
+      coordinates: spiaggia.coordinates,
+    });
   }, []);
 
   const clearTrailPreviewTimers = useCallback(() => {
@@ -1832,22 +1837,25 @@ export function MaddalenaMap({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !isMapReady || !pendingSpiaggiaCoords) return;
+    if (!map || !isMapReady || !pendingSpiaggiaSelection) return;
 
+    const [pendingLng, pendingLat] = pendingSpiaggiaSelection.coordinates;
     const target = visibleLocations.find(
-      (location) =>
-        location.tipo === "spiagge" &&
-        location.coordinates[0] === pendingSpiaggiaCoords[0] &&
-        location.coordinates[1] === pendingSpiaggiaCoords[1]
+      (location) => {
+        if (location.tipo !== "spiagge") return false;
+        if (location.name === pendingSpiaggiaSelection.name) return true;
+        const [lng, lat] = location.coordinates;
+        return Math.abs(lng - pendingLng) < 0.00001 && Math.abs(lat - pendingLat) < 0.00001;
+      }
     );
-    if (!target) return;
-
-    const markerEntry = markerRegistryRef.current[target.id];
-    if (!markerEntry) return;
+    if (!target) {
+      setPendingSpiaggiaSelection(null);
+      return;
+    }
 
     focusLocation(target.id, "list");
-    setPendingSpiaggiaCoords(null);
-  }, [focusLocation, isMapReady, pendingSpiaggiaCoords, visibleLocations]);
+    setPendingSpiaggiaSelection(null);
+  }, [focusLocation, isMapReady, pendingSpiaggiaSelection, visibleLocations]);
 
   useEffect(() => {
     const map = mapRef.current;
