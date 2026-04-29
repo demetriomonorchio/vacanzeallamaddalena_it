@@ -1307,7 +1307,7 @@ export function MaddalenaMap({
   }, [showAllMobileFilters]);
 
   const handleSpiaggiaClick = useCallback((coordinates: [number, number]) => {
-    setWindExpertAttivo(true);
+    setWindExpertAttivo(false);
     setFiltroAttivo("spiagge");
     setPendingSpiaggiaCoords(coordinates);
   }, []);
@@ -2020,21 +2020,17 @@ export function MaddalenaMap({
         },
         paint: {
           "circle-radius": [
-            "*",
-            [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              10,
-              3.5,
-              12,
-              5.5,
-              15,
-              9.5,
-              18,
-              14
-            ],
-            ["case", ["boolean", ["feature-state", "hover"], false], 1.25, 1]
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            ["case", ["boolean", ["feature-state", "hover"], false], 4.375, 3.5],
+            12,
+            ["case", ["boolean", ["feature-state", "hover"], false], 6.875, 5.5],
+            15,
+            ["case", ["boolean", ["feature-state", "hover"], false], 11.875, 9.5],
+            18,
+            ["case", ["boolean", ["feature-state", "hover"], false], 17.5, 14],
           ],
           "circle-color": "#ffffff",
           "circle-opacity": 0.96,
@@ -2344,11 +2340,17 @@ export function MaddalenaMap({
     };
 
     const handleTrailMouseEnter = () => {
-      map.getCanvas().style.cursor = "pointer";
+      const canvas = map.getCanvas();
+      if (canvas) {
+        canvas.style.cursor = "pointer";
+      }
     };
 
     const handleTrailMouseLeave = () => {
-      map.getCanvas().style.cursor = "";
+      const canvas = map.getCanvas();
+      if (canvas) {
+        canvas.style.cursor = "";
+      }
     };
 
     const handleStartClick = (
@@ -2487,7 +2489,10 @@ export function MaddalenaMap({
       map.off("mouseenter", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseEnter);
       map.off("mousemove", SENTIERI_PHOTO_LAYER_ID, handlePhotoMouseMove);
       map.off("mouseleave", SENTIERI_PHOTO_LAYER_ID, handleTrailMouseLeave);
-      map.getCanvas().style.cursor = "";
+      const canvas = map.getCanvas();
+      if (canvas) {
+        canvas.style.cursor = "";
+      }
     };
   }, [focusSentiero, isEnglish, isMapReady, isTotalImmersionActive, pauseTotalImmersion]);
 
@@ -2861,8 +2866,10 @@ export function MaddalenaMap({
   ]);
 
   const isSentieriActive = filtroAttivo === "sentieri";
+  const isSpiaggeActive = filtroAttivo === "spiagge";
+  const isFullscreenEligibleCategory = isSentieriActive || isSpiaggeActive;
   const isTrailImmersive = isTrailFullscreen || isTrailPseudoFullscreen;
-  const mapHeightClassName = isSentieriActive
+  const mapHeightClassName = isFullscreenEligibleCategory
     ? isTrailImmersive
       ? "h-[100vh]"
       : "h-screen sm:h-[78vh]"
@@ -3337,9 +3344,7 @@ export function MaddalenaMap({
               type="button"
               onClick={() => {
                 setFiltroAttivo(item.key);
-                if (item.key !== "spiagge") {
-                  setWindExpertAttivo(false);
-                }
+                setWindExpertAttivo(false);
               }}
               aria-pressed={isActive}
               aria-label={`Filtro ${item.label}`}
@@ -3405,9 +3410,7 @@ export function MaddalenaMap({
                       type="button"
                       onClick={() => {
                         setFiltroAttivo(item.key);
-                        if (item.key !== "spiagge") {
-                          setWindExpertAttivo(false);
-                        }
+                        setWindExpertAttivo(false);
                         setShowAllMobileFilters(false);
                       }}
                       className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-semibold transition-colors ${
@@ -3493,7 +3496,7 @@ export function MaddalenaMap({
         ref={immersiveContainerRef}
         className={`relative w-full max-w-[100vw] overflow-hidden ${
           isSentieriActive && !isTrailImmersive ? "sm:grid sm:grid-cols-[380px_minmax(0,1fr)] sm:gap-4" : ""
-        } ${isTrailImmersive ? "fixed inset-0 z-[95] max-w-none bg-slate-950" : ""}`}
+        } ${isFullscreenEligibleCategory && isTrailImmersive ? "fixed inset-0 z-[95] max-w-none bg-slate-950" : ""}`}
       >
         {isSentieriActive && isDesktopLayout && !isTrailImmersive ? (
           <aside className="h-[78vh] overflow-y-auto rounded-2xl border border-cyan-200/70 bg-cyan-50/70 p-4 shadow-sm">
@@ -3567,7 +3570,7 @@ export function MaddalenaMap({
               className="z-30"
             />
           ) : null}
-          {isSentieriActive ? (
+          {isFullscreenEligibleCategory ? (
             <button
               type="button"
               onClick={() => {
@@ -3589,7 +3592,9 @@ export function MaddalenaMap({
                   : "Esci da immersione"
                 : isEnglish
                   ? "Open immersive full screen"
-                  : "Apri percorso a tutto schermo"}
+                  : isSentieriActive
+                    ? "Apri percorso a tutto schermo"
+                    : "Apri mappa a tutto schermo"}
               </span>
             </button>
           ) : null}
@@ -3626,7 +3631,7 @@ export function MaddalenaMap({
               </select>
             </div>
           ) : null}
-          {isSentieriActive && isTrailImmersive ? (
+          {isFullscreenEligibleCategory && isTrailImmersive ? (
             <aside className="absolute left-3 top-3 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/70 bg-emerald-500/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md">
               <span className="inline-block h-2 w-2 rounded-full bg-white/95" aria-hidden="true" />
               <span>
