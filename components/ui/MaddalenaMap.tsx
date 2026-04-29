@@ -363,11 +363,17 @@ function normalizeTrailToken(value: string) {
     .replace(/[^a-z0-9]+/g, "");
 }
 
-function isPercorso15Trail(sentiero: SentieroInfo | null | undefined) {
-  if (!sentiero) return false;
+function getExternalTrailPhotoDataPath(sentiero: SentieroInfo | null | undefined) {
+  if (!sentiero) return null;
   const joined = `${sentiero.id} ${sentiero.name}`;
   const token = normalizeTrailToken(joined);
-  return token.includes("percorso15") || token.includes("sentiero15") || token.includes("trail15");
+  if (token.includes("percorso15") || token.includes("sentiero15") || token.includes("trail15")) {
+    return "/data/foto-sentiero15.json";
+  }
+  if (token.includes("percorso12") || token.includes("sentiero12") || token.includes("trail12")) {
+    return "/data/foto-sentiero12.json";
+  }
+  return null;
 }
 
 function haversineMeters(from: [number, number], to: [number, number]) {
@@ -798,7 +804,7 @@ export function MaddalenaMap({
   const [immersionStepIndex, setImmersionStepIndex] = useState(0);
   const [immersionPassedShots, setImmersionPassedShots] = useState(0);
   const [immersionCurrentTitle, setImmersionCurrentTitle] = useState("");
-  const [trail15Photos, setTrail15Photos] = useState<TrailPhoto[] | null>(null);
+  const [externalTrailPhotos, setExternalTrailPhotos] = useState<Record<string, TrailPhoto[]>>({});
   const [visibleImmersionPhotos, setVisibleImmersionPhotos] = useState<
     Array<{ photo: TrailPhoto; opacity: number; left: number; top: number }>
   >([]);
@@ -1506,16 +1512,17 @@ export function MaddalenaMap({
     [isTotalImmersionActive, isTotalImmersionPaused, runNextImmersionStep]
   );
 
-  const loadTrail15Photos = useCallback(async () => {
-    if (trail15Photos) return trail15Photos;
-    const response = await fetch("/data/foto-sentiero15.json");
+  const loadExternalTrailPhotos = useCallback(async (dataPath: string) => {
+    const cached = externalTrailPhotos[dataPath];
+    if (cached) return cached;
+    const response = await fetch(dataPath);
     if (!response.ok) {
-      throw new Error("foto-sentiero15.json non disponibile");
+      throw new Error(`${dataPath} non disponibile`);
     }
     const payload = (await response.json()) as TrailPhoto[];
-    setTrail15Photos(payload);
+    setExternalTrailPhotos((current) => ({ ...current, [dataPath]: payload }));
     return payload;
-  }, [trail15Photos]);
+  }, [externalTrailPhotos]);
 
   const startTotalImmersion = useCallback(
     async (sentiero: SentieroInfo) => {
@@ -1523,9 +1530,10 @@ export function MaddalenaMap({
       if (!map) return;
 
       let effectiveSentiero = sentiero;
-      if (isPercorso15Trail(sentiero)) {
+      const externalDataPath = getExternalTrailPhotoDataPath(sentiero);
+      if (externalDataPath) {
         try {
-          const loaded = await loadTrail15Photos();
+          const loaded = await loadExternalTrailPhotos(externalDataPath);
           effectiveSentiero = { ...sentiero, photoStops: loaded };
           setSelectedSentiero(effectiveSentiero);
         } catch {
@@ -1550,7 +1558,7 @@ export function MaddalenaMap({
       immersionStepRef.current = 0;
       runNextImmersionStep();
     },
-    [loadTrail15Photos, runNextImmersionStep, stopTotalImmersion]
+    [loadExternalTrailPhotos, runNextImmersionStep, stopTotalImmersion]
   );
 
   const runTrailCinematicPreview = useCallback(
@@ -2755,12 +2763,11 @@ export function MaddalenaMap({
     const map = mapRef.current;
     if (!map || !isMapReady) return;
     const visibility = filtroAttivo === "sentieri" ? "visible" : "none";
+    const externalDataPath = getExternalTrailPhotoDataPath(selectedSentiero);
     const activePhotoStops =
-      selectedSentiero && isPercorso15Trail(selectedSentiero)
-        ? selectedSentiero.photoStops.length > 0
-          ? selectedSentiero.photoStops
-          : (trail15Photos ?? [])
-        : selectedSentiero?.photoStops ?? [];
+      selectedSentiero?.photoStops.length
+        ? selectedSentiero.photoStops
+        : (externalDataPath ? externalTrailPhotos[externalDataPath] ?? [] : []);
 
     if (map.getLayer(SENTIERI_LAYER_ID)) {
       map.setLayoutProperty(SENTIERI_LAYER_ID, "visibility", visibility);
@@ -2786,19 +2793,18 @@ export function MaddalenaMap({
         map.setLayoutProperty(SENTIERI_PHOTO_DOT_LAYER_ID, "visibility", photoVisibility);
       }
     }
-  }, [filtroAttivo, hoveredSentieroId, isMapReady, selectedSentiero, trail15Photos]);
+  }, [externalTrailPhotos, filtroAttivo, hoveredSentieroId, isMapReady, selectedSentiero]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isMapReady) return;
     const photoSource = map.getSource(SENTIERI_PHOTO_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
     if (!photoSource) return;
+    const externalDataPath = getExternalTrailPhotoDataPath(selectedSentiero);
     const photoStops =
-      selectedSentiero && isPercorso15Trail(selectedSentiero)
-        ? selectedSentiero.photoStops.length > 0
-          ? selectedSentiero.photoStops
-          : (trail15Photos ?? [])
-        : (selectedSentiero?.photoStops ?? []);
+      selectedSentiero?.photoStops.length
+        ? selectedSentiero.photoStops
+        : (externalDataPath ? externalTrailPhotos[externalDataPath] ?? [] : []);
     const features = photoStops.map((photo) => ({
       id: photo.id,
       type: "Feature",
@@ -2818,7 +2824,7 @@ export function MaddalenaMap({
       type: "FeatureCollection",
       features,
     } as GeoJSON.FeatureCollection);
-  }, [isMapReady, selectedSentiero, trail15Photos]);
+  }, [externalTrailPhotos, isMapReady, selectedSentiero]);
 
   useEffect(() => {
     if (filtroAttivo !== "sentieri") {
@@ -2840,17 +2846,18 @@ export function MaddalenaMap({
 
   useEffect(() => {
     if (filtroAttivo !== "sentieri" || !selectedSentiero) return;
-    if (!isPercorso15Trail(selectedSentiero)) return;
-    if (selectedSentiero.photoStops.length > 0 && trail15Photos) return;
+    const externalDataPath = getExternalTrailPhotoDataPath(selectedSentiero);
+    if (!externalDataPath) return;
+    if (selectedSentiero.photoStops.length > 0 && externalTrailPhotos[externalDataPath]) return;
 
     let isCancelled = false;
     const hydrateTrail15Photos = async () => {
       try {
-        const loaded = await loadTrail15Photos();
+          const loaded = await loadExternalTrailPhotos(externalDataPath);
         if (isCancelled) return;
         setSelectedSentiero((current) => {
           if (!current || current.id !== selectedSentiero.id) return current;
-          if (current.photoStops.length > 0 && trail15Photos) return current;
+          if (current.photoStops.length > 0 && externalTrailPhotos[externalDataPath]) return current;
           return { ...current, photoStops: loaded };
         });
       } catch {
@@ -2862,7 +2869,7 @@ export function MaddalenaMap({
     return () => {
       isCancelled = true;
     };
-  }, [filtroAttivo, loadTrail15Photos, selectedSentiero, trail15Photos]);
+  }, [externalTrailPhotos, filtroAttivo, loadExternalTrailPhotos, selectedSentiero]);
 
   useEffect(() => {
     if (!isTotalImmersionActive || !selectedSentiero) {
@@ -3324,7 +3331,7 @@ export function MaddalenaMap({
                 Apple
               </a>
             ) : null}
-            {isPercorso15Trail(selectedSentiero) ? (
+            {getExternalTrailPhotoDataPath(selectedSentiero) ? (
               <button
                 type="button"
                 onClick={() => {
@@ -3529,13 +3536,11 @@ export function MaddalenaMap({
   );
 
   const activeTrailPhotos = useMemo(() => {
-    if (selectedSentiero && isPercorso15Trail(selectedSentiero)) {
-      return selectedSentiero.photoStops.length > 0
-        ? selectedSentiero.photoStops
-        : (trail15Photos ?? []);
-    }
-    return selectedSentiero?.photoStops ?? [];
-  }, [selectedSentiero, trail15Photos]);
+    const externalDataPath = getExternalTrailPhotoDataPath(selectedSentiero);
+    return selectedSentiero?.photoStops.length
+      ? selectedSentiero.photoStops
+      : (externalDataPath ? externalTrailPhotos[externalDataPath] ?? [] : []);
+  }, [externalTrailPhotos, selectedSentiero]);
 
   const lightboxPhotos = useMemo(() => {
     if (activeTrailPhotos.length > 0) return activeTrailPhotos;
