@@ -3687,6 +3687,43 @@ export function MaddalenaMap({
               </select>
             </div>
           ) : null}
+          {isSpiaggeActive && isTrailImmersive ? (
+            <div className="absolute left-3 top-14 z-40 w-[290px] rounded-xl border border-sky-200/55 bg-slate-900/88 p-2.5 text-white shadow-lg backdrop-blur-md">
+              <p className="mb-1 text-[11px] font-semibold tracking-wide text-sky-200">
+                {isEnglish ? "Change beach" : "Cambia spiaggia"}
+              </p>
+              <p className="mb-2 truncate text-sm font-bold text-white">
+                {selectedLocation?.tipo === "spiagge"
+                  ? selectedLocation.name
+                  : isEnglish
+                    ? "No beach selected"
+                    : "Nessuna spiaggia selezionata"}
+              </p>
+              <select
+                value={selectedLocation?.tipo === "spiagge" ? selectedLocation.id : ""}
+                onChange={(event) => {
+                  const nextId = event.target.value;
+                  if (!nextId) return;
+                  focusLocation(nextId, "list");
+                }}
+                className="w-full rounded-lg border border-sky-200/70 bg-white px-2 py-2 text-sm font-semibold text-slate shadow-sm"
+                aria-label={isEnglish ? "Change beach in fullscreen" : "Cambia spiaggia in fullscreen"}
+              >
+                {selectedLocation?.tipo !== "spiagge" ? (
+                  <option value="">{isEnglish ? "Select a beach" : "Seleziona una spiaggia"}</option>
+                ) : null}
+                {spiaggeMobileList.map((spiaggia) => (
+                  <option
+                    key={`immersive-beach-${spiaggia.id}`}
+                    value={spiaggia.id}
+                    style={{ color: "#0f172a", backgroundColor: "#ffffff" }}
+                  >
+                    {spiaggia.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
           {isFullscreenEligibleCategory && isTrailImmersive ? (
             <aside className="absolute left-3 top-3 z-40 inline-flex items-center gap-2 rounded-full border border-emerald-300/70 bg-emerald-500/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-md">
               <span className="inline-block h-2 w-2 rounded-full bg-white/95" aria-hidden="true" />
