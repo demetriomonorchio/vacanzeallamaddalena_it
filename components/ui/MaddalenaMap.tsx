@@ -373,6 +373,9 @@ function getExternalTrailPhotoDataPath(sentiero: SentieroInfo | null | undefined
   if (token.includes("percorso12") || token.includes("sentiero12") || token.includes("trail12")) {
     return "/data/foto-sentiero12.json";
   }
+  if (token.includes("percorso7") || token.includes("sentiero7") || token.includes("trail7")) {
+    return "/data/foto-sentiero7.json";
+  }
   return null;
 }
 
@@ -2179,9 +2182,9 @@ export function MaddalenaMap({
           visibility: "none",
         },
         paint: {
-          "line-color": "#22d3ee",
-          "line-opacity": 0.95,
-          "line-width": 5,
+          "line-color": "#f59e0b",
+          "line-opacity": 1,
+          "line-width": 6,
         },
         filter: ["==", ["get", "trailId"], "__none__"],
       });
@@ -3255,6 +3258,7 @@ export function MaddalenaMap({
       <div className="grid gap-2">
         {sentieriList.map((sentiero) => {
           const isActive = selectedSentiero?.id === sentiero.id;
+          const hasTrailPhotos = Boolean(getExternalTrailPhotoDataPath(sentiero));
           return (
             <button
               key={sentiero.id}
@@ -3287,6 +3291,7 @@ export function MaddalenaMap({
                     className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-cyan-300 bg-cyan-100 text-cyan-800"
                     aria-hidden="true"
                   >
+                    {hasTrailPhotos ? "📷" : ""}
                     ▶
                   </span>
                 </div>
@@ -3382,6 +3387,7 @@ export function MaddalenaMap({
       <div className="grid gap-2">
         {sentieriList.map((sentiero) => {
           const isActive = selectedSentiero?.id === sentiero.id;
+          const hasTrailPhotos = Boolean(getExternalTrailPhotoDataPath(sentiero));
           return (
             <div
               key={`mobile-sheet-${sentiero.id}`}
@@ -3421,9 +3427,10 @@ export function MaddalenaMap({
                     focusSentiero(sentiero);
                     collapseMobileTrailSheet();
                   }}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-300 bg-cyan-100 text-cyan-800"
+                  className="inline-flex h-9 min-w-9 items-center justify-center gap-0.5 rounded-full border border-cyan-300 bg-cyan-100 px-1 text-cyan-800"
                   aria-label={isEnglish ? `Play ${sentiero.name}` : `Avvia ${sentiero.name}`}
                 >
+                  {hasTrailPhotos ? <span aria-hidden="true">📷</span> : null}
                   ▶
                 </button>
               </div>

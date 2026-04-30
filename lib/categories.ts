@@ -165,6 +165,14 @@ export const guidesByCategory: Record<Category, readonly GuideEntry[]> = {
         en: "Caprera coves by kayak at dawn, SUP on the flat water of Porto Massimo and pescaturismo with local fishermen: the slow, authentic ways to be on the water.",
       },
     },
+    {
+      slug: "puntiimmersione",
+      title: { it: "Siti di immersione dell'arcipelago", en: "Archipelago dive sites" },
+      excerpt: {
+        it: "Picchi di Coticcio, Scoglio del Gotto, Mortoriotto e Secca di Spargi: i principali siti d'immersione tra granito, canali e coralligeno.",
+        en: "Picchi di Coticcio, Scoglio del Gotto, Mortoriotto and Secca di Spargi: key dive sites among granite formations, channels and coralligenous habitats.",
+      },
+    },
   ],
   guida: [
     {

@@ -234,6 +234,21 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
         "windsurf Spalmatore",
       ],
     },
+    puntiimmersione: {
+      title: "Siti di immersione a La Maddalena — guida ai principali punti diving dell'arcipelago",
+      description:
+        "Picchi di Coticcio, Scoglio del Gotto, Pilastrino, Mortoriotto e Secca di Spargi: panoramica dei principali siti d'immersione dell'arcipelago di La Maddalena.",
+      keywords: [
+        "siti immersione La Maddalena",
+        "punti diving arcipelago La Maddalena",
+        "Picchi di Coticcio immersione",
+        "Scoglio del Gotto diving",
+        "Scoglio del Pilastrino",
+        "Mortoriotto immersioni",
+        "Secca di Spargi Washington",
+        "fondali Caprera",
+      ],
+    },
     // GUIDA
     venti: {
       title: "I venti dell'arcipelago di La Maddalena",
@@ -510,6 +525,21 @@ const guidesMeta: Record<Locale, Record<string, GuideMeta>> = {
         "water sports La Maddalena archipelago",
         "kayak hire La Maddalena",
         "windsurfing Spalmatore",
+      ],
+    },
+    puntiimmersione: {
+      title: "Dive sites in La Maddalena — guide to the archipelago's key diving spots",
+      description:
+        "Picchi di Coticcio, Scoglio del Gotto, Pilastrino, Mortoriotto and Secca di Spargi: an overview of the main diving sites in the La Maddalena archipelago.",
+      keywords: [
+        "La Maddalena dive sites",
+        "La Maddalena archipelago diving spots",
+        "Picchi di Coticcio dive",
+        "Scoglio del Gotto diving",
+        "Pilastrino dive site",
+        "Mortoriotto diving",
+        "Secca di Spargi Washington",
+        "Caprera seabed diving",
       ],
     },
     // INSIDER GUIDE
