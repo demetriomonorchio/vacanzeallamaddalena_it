@@ -25,6 +25,8 @@ C'è un'immagine che chi cammina sull'arcipelago porta a casa e non riesce a des
 
 Camminare a La Maddalena e Caprera è capire l'arcipelago da un'angolazione diversa rispetto al mare: la forma delle isole dall'interno, la direzione del vento sulle creste, il suono che cambia quando si scende verso l'acqua. È un tipo di lettura del territorio che richiede tempo, scarpe chiuse e nessuna fretta.
 
+👉 **Prima di partire:** [Apri Maddalena Live](/it/maddalena-live?section=sentieri#sentieri) per vedere i percorsi attivi, scegliere il tracciato giusto e seguirlo in tempo reale.
+
 ## Guardia Vecchia
 
 Il sentiero che porta al faro di Guardia Vecchia è il più accessibile tra quelli significativi. Si parte dal retro del centro abitato di La Maddalena e sale attraverso macchia mediterranea bassa — cisto, elicriso, mirto in fiore fino a maggio — fino a 150 metri sul livello del mare. In cima, il faro ottocentesco ancora attivo e una vista che non lascia dubbi sulla geometria dell'arcipelago: le isole disposte attorno alla Maddalena in modo che sembrava improbabile prima di vederlo dall'alto.

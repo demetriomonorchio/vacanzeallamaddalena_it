@@ -34,6 +34,7 @@ export const serviziRistoranti: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Ristorante+Pizzeria+Sergent+Peppers,+Via+Giordano+Bruno+1,+La+Maddalena",
     rating: 4.4,
     reviews: 2223,
+    isFavorite: true,
     description: "Italiana · Via Giordano Bruno, 1.",
   },
   {
@@ -44,6 +45,7 @@ export const serviziRistoranti: readonly Servizio[] = [
     url: "https://maps.google.com/?q=I+Capatosta,+Piazza+Bambino+Gesu+12,+La+Maddalena",
     rating: 4.5,
     reviews: 1333,
+    isFavorite: true,
     description: "Pizza · Piazza Bambino Gesù, 12.",
   },
   {
@@ -64,6 +66,7 @@ export const serviziRistoranti: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Pizzeria+La+Mulas,+Via+Balbo+47,+La+Maddalena",
     rating: 4.8,
     reviews: 538,
+    isFavorite: true,
     description: "Pizza · Via Balbo, 47.",
   },
   {
@@ -254,6 +257,7 @@ export const serviziRistoranti: readonly Servizio[] = [
     url: "https://maps.google.com/?q=Trattoria+Vecchia+ILVA,+Largo+Giacomo+Matteotti+1,+La+Maddalena",
     rating: 4.1,
     reviews: 552,
+    favorite: true,
     description: "Ristorante · Largo Giacomo Matteotti, 1.",
   },
   {

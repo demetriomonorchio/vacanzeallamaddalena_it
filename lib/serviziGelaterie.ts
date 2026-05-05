@@ -31,7 +31,7 @@ export const serviziGelaterie: readonly Servizio[] = [
     rating: 4.7,
     reviews: 59,
     isFavorite: true,
-    maddiNote: "Ottimo il gelato di Dolci Distrazioni anche se e cambiata la proprietaria.",
+    maddiNote: "Ottimo il gelato di Dolci Distrazioni anche se e cambiata la proprietà.",
   },
   {
     name: "Gelateria Ilva",

@@ -46,37 +46,11 @@ export const MADDI_LOCATIONS: Location[] = [
     coordinates: [9.391, 41.214],
     description: 'Oasi di pace immersa nel verde della macchia mediterranea.',
     maddiTip: 'Il posto ideale per rilassarsi dopo un trekking con Eleonora.',
-    isFavorite: false,
-    bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/lena/'
-  },
-
-  // --- RISTORANTI ---
-  {
-    id: 'vecchia-ilva',
-    name: 'La Vecchia Ilva',
-    type: 'ristorante',
-    coordinates: [9.406, 41.213],
-    description: 'Cucina tipica e ottima pizza nel centro.',
-    maddiTip: 'Ideale per una cena informale ma di alta qualità dopo una giornata di mare.',
-    isFavorite: false,
-  },
-  {
-    id: 'aragosta',
-    name: 'L’Aragosta',
-    type: 'ristorante',
-    coordinates: [9.408, 41.214],
-    description: 'Ristorante storico con terrazza vista mare.',
-    maddiTip: 'Per una serata speciale. Chiedi il pescato del giorno, non sbagliano mai.',
-    isFavorite: false,
-  },
-  {
-    id: 'zi-anto',
-    name: 'Zi Antò',
-    type: 'ristorante',
-    coordinates: [9.385, 41.212],
-    description: 'Posizione unica sugli scogli di Punta Tegge.',
-    maddiTip: 'Mangiare qui mentre il sole scende è un’esperienza magica. Prenota in anticipo!',
     isFavorite: true,
-    maddiNote: 'Location incredibile sul mare, perfetta per una cena memorabile.',
+    maddiNote: 'Perfetta se cerchi tranquillita e verde, senza rinunciare alla vicinanza al mare.',
+    bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/lena/'
   }
+
+  
+ 
 ];

@@ -3,7 +3,7 @@ import type { Servizio } from "./servizi";
 /** Noleggio scooter e bike (dati da elenco Google Maps). */
 export const serviziNoleggioScooterBike: readonly Servizio[] = [
   {
-    name: "Rent Experience — Slow Travel (e-bike, scooter, kayak) — chiuso temporaneamente",
+    name: "Rent Experience — Slow Travel (e-bike, scooter, kayak) ",
     category: "Noleggio scooter e bike",
     zona: "Cala Gavetta",
     coordinates: [9.4057552, 41.2114003],
@@ -45,6 +45,8 @@ export const serviziNoleggioScooterBike: readonly Servizio[] = [
     coordinates: [9.4074965, 41.2136245],
     url: "https://maps.google.com/?q=Noleggio+Flli+Cuccu,+Via+Amendola+45,+La+Maddalena",
     rating: 4.6,
+    isFavorite: true,
+    maddiNote: "I fratelli Cuccu sono una garanzia di qualità e sicurezza.",
     reviews: 389,
   },
   {
@@ -54,6 +56,8 @@ export const serviziNoleggioScooterBike: readonly Servizio[] = [
     coordinates: [9.4054906, 41.2128379],
     url: "https://maps.google.com/?q=Nicolsport,+Via+Amendola+16,+La+Maddalena",
     rating: 3.5,
+    isFavorite: true,
+    maddiNote: "Nicolsport è un punto di riferimento per il noleggio di scooter e bike.",
     reviews: 226,
   },
 ].map((servizio) => ({ isFavorite: false, maddiNote: "", ...(servizio as Servizio) }));

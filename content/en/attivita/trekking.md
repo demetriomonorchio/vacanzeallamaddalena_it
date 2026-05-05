@@ -25,6 +25,8 @@ Walkers take home an image from the archipelago they can never quite describe: p
 
 Hiking in La Maddalena and Caprera means understanding the archipelago from a different angle than the sea: the islands’ shape from inside, wind direction on the crests, sound changing as you descend toward the water. It is a slow way of reading the land — closed shoes, no rush.
 
+👉 **Before you start:** [Open Maddalena Live](/en/maddalena-live?section=sentieri#sentieri) to see active routes, choose your path, and follow the correct trail in real time.
+
 ## Guardia Vecchia
 
 The trail to the Guardia Vecchia lighthouse is the most accessible of the significant routes. It starts behind the La Maddalena town centre and climbs through low Mediterranean scrub — cistus, helichrysum, myrtle in flower until May — up to about 150 m above sea level. At the top, the still-active 19th-century lighthouse and a view that leaves no doubt about the archipelago’s geometry: islands arranged around La Maddalena in a way that seemed improbable until you saw it from above.

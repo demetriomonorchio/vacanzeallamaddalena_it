@@ -15,7 +15,7 @@ polaroidAuthorLink.il-noleggio-autonomo: "https://www.vacanzemaddalena.com"
 polaroidAuthor.come-il-vento: "Mauro Cercignani"
 polaroidAuthorLink.come-il-vento: "https://www.facebook.com/mauro.cercignani/"
 ---
-content = """# Siti di Immersione dell'Arcipelago
+
 
 ## 1. Picchi di Coticcio
 * **Localizzazione e Accesso:** Situato a est di Caprera, il sito è protetto dai venti di Ponente e Maestrale. Dispone di tre gavitelli per l'ormeggio. L'area è soggetta a restrizioni: vige il divieto di pesca e il limite di velocità per il transito è di 3 nodi.
