@@ -778,14 +778,20 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
         </button>
       </div>
   `;
-  const maddiFavoriteNote =
-    location.isFavorite && location.maddiNote
-      ? `
-      <div style="margin-top: 8px; border-radius: 8px; background: #fef3c7; border: 1px solid #fcd34d; padding: ${isCompactPopup ? "6px 7px" : "7px 8px"}; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #78350f;">
-        <strong>${isEnglish ? "Maddi's tip:" : "Consiglio di Maddi:"}</strong> ${location.maddiNote}
+  const normalizedMaddiTip = location.maddiTip.trim();
+  const normalizedMaddiNote = (location.maddiNote ?? "").trim();
+  const mainMaddiAdvice = normalizedMaddiNote || normalizedMaddiTip;
+  const extraLocationTip =
+    normalizedMaddiNote && normalizedMaddiTip && normalizedMaddiNote !== normalizedMaddiTip
+      ? normalizedMaddiTip
+      : "";
+  const extraLocationTipBlock = extraLocationTip
+    ? `
+      <div style="margin-top: 8px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; padding: ${isCompactPopup ? "6px 7px" : "7px 8px"}; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #334155;">
+        <strong>${isEnglish ? "Location tip:" : "Tip sul luogo:"}</strong> ${extraLocationTip}
       </div>
       `
-      : "";
+    : "";
   return `
     <div style="width: ${isCompactPopup ? "236px" : "280px"}; max-width: 100%; font-family: ui-sans-serif, system-ui, sans-serif;">
       <p style="margin: 0 0 4px; font-size: ${isCompactPopup ? "11px" : "12px"}; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">
@@ -799,10 +805,10 @@ function buildPopupContent(location: MappaLocation, locale: Locale) {
       </p>
       ${ratingInfo}
       <p style="margin: 0; font-size: ${isCompactPopup ? "11px" : "12px"}; line-height: 1.4; color: #0f172a;">
-        <strong>Maddi tip:</strong> ${location.maddiTip}
+        <strong>${isEnglish ? "Maddi's tip:" : "Consiglio di Maddi:"}</strong> ${mainMaddiAdvice}
       </p>
       ${navigationLinks}
-      ${maddiFavoriteNote}
+      ${extraLocationTipBlock}
       ${bookingCta}
     </div>
   `;
@@ -1367,6 +1373,19 @@ export function MaddalenaMap({
     () => visibleLocations.find((location) => location.id === selectedLocationId),
     [selectedLocationId, visibleLocations]
   );
+  const selectedLocationMainAdvice = useMemo(() => {
+    if (!selectedLocation) return "";
+    const note = (selectedLocation.maddiNote ?? "").trim();
+    const tip = selectedLocation.maddiTip.trim();
+    return note || tip;
+  }, [selectedLocation]);
+  const selectedLocationExtraTip = useMemo(() => {
+    if (!selectedLocation) return "";
+    const note = (selectedLocation.maddiNote ?? "").trim();
+    const tip = selectedLocation.maddiTip.trim();
+    if (!note || !tip || note === tip) return "";
+    return tip;
+  }, [selectedLocation]);
   const immersionPhotoMilestones = useMemo(() => {
     if (!selectedSentiero || selectedSentiero.pathCoordinates.length === 0) return [];
     return selectedSentiero.photoStops
@@ -4646,7 +4665,7 @@ export function MaddalenaMap({
               </p>
               <p className="mt-1 text-sm leading-relaxed text-slate/85">
                 <strong>{isEnglish ? "Maddi recommends:" : "Maddì consiglia:"}</strong>{" "}
-                {selectedLocation.maddiTip}
+                {selectedLocationMainAdvice}
               </p>
               {typeof selectedLocation.rating === "number" ? (
                 <p className="mt-2 text-xs font-semibold text-amber-700">
@@ -4710,10 +4729,10 @@ export function MaddalenaMap({
                     : `Coordinate per ancoraggio: ${toLatLngString(selectedLocation.coordinates)}`}
                 </p>
               ) : null}
-              {selectedLocation.isFavorite && selectedLocation.maddiNote ? (
+              {selectedLocationExtraTip ? (
                 <div className="mt-2 rounded-lg border border-amber-300 bg-amber-100/70 px-2.5 py-2 text-xs text-amber-900">
-                  <strong>{isEnglish ? "Maddi's tip:" : "Consiglio di Maddi:"}</strong>{" "}
-                  {selectedLocation.maddiNote}
+                  <strong>{isEnglish ? "Location tip:" : "Tip sul luogo:"}</strong>{" "}
+                  {selectedLocationExtraTip}
                 </div>
               ) : null}
             </div>
