@@ -5,7 +5,7 @@ author: "Demetrio Monorchio"
 authorLink: "https://www.vacanzemaddalena.com/"
 ---
 
-# Three homes, one horizon
+## Three homes, one horizon
 
 Hello, we are Demetrio and Giusy.
 
@@ -27,7 +27,7 @@ Isola is a real apartment: **two bedrooms** furnished with care for rest after l
 
 Isola is for people who come to the archipelago for the sea in the most literal sense: divers, RIB renters, anyone who wants to wake up with blue already in front of them. With parking available, it is also a natural base if you arrive with bikes or your own gear. Perfect for a couple looking for a romantic escape, a family, or a group of friends sharing the same idea of a holiday: one where the sea is the centre of every day.
 
-> [Check availability and book Isola apartment](https://vacanzemaddalena.com)
+> [Check availability and book Isola apartment](https://www.vacanzemaddalena.com/it/appartamenti/isola)
 
 ## Madda apartment — the centre as a way of life
 
@@ -45,7 +45,7 @@ We do not live on site full-time, but we are always reachable by phone. A truste
 
 Madda is for people who want to live the island day to day: shopping at the morning market, sitting in the bars where Maddalenini sit, ending the evening with the harbour under your window. A flat where small size is a strength, not a weakness — because everything that matters is outside the door.
 
-> [Check availability and book Madda apartment](https://vacanzemaddalena.com)
+> [Check availability and book Madda apartment](https://www.vacanzemaddalena.com/it/appartamenti/madda/)
 
 ## Lena apartment — light, garden, and a ritual of outdoor life
 
@@ -61,7 +61,7 @@ Lena is a **bright, spacious three-bedroom flat** — room for families or anyon
 
 Lena is balance. Not the urban concentration of services like Madda, not Isola's absolute view — but a flat where every part of the day has its place: morning coffee on the terrace, afternoon at the beach five minutes away, evening at the barbecue with something fresh. Ideal for families with children, for people who bring gear in the car and do not want to worry about parking, for anyone who wants the sea close without it being the only option.
 
-> [Check availability and book Lena apartment](https://vacanzemaddalena.com)
+> [Check availability and book Lena apartment](https://www.vacanzemaddalena.com/it/appartamenti/lena)
 
 ## Why choose us
 

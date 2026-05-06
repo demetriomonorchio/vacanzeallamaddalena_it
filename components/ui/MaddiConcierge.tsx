@@ -20,6 +20,7 @@ type MaddiConciergeProps = {
   onSpiaggiaClick?: (spiaggia: Spiaggia) => void;
   className?: string;
   locale?: Locale;
+  autoCollapseOnSelectedLocation?: boolean;
 };
 
 type BeachStatus = "riparata" | "esposta";
@@ -151,6 +152,7 @@ export function MaddiConcierge({
   onSpiaggiaClick,
   className,
   locale = "it",
+  autoCollapseOnSelectedLocation = false,
 }: MaddiConciergeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const favoriteNamesByCategory = useMemo(() => {
@@ -231,6 +233,11 @@ export function MaddiConcierge({
     };
   }, [isExpanded, messaggioMaddi]);
 
+  useEffect(() => {
+    if (!autoCollapseOnSelectedLocation || !selectedLocation) return;
+    setIsExpanded(false);
+  }, [autoCollapseOnSelectedLocation, selectedLocation]);
+
   const spiaggeRiparate = listaSpiagge.filter(
     (spiaggia) => getBeachStatus(spiaggia, ventoAttuale) === "riparata"
   );
@@ -240,17 +247,17 @@ export function MaddiConcierge({
       <button
         type="button"
         onClick={() => setIsExpanded(true)}
-        className={`absolute bottom-3 left-3 z-20 inline-flex items-center gap-2 rounded-full border border-white/30 bg-slate-900/80 px-3 py-2 text-left text-white shadow-2xl backdrop-blur-md transition-colors hover:bg-slate-800/85 md:bottom-auto md:left-4 md:top-4 ${className ?? ""}`}
+        className={`absolute left-2 top-2 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-slate-900/80 px-2.5 py-1.5 text-left text-white shadow-2xl backdrop-blur-md transition-colors hover:bg-slate-800/85 md:left-4 md:top-4 md:gap-2 md:px-3 md:py-2 ${className ?? ""}`}
       >
         <Image
           src="/images/maddi-avatar.webp"
           alt="Maddi avatar"
           width={32}
           height={32}
-          className="h-8 w-8 rounded-full object-cover border border-white/20 shadow-md"
+          className="h-7 w-7 rounded-full border border-white/20 object-cover shadow-md md:h-8 md:w-8"
         />
-        <span className="text-xs font-semibold">
-          {locale === "en" ? "Maddi has a tip..." : "Maddi ha un consiglio..."}
+        <span className="text-[11px] font-semibold md:text-xs">
+          {locale === "en" ? "Maddi tip" : "Tip Maddi"}
         </span>
       </button>
     );
@@ -258,22 +265,22 @@ export function MaddiConcierge({
 
   return (
     <aside
-      className={`absolute bottom-3 left-3 right-3 z-20 rounded-2xl border border-white/30 bg-slate-900/80 p-3 text-slate shadow-2xl backdrop-blur-md md:bottom-auto md:left-4 md:right-auto md:top-4 md:w-[380px] ${className ?? ""}`}
+      className={`absolute left-2 top-2 z-20 w-[min(80vw,300px)] rounded-2xl border border-white/30 bg-slate-900/80 p-2.5 text-slate shadow-2xl backdrop-blur-md md:left-4 md:top-4 md:w-[380px] md:p-3 ${className ?? ""}`}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2.5 md:gap-4">
           <Image
             src="/images/maddi-avatar.webp"
             alt="Maddi avatar"
             width={56}
             height={56}
-            className="w-14 h-14 rounded-full object-cover border-2 border-white/20 shadow-xl"
+            className="h-10 w-10 rounded-full border-2 border-white/20 object-cover shadow-xl md:h-14 md:w-14"
           />
           <div>
-            <h3 className="text-sm font-semibold text-white">
+            <h3 className="text-xs font-semibold text-white md:text-sm">
               {locale === "en" ? "Maddi says:" : "Maddi dice:"}
             </h3>
-            <p className="text-sm font-semibold leading-snug text-white">
+            <p className="text-xs font-semibold leading-snug text-white md:text-sm">
               {typedMessage}
               {isTyping ? (
                 <span className="ml-0.5 inline-block animate-pulse text-white" aria-hidden="true">
@@ -286,7 +293,7 @@ export function MaddiConcierge({
         <button
           type="button"
           onClick={() => setIsExpanded(false)}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-white/10 text-sm font-bold text-white transition-colors hover:bg-white/20"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/30 bg-white/10 text-xs font-bold text-white transition-colors hover:bg-white/20 md:h-7 md:w-7 md:text-sm"
           aria-label={locale === "en" ? "Close Maddi panel" : "Chiudi pannello Maddi"}
         >
           ×

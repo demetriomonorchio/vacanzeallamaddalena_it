@@ -4269,7 +4269,8 @@ export function MaddalenaMap({
             listaSpiagge={spiaggeTutte}
             onSpiaggiaClick={handleSpiaggiaClick}
             locale={locale}
-            className="z-30"
+            autoCollapseOnSelectedLocation
+            className={`${selectedLocation ? "hidden md:block" : ""} z-10 md:z-30`}
           />
           {windExpertAttivo && weather ? (
             <WeatherWidget

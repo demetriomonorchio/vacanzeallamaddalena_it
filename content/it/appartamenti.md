@@ -5,7 +5,7 @@ author: "Demetrio Monorchio"
 authorLink: "https://www.vacanzemaddalena.com/"
 ---
 
-# Tre dimore, un unico orizzonte
+## Tre dimore, un unico orizzonte
 
 Ciao, siamo Demetrio e Giusy.
 

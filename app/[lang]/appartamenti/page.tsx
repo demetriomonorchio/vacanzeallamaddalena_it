@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  parseBlocks,
   parseBlocksOmitFirstH1,
   renderInline,
   type MarkdownBlock,
@@ -43,6 +44,11 @@ function getContent(locale: Locale): string | null {
   );
   if (fs.existsSync(fallback)) return fs.readFileSync(fallback, "utf8");
   return null;
+}
+
+function getFrontmatterTitle(raw: string): string | null {
+  const match = raw.match(/^\s*---[\s\S]*?\n\s*title:\s*["']?(.+?)["']?\s*\n[\s\S]*?---/m);
+  return match?.[1]?.trim() || null;
 }
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
@@ -168,14 +174,21 @@ export default async function AppartamentiPage({ params }: Props) {
   if (!raw) notFound();
   const { author, authorLink } = parseFrontmatter(raw);
   const photoByLabel = locale === "it" ? "Foto di" : "Photo by";
+  const firstH1Block = parseBlocks(raw).find((block) => block.kind === "h1");
+  const pageHeading = firstH1Block?.text ?? getFrontmatterTitle(raw) ?? pageMeta[locale].title;
   const blocks = parseBlocksOmitFirstH1(raw);
   const { orphan, sections } = groupH2Sections(blocks);
 
   return (
-    <div className="mx-auto max-w-content px-6 py-16 md:px-10 md:py-24">
+    <div className="mx-auto max-w-content px-6 pb-24 pt-28 md:px-10 md:pt-36">
       {/* Intro + sections from markdown with apartment polaroids */}
       <div className="mx-auto max-w-3xl">
         <article className="space-y-6 font-sans text-base leading-relaxed text-slate-800">
+          <header className="mb-8">
+            <h1 className="font-serif text-4xl font-semibold leading-tight text-slate md:text-5xl">
+              {pageHeading}
+            </h1>
+          </header>
           <div className="space-y-6">
             {orphan.map((b, i) => renderMarkdownBlock(b, i))}
           </div>
@@ -223,7 +236,7 @@ export default async function AppartamentiPage({ params }: Props) {
                   ) : null}
 
                   <h2
-                    className={`font-serif text-2xl font-semibold text-mare ${
+                    className={`font-serif text-3xl font-semibold leading-tight text-slate ${
                       si > 0 || orphan.length > 0 ? "mt-12" : ""
                     }`}
                   >

@@ -45,7 +45,7 @@ export const MADDI_LOCATIONS: Location[] = [
     type: 'alloggio',
     coordinates: [9.391, 41.214],
     description: 'Oasi di pace immersa nel verde della macchia mediterranea.',
-    maddiTip: 'Il posto ideale per rilassarsi dopo un trekking con Eleonora.',
+    maddiTip: 'Il posto ideale per rilassarsi.',
     isFavorite: true,
     maddiNote: 'Perfetta se cerchi tranquillita e verde, senza rinunciare alla vicinanza al mare.',
     bookingUrl: 'https://www.vacanzemaddalena.com/it/appartamenti/lena/'
