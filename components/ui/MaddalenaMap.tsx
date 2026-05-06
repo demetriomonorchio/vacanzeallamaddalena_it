@@ -4049,7 +4049,7 @@ export function MaddalenaMap({
             className="inline-flex items-center rounded-full border border-mare/25 bg-white/80 px-2.5 py-1 text-xs font-semibold text-slate transition-colors hover:border-mare/50 sm:hidden"
             aria-expanded={showAllMobileFilters}
           >
-            {isEnglish ? "More filters..." : "Più filtri..."}
+            {isEnglish ? "All filters" : "Tutti i filtri"}
           </button>
         ) : null}
       </div>
@@ -4061,9 +4061,9 @@ export function MaddalenaMap({
             onClick={() => setShowAllMobileFilters(false)}
             aria-label={isEnglish ? "Close filters" : "Chiudi filtri"}
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[75vh] overflow-y-auto rounded-t-2xl border-t border-mare/20 bg-sabbia p-4 shadow-2xl">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-mare">
+          <div className="absolute inset-0 flex flex-col bg-sabbia shadow-2xl">
+            <div className="flex items-center justify-between border-b border-mare/15 px-4 py-3">
+              <p className="text-base font-semibold text-mare">
                 {isEnglish ? "All filters" : "Tutti i filtri"}
               </p>
               <button
@@ -4074,9 +4074,9 @@ export function MaddalenaMap({
                 {isEnglish ? "Close" : "Chiudi"}
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="flex-1 overflow-y-auto px-4 py-3">
+              <div className="grid grid-cols-1 gap-2 pb-3">
               {categoryFilterOptions
-                .filter((item) => !primaryMobileFilters.includes(item.key))
                 .map((item) => {
                   const isActive = filtroAttivo === item.key;
                   return (
@@ -4106,6 +4106,16 @@ export function MaddalenaMap({
                     </button>
                   );
                 })}
+              </div>
+            </div>
+            <div className="border-t border-mare/15 bg-sabbia/95 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => setShowAllMobileFilters(false)}
+                className="w-full rounded-full bg-mare px-4 py-2 text-sm font-semibold text-white"
+              >
+                {isEnglish ? "Apply and close" : "Applica e chiudi"}
+              </button>
             </div>
           </div>
         </div>
