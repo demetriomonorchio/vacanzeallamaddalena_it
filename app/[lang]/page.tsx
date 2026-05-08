@@ -2,6 +2,7 @@ import { Compass, Map, UtensilsCrossed } from "lucide-react";
 import { Hero } from "@/components/ui/Hero";
 import { Card } from "@/components/ui/Card";
 import { EnvironmentalAwarenessTeaser } from "@/components/ui/EnvironmentalAwarenessTeaser";
+import { ResponsibleSunsetTeaser } from "@/components/ui/ResponsibleSunsetTeaser";
 import { getHomeCopy } from "@/lib/home-copy";
 import { apartments } from "@/lib/categories";
 import { getCategoryForSlug } from "@/lib/guides";
@@ -80,6 +81,7 @@ export default async function HomePage({
           })}
         </ul>
         <EnvironmentalAwarenessTeaser locale={locale} />
+        <ResponsibleSunsetTeaser locale={locale} />
       </section>
 
       <section
