@@ -1,6 +1,7 @@
 import { Compass, Map, UtensilsCrossed } from "lucide-react";
 import { Hero } from "@/components/ui/Hero";
 import { Card } from "@/components/ui/Card";
+import { EnvironmentalAwarenessTeaser } from "@/components/ui/EnvironmentalAwarenessTeaser";
 import { getHomeCopy } from "@/lib/home-copy";
 import { apartments } from "@/lib/categories";
 import { getCategoryForSlug } from "@/lib/guides";
@@ -12,6 +13,12 @@ const heroImage = "/images/home/hero-home.webp";
 const heroCta: Record<string, { label: string; href: string }> = {
   it: { label: "Inizia l'esplorazione", href: "/it/guida" },
   en: { label: "Start exploring", href: "/en/guida" },
+};
+
+const apartmentExternalUrls: Record<string, string> = {
+  isola: "https://www.vacanzemaddalena.com/it/appartamenti/isola/",
+  madda: "https://www.vacanzemaddalena.com/it/appartamenti/madda/",
+  lena: "https://www.vacanzemaddalena.com/it/appartamenti/lena/",
 };
 
 const guideIcons = [Compass, Map, UtensilsCrossed];
@@ -72,6 +79,7 @@ export default async function HomePage({
             );
           })}
         </ul>
+        <EnvironmentalAwarenessTeaser locale={locale} />
       </section>
 
       <section
@@ -94,7 +102,8 @@ export default async function HomePage({
             {apartments.map((apt) => (
               <li key={apt.slug}>
                 <Card
-                  href={`/${locale}/appartamenti/${apt.slug}`}
+                  href={apartmentExternalUrls[apt.slug] ?? `/${locale}/appartamenti/${apt.slug}`}
+                  external
                   title={apt.title[locale]}
                   excerpt={apt.excerpt[locale]}
                   image={apt.image}

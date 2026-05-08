@@ -1,8 +1,15 @@
 ---
+
 title: "Apartments in La Maddalena — Isola, Madda, and Lena"
 description: "Three homes at the heart of the archipelago, run by Demetrio and Giusy. Genuine comfort, strategic locations, and the knowledge of people who actually live here."
 author: "Demetrio Monorchio"
-authorLink: "https://www.vacanzemaddalena.com/"
+authorLink: "https://www.vacanzemaddalena.com/it/appartamenti"
+polaroidAuthor.appartamento-isola: "Demetrio Monorchio"
+polaroidAuthorLink.appartamento-isola: "https://www.vacanzemaddalena.com/it/appartamenti/isola"
+polaroidAuthor.appartamento-madda: "Demetrio Monorchio"
+polaroidAuthorLink.appartamento-madda: "https://www.vacanzemaddalena.com/it/appartamenti/madda"
+polaroidAuthor.appartamento-lena: "Demetrio Monorchio"
+polaroidAuthorLink.appartamento-lena: "https://www.vacanzemaddalena.com/it/appartamenti/lena"
 ---
 
 ## Three homes, one horizon

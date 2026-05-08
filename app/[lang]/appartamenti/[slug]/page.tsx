@@ -91,6 +91,11 @@ const backLabel: Record<Locale, string> = {
   en: "Apartments",
 };
 
+const bookingCtaLabel: Record<Locale, string> = {
+  it: "Verifica disponibilita su vacanzemaddalena.com",
+  en: "Check availability on vacanzemaddalena.com",
+};
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
@@ -143,6 +148,16 @@ export default async function ApartmentDetailPage({ params }: Props) {
         <h1 className="mt-8 font-serif text-4xl font-bold text-mare md:text-5xl">
           {apt.title[locale]}
         </h1>
+        <div className="mt-4">
+          <a
+            href={apt.bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-full bg-mare px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-opacity hover:opacity-90"
+          >
+            {bookingCtaLabel[locale]}
+          </a>
+        </div>
 
         {raw ? (
           <div className="mt-4">

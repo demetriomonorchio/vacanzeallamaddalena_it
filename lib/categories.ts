@@ -274,6 +274,7 @@ export type ApartmentEntry = {
   slug: string;
   title: Record<Locale, string>;
   excerpt: Record<Locale, string>;
+  bookingUrl: string;
   /** Hero cover image shown at the top of the detail page. */
   image: string;
   /** Ordered gallery images shown below the article text. */
@@ -291,6 +292,7 @@ export const apartments: readonly ApartmentEntry[] = [
       it: "Tra calette e silenzio — la base giusta per chi vuole l'arcipelago tutto per sé.",
       en: "Between coves and quiet — the right base for those who want the archipelago to themselves.",
     },
+    bookingUrl: "https://www.vacanzemaddalena.com/it/appartamenti/isola/",
     image: "/images/appartamenti/isola/hero.jpg",
     gallery: [
       "/images/appartamenti/isola/isola-1.jpg",
@@ -313,6 +315,7 @@ export const apartments: readonly ApartmentEntry[] = [
       it: "Al centro del borgo, a pochi minuti dal porto e dal mercato del mattino.",
       en: "In the village centre, minutes from the port and the morning market.",
     },
+    bookingUrl: "https://www.vacanzemaddalena.com/it/appartamenti/madda/",
     image: "/images/appartamenti/madda/hero.jpg",
     gallery: [
       "/images/appartamenti/madda/madda-1.jpg",
@@ -332,9 +335,10 @@ export const apartments: readonly ApartmentEntry[] = [
       en: "Lena Apartment",
     },
     excerpt: {
-      it: "Luminosa, essenziale. Con la vista che dice tutto il resto.",
-      en: "Light-filled, essential. With a view that says the rest.",
+      it: "Luminosa e accogliente, con un giardino privato dove vivere il relax all'aria aperta.",
+      en: "Bright and welcoming, with a private garden made for open-air relax.",
     },
+    bookingUrl: "https://www.vacanzemaddalena.com/it/appartamenti/lena/",
     image: "/images/appartamenti/lena/hero.jpg",
     gallery: [
       "/images/appartamenti/lena/lena-1.jpg",

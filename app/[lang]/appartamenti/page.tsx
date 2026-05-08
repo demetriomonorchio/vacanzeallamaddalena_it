@@ -51,6 +51,19 @@ function getFrontmatterTitle(raw: string): string | null {
   return match?.[1]?.trim() || null;
 }
 
+function getPolaroidCredit(
+  slug: "isola" | "madda" | "lena",
+  credits?: Record<string, { author?: string; authorLink?: string }>
+) {
+  if (!credits) return {};
+  const candidates = [slug, `appartamento-${slug}`, `apartment-${slug}`];
+  for (const key of candidates) {
+    const hit = credits[key];
+    if (hit) return hit;
+  }
+  return {};
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 const pageMeta: Record<Locale, { title: string; description: string }> = {
@@ -172,7 +185,7 @@ export default async function AppartamentiPage({ params }: Props) {
   const locale: Locale = isLocale(lang) ? lang : defaultLocale;
   const raw = getContent(locale);
   if (!raw) notFound();
-  const { author, authorLink } = parseFrontmatter(raw);
+  const { author, authorLink, polaroidCredits } = parseFrontmatter(raw);
   const photoByLabel = locale === "it" ? "Foto di" : "Photo by";
   const firstH1Block = parseBlocks(raw).find((block) => block.kind === "h1");
   const pageHeading = firstH1Block?.text ?? getFrontmatterTitle(raw) ?? pageMeta[locale].title;
@@ -197,6 +210,9 @@ export default async function AppartamentiPage({ params }: Props) {
             const apt = section.aptSlug
               ? apartments.find((a) => a.slug === section.aptSlug)
               : null;
+            const perPolaroidCredit = section.aptSlug
+              ? getPolaroidCredit(section.aptSlug, polaroidCredits)
+              : {};
             const sideRight = si % 2 === 0;
             const floatClass = sideRight
               ? "float-right mb-4 ml-10 md:ml-12"
@@ -213,25 +229,11 @@ export default async function AppartamentiPage({ params }: Props) {
                         pageSlug={apt.slug}
                         rotationDeg={polaroidRotationDeg(`appartamenti:${apt.slug}`)}
                         missingLabel={locale === "it" ? "Immagine assente" : "Image missing"}
+                        photoCreditLabel={photoByLabel}
+                        photoCreditAuthor={perPolaroidCredit.author ?? author}
+                        photoCreditLink={perPolaroidCredit.authorLink ?? authorLink}
+                        disableLightbox
                       />
-                      {author ? (
-                        <p className="relative z-20 mt-1.5 px-1 text-center text-xs italic leading-tight text-slate/70">
-                          {authorLink ? (
-                            <a
-                              href={authorLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="underline-offset-2 transition-colors hover:text-mare hover:underline"
-                            >
-                              📷 {photoByLabel} {author}
-                            </a>
-                          ) : (
-                            <span>
-                              📷 {photoByLabel} {author}
-                            </span>
-                          )}
-                        </p>
-                      ) : null}
                     </div>
                   ) : null}
 

@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from "react";
+import type {
+  CSSProperties,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+} from "react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Category } from "@/lib/categories";
 
@@ -18,6 +22,7 @@ type Props = {
   photoCreditAuthor?: string;
   photoCreditLink?: string;
   className?: string;
+  disableLightbox?: boolean;
 };
 
 function hashString(s: string): number {
@@ -252,11 +257,19 @@ export function UtilitiesPolaroidInner({
   photoCreditAuthor,
   photoCreditLink,
   className = "",
+  disableLightbox = false,
 }: Props) {
   const reactId = useId().replace(/:/g, "");
   const [enlarged, setEnlarged] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const relativePath = `images/${category}/${pageSlug}/${expectedBasename}.png`;
+
+  const isLinkOnlyMode = disableLightbox && Boolean(photoCreditLink);
+
+  const openCreditLink = useCallback(() => {
+    if (!photoCreditLink) return;
+    window.open(photoCreditLink, "_blank", "noopener,noreferrer");
+  }, [photoCreditLink]);
 
   const closeEnlarged = useCallback(() => setEnlarged(false), []);
 
@@ -296,29 +309,52 @@ export function UtilitiesPolaroidInner({
   }, [category, pageSlug, expectedBasename, reactId]);
 
   const openEnlarged = useCallback(() => {
-    if (!src) return;
+    if (isLinkOnlyMode) {
+      openCreditLink();
+      return;
+    }
+    if (!src || disableLightbox) return;
     queueMicrotask(() => setEnlarged(true));
-  }, [src]);
+  }, [disableLightbox, isLinkOnlyMode, openCreditLink, src]);
+
+  const onPolaroidClick = useCallback(
+    (e: ReactMouseEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest("a")) return;
+      openEnlarged();
+    },
+    [openEnlarged]
+  );
 
   const onPolaroidKeyDown = useCallback(
     (e: ReactKeyboardEvent) => {
-      if (!src) return;
+      if (isLinkOnlyMode && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        openCreditLink();
+        return;
+      }
+      if (!src || disableLightbox) return;
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         setEnlarged(true);
       }
     },
-    [src],
+    [disableLightbox, isLinkOnlyMode, openCreditLink, src],
   );
 
   return (
     <div
-      className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className} ${src ? "cursor-zoom-in" : ""}`}
+      className={`relative shrink-0 transition-transform duration-300 hover:z-10 hover:scale-[1.02] ${className} ${isLinkOnlyMode ? "cursor-pointer" : src && !disableLightbox ? "cursor-zoom-in" : ""}`}
       style={{ transform: `rotate(${rotationDeg}deg)` }}
-      role={src ? "button" : undefined}
-      tabIndex={src ? 0 : undefined}
-      aria-label={src ? "Apri anteprima ingrandita" : undefined}
-      onClick={openEnlarged}
+      role={isLinkOnlyMode ? "link" : src && !disableLightbox ? "button" : undefined}
+      tabIndex={isLinkOnlyMode || (src && !disableLightbox) ? 0 : undefined}
+      aria-label={
+        isLinkOnlyMode
+          ? "Apri pagina appartamento"
+          : src && !disableLightbox
+            ? "Apri anteprima ingrandita"
+            : undefined
+      }
+      onClick={onPolaroidClick}
       onKeyDown={onPolaroidKeyDown}
     >
       <div className="relative isolate block w-full max-w-full overflow-visible">
@@ -401,7 +437,8 @@ export function UtilitiesPolaroidInner({
         </figure>
       </div>
 
-      {enlarged &&
+      {!disableLightbox &&
+        enlarged &&
         src &&
         typeof document !== "undefined" &&
         createPortal(

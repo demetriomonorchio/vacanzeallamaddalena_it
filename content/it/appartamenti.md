@@ -1,8 +1,14 @@
 ---
 title: "Appartamenti a La Maddalena — Isola, Madda e Lena"
 description: "Tre dimore nel cuore dell'arcipelago gestite da Demetrio e Giusy. Comfort autentico, posizioni strategiche, la conoscenza di chi ci abita davvero."
-author: "Demetrio Monorchio"
-authorLink: "https://www.vacanzemaddalena.com/"
+author: "scoprimi su vacanzemaddalena.com"
+authorLink: "https://www.vacanzemaddalena.com/appartamenti"
+polaroidAuthor.appartamento-isola: " vacanzemaddalena.com"
+polaroidAuthorLink.appartamento-isola: "https://www.vacanzemaddalena.com/it/appartamenti/isola"
+polaroidAuthor.appartamento-madda: "vacanzemaddalena.com"
+polaroidAuthorLink.appartamento-madda: "https://www.vacanzemaddalena.com/it/appartamenti/madda"
+polaroidAuthor.appartamento-lena: "vacanzemaddalena.com"
+polaroidAuthorLink.appartamento-lena: "https://www.vacanzemaddalena.com/it/appartamenti/lena"
 ---
 
 ## Tre dimore, un unico orizzonte
