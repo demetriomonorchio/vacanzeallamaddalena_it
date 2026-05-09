@@ -861,8 +861,11 @@ export function MaddalenaMap({
     Array<{ x: number; y: number; life: number; maxLife: number }>
   >([]);
   const animationFrameRef = useRef<number | null>(null);
-  /** Evita zoom stretto sugli POI alla prima apparizione della mappa (es. solo alloggi). */
-  const skipInitialMarkersFitBoundsRef = useRef(true);
+  /** Ultimo contesto per cui abbiamo adattato la camera: solo filtro/consigliati, non liste che cambiano (es. meteo). */
+  const markersFitBoundsContextRef = useRef<{
+    filtro: FiltroAttivo;
+    showOnlyMaddiFavorites: boolean;
+  } | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(
     null
@@ -2018,7 +2021,7 @@ export function MaddalenaMap({
       markerRegistryRef.current = {};
       map.remove();
       mapRef.current = null;
-      skipInitialMarkersFitBoundsRef.current = true;
+      markersFitBoundsContextRef.current = null;
     };
   }, [center, mapStyle, mapboxToken, zoom]);
 
@@ -2103,18 +2106,32 @@ export function MaddalenaMap({
         : null
     );
 
-    if (!bounds.isEmpty()) {
-      if (skipInitialMarkersFitBoundsRef.current) {
-        skipInitialMarkersFitBoundsRef.current = false;
-      } else {
-        map.fitBounds(bounds, {
-          padding: 72,
-          maxZoom: 14,
-          duration: 450,
-        });
-      }
+    const fitContext = {
+      filtro: filtroAttivo,
+      showOnlyMaddiFavorites,
+    };
+    const prevFit = markersFitBoundsContextRef.current;
+    const userChangedFilterOrFavorites =
+      prevFit !== null &&
+      (prevFit.filtro !== fitContext.filtro ||
+        prevFit.showOnlyMaddiFavorites !== fitContext.showOnlyMaddiFavorites);
+    markersFitBoundsContextRef.current = fitContext;
+
+    if (!bounds.isEmpty() && userChangedFilterOrFavorites) {
+      map.fitBounds(bounds, {
+        padding: 72,
+        maxZoom: 14,
+        duration: 450,
+      });
     }
-  }, [focusLocation, isMapReady, locale, visibleLocations]);
+  }, [
+    filtroAttivo,
+    focusLocation,
+    isMapReady,
+    locale,
+    showOnlyMaddiFavorites,
+    visibleLocations,
+  ]);
 
   useEffect(() => {
     const map = mapRef.current;
