@@ -263,38 +263,48 @@ function createServiceId(prefix: string, name: string, index: number) {
   return `${prefix}-${slug}-${index}`;
 }
 
+const FILTRI_ATTIVI_LIST: FiltroAttivo[] = [
+  "spiagge",
+  "sentieri",
+  "ristoranti",
+  "alloggi",
+  "banche",
+  "supermercati",
+  "farmacie",
+  "mercati",
+  "emergenze",
+  "musei",
+  "trasporti",
+  "vela",
+  "diving",
+  "windsurfKite",
+  "gelaterie",
+  "noleggioGommoni",
+  "noleggioScooterBike",
+];
+
+/** Da query/hash case-insensitive (es. noleggiogommoni → noleggioGommoni). */
+const FILTRO_BY_LOWER = new Map<string, FiltroAttivo>(
+  FILTRI_ATTIVI_LIST.map((k) => [k.toLowerCase(), k])
+);
+
 function parseFiltroAttivoFromUrl(): FiltroAttivo | null {
   if (typeof window === "undefined") return null;
-  const allowed = new Set<FiltroAttivo>([
-    "spiagge",
-    "sentieri",
-    "ristoranti",
-    "alloggi",
-    "banche",
-    "supermercati",
-    "farmacie",
-    "mercati",
-    "emergenze",
-    "musei",
-    "trasporti",
-    "vela",
-    "diving",
-    "windsurfKite",
-    "gelaterie",
-    "noleggioGommoni",
-    "noleggioScooterBike",
-  ]);
 
-  const normalize = (raw: string | null) => (raw ?? "").trim().toLowerCase();
+  const resolve = (raw: string | null): FiltroAttivo | null => {
+    const key = (raw ?? "").trim().toLowerCase();
+    if (!key) return null;
+    return FILTRO_BY_LOWER.get(key) ?? null;
+  };
 
-  const section = normalize(new URLSearchParams(window.location.search).get("section"));
-  if (section && allowed.has(section as FiltroAttivo)) return section as FiltroAttivo;
+  const section = resolve(new URLSearchParams(window.location.search).get("section"));
+  if (section) return section;
 
-  const category = normalize(new URLSearchParams(window.location.search).get("category"));
-  if (category && allowed.has(category as FiltroAttivo)) return category as FiltroAttivo;
+  const category = resolve(new URLSearchParams(window.location.search).get("category"));
+  if (category) return category;
 
-  const hash = normalize(window.location.hash.replace(/^#/, ""));
-  if (hash && allowed.has(hash as FiltroAttivo)) return hash as FiltroAttivo;
+  const hash = resolve(window.location.hash.replace(/^#/, ""));
+  if (hash) return hash;
 
   return null;
 }
@@ -851,11 +861,13 @@ export function MaddalenaMap({
     Array<{ x: number; y: number; life: number; maxLife: number }>
   >([]);
   const animationFrameRef = useRef<number | null>(null);
+  /** Evita zoom stretto sugli POI alla prima apparizione della mappa (es. solo alloggi). */
+  const skipInitialMarkersFitBoundsRef = useRef(true);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(
     null
   );
-  const [filtroAttivo, setFiltroAttivo] = useState<FiltroAttivo>("alloggi");
+  const [filtroAttivo, setFiltroAttivo] = useState<FiltroAttivo>("spiagge");
   const [windExpertAttivo, setWindExpertAttivo] = useState(true);
   const [direzioneVento, setDirezioneVento] = useState<DirezioneVento>("NW");
   const [activeWeatherLayer, setActiveWeatherLayer] =
@@ -1398,10 +1410,10 @@ export function MaddalenaMap({
   }, [selectedSentiero]);
   const immersionTotalShots = immersionPhotoMilestones.length;
   const categoryFilterOptions = [
-    { key: "alloggi", label: isEnglish ? "Accommodation" : "Alloggi" },
     { key: "spiagge", label: isEnglish ? "Beaches" : "Spiagge" },
     { key: "sentieri", label: isEnglish ? "Trails" : "Sentieri" },
     { key: "ristoranti", label: isEnglish ? "Restaurants" : "Ristoranti" },
+    { key: "alloggi", label: isEnglish ? "Accommodation" : "Alloggi" },
     { key: "banche", label: "Banche & ATM" },
     { key: "supermercati", label: isEnglish ? "Supermarkets" : "Supermercati" },
     { key: "farmacie", label: isEnglish ? "Pharmacies" : "Farmacie" },
@@ -1420,10 +1432,10 @@ export function MaddalenaMap({
     },
   ] as const;
   const primaryMobileFilters: readonly FiltroAttivo[] = [
-    "alloggi",
     "spiagge",
     "sentieri",
     "ristoranti",
+    "alloggi",
     "banche",
   ];
   const hasHiddenMobileFilters = categoryFilterOptions.some(
@@ -2006,6 +2018,7 @@ export function MaddalenaMap({
       markerRegistryRef.current = {};
       map.remove();
       mapRef.current = null;
+      skipInitialMarkersFitBoundsRef.current = true;
     };
   }, [center, mapStyle, mapboxToken, zoom]);
 
@@ -2091,11 +2104,15 @@ export function MaddalenaMap({
     );
 
     if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, {
-        padding: 72,
-        maxZoom: 14,
-        duration: 450,
-      });
+      if (skipInitialMarkersFitBoundsRef.current) {
+        skipInitialMarkersFitBoundsRef.current = false;
+      } else {
+        map.fitBounds(bounds, {
+          padding: 72,
+          maxZoom: 14,
+          duration: 450,
+        });
+      }
     }
   }, [focusLocation, isMapReady, locale, visibleLocations]);
 
