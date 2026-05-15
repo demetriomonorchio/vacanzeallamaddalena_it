@@ -69,7 +69,7 @@ function renderMarkdownBlock(
     return (
       <h3
         key={i}
-        className="mt-8 font-serif text-lg font-semibold text-slate"
+        className="mt-5 font-serif text-lg font-semibold text-slate"
       >
         {b.text}
       </h3>
@@ -86,6 +86,20 @@ function renderMarkdownBlock(
           {renderInline(b.text)}
         </p>
       </aside>
+    );
+  }
+  if (b.kind === "ul") {
+    return (
+      <ul
+        key={i}
+        className="list-disc space-y-1.5 pl-5 text-pretty marker:text-mare md:columns-2 md:gap-x-8 [&>li]:break-inside-avoid"
+      >
+        {b.items.map((item, j) => (
+          <li key={j} className="ps-1">
+            {renderInline(item)}
+          </li>
+        ))}
+      </ul>
     );
   }
   return (
@@ -130,8 +144,8 @@ export function UtilitiesDiaryArticle({
   const quoteAriaEn = "Editorial note";
 
   return (
-    <article className="space-y-6 font-sans text-base leading-relaxed text-slate-800">
-      <div className="space-y-6">
+    <article className="space-y-4 font-sans text-base leading-relaxed text-slate-800 md:space-y-5">
+      <div className="space-y-4 md:space-y-5">
         {orphan.map((b, i) =>
           renderMarkdownBlock(b, i, locale, quoteAriaIt, quoteAriaEn)
         )}
@@ -150,7 +164,7 @@ export function UtilitiesDiaryArticle({
         return (
         <section
           key={`${pageSlug}-section-${si}`}
-          className="space-y-6"
+          className="space-y-4 md:space-y-5"
         >
           <div className="text-pretty">
             <UtilitiesImageCard
@@ -166,12 +180,12 @@ export function UtilitiesDiaryArticle({
             />
             <h2
               className={`font-serif text-2xl font-semibold text-mare ${
-                si > 0 || orphan.length > 0 ? "mt-12" : ""
+                si > 0 || orphan.length > 0 ? "mt-8 md:mt-10" : ""
               }`}
             >
               {section.displayTitle}
             </h2>
-            <div className="mt-6 space-y-6">
+            <div className="mt-4 space-y-3 md:space-y-4">
               {section.blocks.map((b, bi) =>
                 renderMarkdownBlock(
                   b,

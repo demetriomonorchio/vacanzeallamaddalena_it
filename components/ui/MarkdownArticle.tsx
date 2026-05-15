@@ -51,7 +51,8 @@ export type MarkdownBlock =
   | { kind: "h2"; text: string }
   | { kind: "h3"; text: string }
   | { kind: "p"; text: string }
-  | { kind: "blockquote"; text: string };
+  | { kind: "blockquote"; text: string }
+  | { kind: "ul"; items: string[] };
 
 export function parseBlocks(source: string): MarkdownBlock[] {
   const clean = stripFrontmatter(source).trim();
@@ -59,6 +60,7 @@ export function parseBlocks(source: string): MarkdownBlock[] {
   const blocks: MarkdownBlock[] = [];
   let buf: string[] = [];
   let quoteBuf: string[] = [];
+  let listBuf: string[] = [];
 
   const flushParagraph = () => {
     const t = buf.join("\n").trim();
@@ -72,45 +74,77 @@ export function parseBlocks(source: string): MarkdownBlock[] {
     quoteBuf = [];
   };
 
-  for (const line of lines) {
+  const flushList = () => {
+    if (listBuf.length > 0) {
+      blocks.push({ kind: "ul", items: [...listBuf] });
+      listBuf = [];
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i] ?? "";
     const h3 = line.match(/^###\s+(.+)/);
     const h2 = line.match(/^##\s+(.+)/);
     const h1 = line.match(/^#\s+(.+)/);
     const bq = line.match(/^>\s?(.*)/);
+    const ul = line.match(/^-\s+(.+)/);
 
     if (h1 && !h2 && !h3) {
       flushParagraph();
       flushQuote();
+      flushList();
       blocks.push({ kind: "h1", text: h1[1].trim() });
       continue;
     }
     if (h2 && !h3) {
       flushParagraph();
       flushQuote();
+      flushList();
       blocks.push({ kind: "h2", text: h2[1].trim() });
       continue;
     }
     if (h3) {
       flushParagraph();
       flushQuote();
+      flushList();
       blocks.push({ kind: "h3", text: h3[1].trim() });
       continue;
     }
     if (bq !== null) {
       flushParagraph();
+      flushList();
       quoteBuf.push(bq[1]);
+      continue;
+    }
+    if (ul) {
+      flushParagraph();
+      flushQuote();
+      listBuf.push(ul[1].trim());
       continue;
     }
     if (line.trim() === "") {
       flushParagraph();
       flushQuote();
+      // Non chiudere la lista se la prossima riga non vuota è ancora un elenco (- …):
+      // altrimenti ogni riga vuota tra bullet crea un <ul> da un solo elemento e enormi spazi verticali.
+      if (listBuf.length > 0) {
+        let j = i + 1;
+        while (j < lines.length && lines[j]!.trim() === "") j++;
+        const next = (lines[j] ?? "").trim();
+        if (/^-\s+/.test(next)) {
+          continue;
+        }
+      }
+      flushList();
     } else {
       if (quoteBuf.length > 0) flushQuote();
+      flushList();
       buf.push(line);
     }
   }
   flushParagraph();
   flushQuote();
+  flushList();
   return blocks;
 }
 
@@ -195,6 +229,20 @@ export function MarkdownArticle({
                 {renderInline(b.text)}
               </p>
             </aside>
+          );
+        }
+        if (b.kind === "ul") {
+          return (
+            <ul
+              key={i}
+              className="list-disc space-y-1.5 pl-6 text-pretty marker:text-mare md:columns-2 md:gap-x-8 [&>li]:break-inside-avoid"
+            >
+              {b.items.map((item, j) => (
+                <li key={j} className="ps-1">
+                  {renderInline(item)}
+                </li>
+              ))}
+            </ul>
           );
         }
         return (

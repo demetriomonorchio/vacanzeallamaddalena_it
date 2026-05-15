@@ -29,8 +29,6 @@ Il vero pericolo, tuttavia, si nasconde in ciò che lasciamo indietro. Le bottig
 - **Inquinamento a lungo termine:** Una bottiglia di vetro può impiegare fino a 4.000 anni per decomporsi completamente, frantumandosi in mille pezzi che diventano quasi impossibili da rimuovere.
 - **Danno estetico:** Nulla rompe l'incantesimo di un tramonto quanto un tappeto di bottiglie vuote ai propri piedi.
 
-> [Image suggestion: A beautiful, clean glass of wine held up against a pristine Maddalena sunset, with no empty bottles in sight.]
-
 ## Il decalogo tur brindisi responsabile al tramonto
 
 Ecco come possiamo assicurarci che il nostro brindisi sia un omaggio alla bellezza dell'Arcipelago, e non una cicatrice sulla sua pelle:

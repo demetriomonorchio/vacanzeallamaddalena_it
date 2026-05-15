@@ -173,6 +173,20 @@ function renderMarkdownBlock(b: MarkdownBlock, i: number) {
       </aside>
     );
   }
+  if (b.kind === "ul") {
+    return (
+      <ul
+        key={i}
+        className="list-disc space-y-1.5 pl-6 text-pretty marker:text-mare md:columns-2 md:gap-x-8 [&>li]:break-inside-avoid"
+      >
+        {b.items.map((item, j) => (
+          <li key={j} className="ps-1">
+            {renderInline(item)}
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
     <p key={i} className="text-pretty">
       {renderInline(b.text)}
