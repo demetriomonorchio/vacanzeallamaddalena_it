@@ -420,6 +420,32 @@ function isMaddalenaTrail(trailId: string, properties: Record<string, unknown>) 
   return token.includes("maddalena");
 }
 
+/** Numero da nomi tipo "Percorso 12", "Sentiero 7". */
+function extractPercorsoNumber(name: string): string | null {
+  const match =
+    name.match(/\bpercorso\s*(\d+)\b/i) ||
+    name.match(/\bsentiero\s*(\d+)\b/i) ||
+    name.match(/\btrail\s*(\d+)\b/i);
+  return match?.[1] ?? null;
+}
+
+function isCapreraTrail(
+  trailId: string,
+  properties: Record<string, unknown>,
+  startCoordinates?: [number, number]
+) {
+  if (isMaddalenaTrail(trailId, properties)) return false;
+  const island = typeof properties.island === "string" ? properties.island : "";
+  const islandToken = normalizeTrailToken(island);
+  if (islandToken.includes("caprera")) return true;
+  if (islandToken.includes("maddalena")) return false;
+  const name = typeof properties.name === "string" ? properties.name : "";
+  if (extractPercorsoNumber(name)) return true;
+  // Percorsi Caprera nell'arcipelago: inizio a est del ponte (~9.45°E)
+  if (startCoordinates && startCoordinates[0] >= 9.448) return true;
+  return false;
+}
+
 function findTrailEndBeachByName(
   trailName: string,
   spiagge: Array<{ name: string; coordinates: [number, number] }>
@@ -2311,7 +2337,17 @@ export function MaddalenaMap({
           "circle-sort-key": 100,
         },
         paint: {
-          "circle-radius": 7,
+          "circle-radius": [
+            "case",
+            ["==", ["get", "labelStyle"], "number"],
+            [
+              "case",
+              [">", ["length", ["to-string", ["get", "startLabel"]]], 1],
+              9,
+              8,
+            ],
+            7,
+          ],
           "circle-color": "#f97316",
           "circle-stroke-color": "#ffffff",
           "circle-stroke-width": 2,
@@ -2328,11 +2364,36 @@ export function MaddalenaMap({
         type: "symbol",
         source: SENTIERI_START_SOURCE_ID,
         layout: {
-          "text-field": "START",
-          "text-size": 10,
+          "text-field": [
+            "case",
+            ["==", ["get", "labelStyle"], "number"],
+            ["to-string", ["get", "startLabel"]],
+            "START",
+          ],
+          "text-size": [
+            "case",
+            ["==", ["get", "labelStyle"], "number"],
+            [
+              "case",
+              [">", ["length", ["to-string", ["get", "startLabel"]]], 1],
+              9,
+              11,
+            ],
+            10,
+          ],
           "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-          "text-offset": [0, 1.5],
-          "text-anchor": "top",
+          "text-anchor": [
+            "case",
+            ["==", ["get", "labelStyle"], "number"],
+            "center",
+            "top",
+          ],
+          "text-offset": [
+            "case",
+            ["==", ["get", "labelStyle"], "number"],
+            ["literal", [0, 0]],
+            ["literal", [0, 1.5]],
+          ],
           visibility: "none",
         },
         paint: {
@@ -2629,6 +2690,10 @@ export function MaddalenaMap({
             properties,
           });
 
+          const onCaprera = isCapreraTrail(String(trailId), properties, startCoordinates);
+          const percorsoNumber = extractPercorsoNumber(name);
+          const labelStyle = onCaprera && percorsoNumber ? "number" : "start";
+
           startPointFeatures.push({
             type: "Feature",
             properties: {
@@ -2641,6 +2706,8 @@ export function MaddalenaMap({
               previewBearing,
               previewLng: previewCoordinates[0],
               previewLat: previewCoordinates[1],
+              labelStyle,
+              startLabel: percorsoNumber ?? "",
             },
             geometry: {
               type: "Point",
