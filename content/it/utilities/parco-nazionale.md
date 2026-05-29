@@ -1,3 +1,22 @@
+---
+title: "Il Parco Nazionale"
+description: "18.000 ettari, 180 km di coste e Santuario Pelagos: permessi, zone protette e regole per visitare l'arcipelago."
+excerpt: "18.000 ettari, 180 km di coste, Santuario Pelagos: permessi, zone e regole."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.18000-ettari-180: "Gemini"
+polaroidAuthorLink.18000-ettari-180: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-santuario-pelagos: "Gemini"
+polaroidAuthorLink.il-santuario-pelagos: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-zonizzazione-del: "Gemini"
+polaroidAuthorLink.la-zonizzazione-del: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.permessi-e-autorizzazioni: "Gemini"
+polaroidAuthorLink.permessi-e-autorizzazioni: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.perche-scegliere-un: "Gemini"
+polaroidAuthorLink.perche-scegliere-un: "https://www.vacanzemaddalena.com/"
+---
+
 # Il Parco Nazionale dell'Arcipelago
 
 ## 18.000 ettari. 180 km di coste. Un solo punto di partenza.

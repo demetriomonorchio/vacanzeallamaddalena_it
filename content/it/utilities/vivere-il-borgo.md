@@ -1,3 +1,25 @@
+---
+title: "Vivere il borgo"
+description: "Traghetti da Palau, bus, mercato, farmacie e numeri utili: la guida pratica per chi soggiorna nel centro di La Maddalena."
+excerpt: "Traghetti, bus, mercato, farmacie e numeri utili. La guida pratica per chi soggiorna nell'arcipelago."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-maddalena-non: "Gemini"
+polaroidAuthorLink.la-maddalena-non: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.come-arrivare: "Gemini"
+polaroidAuthorLink.come-arrivare: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.muoversi-sull-isola: "Gemini"
+polaroidAuthorLink.muoversi-sull-isola: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.servizi-essenziali: "Gemini"
+polaroidAuthorLink.servizi-essenziali: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-mercato-del: "Gemini"
+polaroidAuthorLink.il-mercato-del: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-sera-nel: "Gemini"
+polaroidAuthorLink.la-sera-nel: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.numeri-utili: "Gemini"
+polaroidAuthorLink.numeri-utili: "https://www.vacanzemaddalena.com/"
+---
 # Vivere il borgo
 
 ## La Maddalena non è una fermata: è il posto

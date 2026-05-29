@@ -1,3 +1,26 @@
+---
+title: "Living the village"
+description: "Ferries from Palau, buses, market, pharmacies and useful numbers: the practical guide for stays in La Maddalena village."
+excerpt: "Ferries, buses, market, pharmacies and useful numbers. The practical guide for archipelago stays."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-maddalena-non: "Gemini"
+polaroidAuthorLink.la-maddalena-non: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.come-arrivare: "Gemini"
+polaroidAuthorLink.come-arrivare: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.muoversi-sull-isola: "Gemini"
+polaroidAuthorLink.muoversi-sull-isola: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.servizi-essenziali: "Gemini"
+polaroidAuthorLink.servizi-essenziali: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-mercato-del: "Gemini"
+polaroidAuthorLink.il-mercato-del: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-sera-nel: "Gemini"
+polaroidAuthorLink.la-sera-nel: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.numeri-utili: "Gemini"
+polaroidAuthorLink.numeri-utili: "https://www.vacanzemaddalena.com/"
+---
+
 # Living the village
 
 ## La Maddalena is not a stopover. It is the destination.

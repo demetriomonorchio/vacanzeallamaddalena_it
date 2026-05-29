@@ -1,3 +1,25 @@
+---
+title: "Turismo consapevole"
+description: "Codice di Buona Condotta, arcipelago senza plastica e Posidonia: come visitare il Parco rispettando il territorio."
+excerpt: "Codice di Buona Condotta, arcipelago senza plastica e Posidonia: come visitare il Parco rispettando il territorio."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.non-e-un: "Gemini"
+polaroidAuthorLink.non-e-un: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.cosa-protegge-il: "Gemini"
+polaroidAuthorLink.cosa-protegge-il: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-codice-di: "Gemini"
+polaroidAuthorLink.il-codice-di: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.arcipelago-senza-plastica: "Gemini"
+polaroidAuthorLink.arcipelago-senza-plastica: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.seame-sardinia-e: "Gemini"
+polaroidAuthorLink.seame-sardinia-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.meduse-ricci-e: "Gemini"
+polaroidAuthorLink.meduse-ricci-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.perche-un-appartamento: "Gemini"
+polaroidAuthorLink.perche-un-appartamento: "https://www.vacanzemaddalena.com/"
+---
 # Turismo consapevole nell'arcipelago
 
 ## Non è un obbligo. È la ragione per cui si viene qui.

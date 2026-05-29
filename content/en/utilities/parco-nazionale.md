@@ -1,3 +1,22 @@
+---
+title: "The National Park"
+description: "18,000 hectares, 180 km of coastline and Pelagos Sanctuary: permits, protected zones and rules for visiting the archipelago."
+excerpt: "18,000 hectares, 180 km of coastline, Pelagos Sanctuary: permits, zones and rules."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.18000-ettari-180: "Gemini"
+polaroidAuthorLink.18000-ettari-180: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-santuario-pelagos: "Gemini"
+polaroidAuthorLink.il-santuario-pelagos: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.la-zonizzazione-del: "Gemini"
+polaroidAuthorLink.la-zonizzazione-del: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.permessi-e-autorizzazioni: "Gemini"
+polaroidAuthorLink.permessi-e-autorizzazioni: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.perche-scegliere-un: "Gemini"
+polaroidAuthorLink.perche-scegliere-un: "https://www.vacanzemaddalena.com/"
+---
+
 # The Archipelago National Park
 
 ## 18,000 hectares. 180 km of coastline. One starting point.

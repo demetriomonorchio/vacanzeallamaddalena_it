@@ -1,3 +1,26 @@
+---
+title: "Responsible tourism"
+description: "Code of Good Conduct, plastic-free archipelago and Posidonia: how to visit the Park with genuine care for the territory."
+excerpt: "Code of Good Conduct, plastic-free archipelago and Posidonia: how to visit the Park with genuine care."
+category: "utilities"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.non-e-un: "Gemini"
+polaroidAuthorLink.non-e-un: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.cosa-protegge-il: "Gemini"
+polaroidAuthorLink.cosa-protegge-il: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.il-codice-di: "Gemini"
+polaroidAuthorLink.il-codice-di: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.arcipelago-senza-plastica: "Gemini"
+polaroidAuthorLink.arcipelago-senza-plastica: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.seame-sardinia-e: "Gemini"
+polaroidAuthorLink.seame-sardinia-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.meduse-ricci-e: "Gemini"
+polaroidAuthorLink.meduse-ricci-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.perche-un-appartamento: "Gemini"
+polaroidAuthorLink.perche-un-appartamento: "https://www.vacanzemaddalena.com/"
+---
+
 # Responsible tourism in the archipelago
 
 ## Not an obligation. The reason people come here.
