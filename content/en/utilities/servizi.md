@@ -4,6 +4,22 @@ description: "Where to find supermarkets, duty pharmacies, ATMs, and Paolo Merlo
 excerpt: "Supermarkets, duty pharmacies, ATMs, Paolo Merlo hospital, and WiFi: everything you need for a self-catering stay without surprises."
 category: "utilities"
 googleMapsUrl: "https://maps.app.goo.gl/uVNLDVDk4LkjkbPB6"
+author: "Gemini"
+authorLink: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.una-premessa-rassicurante: "Gemini"
+polaroidAuthorLink.una-premessa-rassicurante: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.supermercati: "Gemini"
+polaroidAuthorLink.supermercati: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.farmacia: "Gemini"
+polaroidAuthorLink.farmacia: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.ospedale-e-pronto: "Gemini"
+polaroidAuthorLink.ospedale-e-pronto: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.bancomat-e-pagamenti: "Gemini"
+polaroidAuthorLink.bancomat-e-pagamenti: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.connettivita-telefono-e: "Gemini"
+polaroidAuthorLink.connettivita-telefono-e: "https://www.vacanzemaddalena.com/"
+polaroidAuthor.servizi-vela: "Gemini"
+polaroidAuthorLink.servizi-vela: "https://www.vacanzemaddalena.com/"
 ---
 
 # Island services
