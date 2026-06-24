@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Caveat, Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -44,6 +45,7 @@ export default function RootLayout({
         {children}
         {/* Portal per lightbox polaroid (sopra tutto il layout, stacking affidabile) */}
         <div id="lightbox-root" />
+        <Analytics />
       </body>
     </html>
   );
