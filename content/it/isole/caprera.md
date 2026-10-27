@@ -23,7 +23,7 @@ polaroidAuthorLink.le-calette: "https://www.facebook.com/mauro.cercignani/"
 
 ## L'isola che non ci si aspetta
 
-Caprera è la sorpresa dell'arcipelago. I turisti la attraversano per raggiungere le spiagge; chi conosce il territorio ci viene per i sentieri, per la storia, per quella qualità dell'aria che cambia non appena si supera il Ponte della Libertà. È un'isola che non si capisce in un giorno e non si dimentica dopo averla capita.
+Caprera è la sorpresa dell'arcipelago. I turisti la attraversano per raggiungere le spiagge; chi conosce il territorio ci viene per i sentieri, per la storia, per quella qualità dell'aria che cambia non appena si supera il Ponte della Moneta. È un'isola che non si capisce in un giorno e non si dimentica dopo averla capita.
 
 Non è un'isola piccola: 16 chilometri quadrati di granito, macchia, lecci e sentieri di costa che collegano calette raggiungibili altrimenti solo via mare. Rispetto a La Maddalena — animata, commerciale, viva — Caprera è silenziosa. La differenza si sente già sul ponte.
 

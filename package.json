@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ig:bozza": "node scripts/ig-draft.mjs",
+    "ig:pubblica": "node scripts/ig-publish.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
