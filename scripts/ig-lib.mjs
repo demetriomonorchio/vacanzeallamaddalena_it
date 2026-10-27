@@ -248,8 +248,10 @@ export function writeQueue(queue) {
 }
 
 export function readEnv(name) {
+  const fromProcess = process.env[name]?.trim();
+  if (fromProcess) return fromProcess;
   const file = path.join(process.cwd(), ".env");
-  if (!fs.existsSync(file)) throw new Error("Manca il file .env");
+  if (!fs.existsSync(file)) throw new Error(`Manca ${name}`);
   const line = fs
     .readFileSync(file, "utf8")
     .split(/\r?\n/)
@@ -312,13 +314,7 @@ function apiError(payload) {
   return [payload.error.code, payload.error.message].filter(Boolean).join(" | ");
 }
 
-export async function publishDraft(item) {
-  const queue = readQueue();
-  const existing = queue.items.find((row) => row.id === item.id);
-  if (existing?.status === "published") {
-    throw new Error(`Già pubblicato: ${existing.permalink || existing.id}`);
-  }
-
+async function publishInstagram(item) {
   const token = readEnv("INSTAGRAM_ACCESS_TOKEN");
   const userId = readEnv("INSTAGRAM_USER_ID");
   const createRes = await fetch(`https://graph.instagram.com/v21.0/${userId}/media`, {
@@ -372,17 +368,79 @@ export async function publishDraft(item) {
     { headers: { Authorization: `Bearer ${token}` } }
   );
   const media = await mediaRes.json();
-  const saved = {
-    ...item,
-    status: "published",
-    permalink: media.permalink || "",
-    publishedAt: new Date().toISOString(),
-  };
-  if (existing) {
-    queue.items = queue.items.map((row) => (row.id === item.id ? saved : row));
-  } else {
-    queue.items.push(saved);
-  }
+  return media.permalink || published.id;
+}
+
+function facebookPostUrl(postId) {
+  if (!postId || !postId.includes("_")) return "";
+  const [page, post] = postId.split("_");
+  return `https://www.facebook.com/${page}/posts/${post}`;
+}
+
+async function publishFacebook(item) {
+  const pageId = readEnv("FACEBOOK_PAGE_ID");
+  const token = readEnv("FACEBOOK_PAGE_ACCESS_TOKEN");
+  const res = await fetch(`https://graph.facebook.com/v21.0/${pageId}/photos`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      url: item.imageUrl,
+      caption: item.caption,
+      published: true,
+    }),
+  });
+  const json = await res.json();
+  if (json.error || !json.id) throw new Error(apiError(json));
+  return facebookPostUrl(json.post_id);
+}
+
+function saveQueueItem(queue, item) {
+  const index = queue.items.findIndex((row) => row.id === item.id);
+  if (index === -1) queue.items.push(item);
+  else queue.items[index] = item;
   writeQueue(queue);
-  return saved.permalink || published.id;
+}
+
+export async function publishDraft(item) {
+  const queue = readQueue();
+  const existing = queue.items.find((row) => row.id === item.id);
+  if (existing?.status === "published" && existing.facebookPermalink) {
+    throw new Error(`Già pubblicato: ${existing.permalink || existing.id}`);
+  }
+
+  let permalink = existing?.status === "published" ? existing.permalink || "" : "";
+  let facebookPermalink = existing?.facebookPermalink || "";
+  const publishedAt = existing?.publishedAt || new Date().toISOString();
+
+  if (!permalink) {
+    permalink = await publishInstagram(item);
+    saveQueueItem(queue, {
+      ...item,
+      status: "published",
+      permalink,
+      facebookPermalink,
+      publishedAt,
+    });
+  }
+
+  if (!facebookPermalink) {
+    try {
+      facebookPermalink = await publishFacebook(item);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "errore Facebook";
+      throw new Error(`Instagram pubblicato. Facebook: ${message}`);
+    }
+    saveQueueItem(queue, {
+      ...item,
+      status: "published",
+      permalink,
+      facebookPermalink,
+      publishedAt,
+    });
+  }
+
+  return { permalink, facebookPermalink };
 }

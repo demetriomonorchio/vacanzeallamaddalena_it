@@ -23,6 +23,7 @@ export type IgDraft = {
   hashtags: string[];
   caption: string;
   permalink?: string;
+  facebookPermalink?: string;
   updatedAt?: string;
   publishedAt?: string;
 };
@@ -31,7 +32,7 @@ type IgLib = {
   loadGuides: () => IgGuide[];
   buildDraft: (guide: IgGuide) => IgDraft;
   readQueue: () => { items: IgDraft[] };
-  publishDraft: (item: IgDraft) => Promise<string>;
+  publishDraft: (item: IgDraft) => Promise<{ permalink: string; facebookPermalink: string }>;
 };
 
 export function adminSecret() {

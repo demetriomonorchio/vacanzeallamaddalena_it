@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { adminCookie, adminSecret, igLib, isAdmin } from "@/lib/instagram-admin";
 
-export type FormState = { error?: string; permalink?: string } | null;
+export type FormState = { error?: string; permalink?: string; facebookPermalink?: string } | null;
 
 export async function login(_state: FormState, formData: FormData): Promise<FormState> {
   const secret = adminSecret();
@@ -33,10 +33,10 @@ export async function publishPost(_state: FormState, formData: FormData): Promis
     const guide = lib.loadGuides().find((item) => item.category === category && item.slug === slug);
     if (!guide) return { error: "Guida non trovata" };
     const draft = lib.buildDraft(guide);
-    const permalink = await lib.publishDraft(draft);
+    const published = await lib.publishDraft(draft);
     revalidatePath("/admin/instagram");
     revalidatePath(`/admin/instagram/${category}/${slug}`);
-    return { permalink };
+    return published;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Pubblicazione non riuscita";
     return { error: message };

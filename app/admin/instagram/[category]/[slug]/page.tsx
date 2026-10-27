@@ -70,8 +70,17 @@ export default async function InstagramPreviewPage({
         <p className="mt-3 text-sm">
           Già pubblicato.{" "}
           <a className="underline" href={saved.permalink} target="_blank" rel="noreferrer">
-            Vedi il post
+            Vedi su Instagram
           </a>
+          {saved.facebookPermalink ? (
+            <>
+              {" "}
+              ·{" "}
+              <a className="underline" href={saved.facebookPermalink} target="_blank" rel="noreferrer">
+                Vedi su Facebook
+              </a>
+            </>
+          ) : null}
         </p>
       ) : null}
       {draftError ? <p className="mt-6 text-sm text-red-700">{draftError}</p> : null}
@@ -81,7 +90,9 @@ export default async function InstagramPreviewPage({
           <img src={imageSrc} alt={guide.title} className="w-full bg-white" />
           <div className="space-y-6">
             <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{draft.caption}</pre>
-            {saved?.status === "published" ? null : <PublishForm id={draft.id} />}
+            {saved?.status === "published" && saved.facebookPermalink ? null : (
+              <PublishForm id={draft.id} />
+            )}
           </div>
         </div>
       ) : null}

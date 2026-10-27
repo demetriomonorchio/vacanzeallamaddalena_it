@@ -50,13 +50,24 @@ export function PublishForm({ id }: { id: string }) {
         <a className="underline" href={state.permalink} target="_blank" rel="noreferrer">
           Aprilo su Instagram
         </a>
+        {state.facebookPermalink ? (
+          <>
+            {" "}
+            ·{" "}
+            <a className="underline" href={state.facebookPermalink} target="_blank" rel="noreferrer">
+              Aprilo su Facebook
+            </a>
+          </>
+        ) : null}
       </p>
     );
   }
   return (
     <form action={action} className="space-y-3">
       <input type="hidden" name="id" value={id} />
-      <p className="text-sm text-slate/80">Il post esce subito sul profilo demetrio_monorchio.</p>
+      <p className="text-sm text-slate/80">
+        Il post esce sul profilo demetrio_monorchio e sulla Pagina Vacanze alla maddalena.
+      </p>
       {state?.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
       <button
         type="submit"
