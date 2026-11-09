@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { login, logout, publishPost, updateScheduleDate, type FormState } from "./actions";
+import { login, logout, publishPost, type FormState } from "./actions";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(login, null as FormState);
@@ -37,36 +37,6 @@ export function LogoutButton() {
       <button type="submit" className="text-sm text-slate/70 underline">
         Esci
       </button>
-    </form>
-  );
-}
-
-export function ScheduleDateForm({
-  id,
-  date,
-}: {
-  id: string;
-  date: string;
-}) {
-  const [state, action, pending] = useActionState(updateScheduleDate, null as FormState);
-  return (
-    <form action={action} className="flex shrink-0 items-center gap-2">
-      <input type="hidden" name="id" value={id} />
-      <input
-        type="date"
-        name="date"
-        required
-        defaultValue={date}
-        className="rounded border border-slate/20 bg-white px-2 py-1 text-xs text-slate"
-      />
-      <button
-        type="submit"
-        disabled={pending}
-        className="text-xs text-mare underline disabled:opacity-60"
-      >
-        {pending ? "…" : "Salva"}
-      </button>
-      {state?.error ? <span className="text-xs text-red-700">{state.error}</span> : null}
     </form>
   );
 }

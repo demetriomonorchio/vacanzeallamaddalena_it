@@ -7,7 +7,8 @@ import {
   instagramSchedule,
   romeToday,
 } from "@/lib/instagram-schedule";
-import { LoginForm, LogoutButton, ScheduleDateForm } from "./forms";
+import { LoginForm, LogoutButton } from "./forms";
+import { ScheduleDateForm } from "./schedule-date-form";
 
 export const metadata: Metadata = {
   title: "Post Instagram",
@@ -84,7 +85,7 @@ export default async function InstagramAdminPage() {
                   {title}
                 </Link>
                 <div className="flex flex-wrap items-center gap-2">
-                  <ScheduleDateForm key={`${item.id}-${date}`} id={item.id} date={date} />
+                  <ScheduleDateForm id={item.id} date={date} />
                   <span className="text-xs text-slate/60">
                     {isPublished && item.publishedAt
                       ? `${formatPublishedAt(item.publishedAt)} · pubblicato`

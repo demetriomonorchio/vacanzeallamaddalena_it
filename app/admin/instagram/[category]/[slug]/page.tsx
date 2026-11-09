@@ -7,7 +7,8 @@ import {
   formatPublishLong,
   instagramSchedule,
 } from "@/lib/instagram-schedule";
-import { LoginForm, LogoutButton, PublishForm, ScheduleDateForm } from "../../forms";
+import { LoginForm, LogoutButton, PublishForm } from "../../forms";
+import { ScheduleDateForm } from "../../schedule-date-form";
 
 export const metadata: Metadata = {
   title: "Anteprima post",
@@ -80,11 +81,7 @@ export default async function InstagramPreviewPage({
           {saved?.status === "published" ? null : (
             <span>In programma {formatPublishLong(scheduledFor)}</span>
           )}
-          <ScheduleDateForm
-            key={`${category}/${slug}-${scheduledFor}`}
-            id={`${category}/${slug}`}
-            date={scheduledFor}
-          />
+          <ScheduleDateForm id={`${category}/${slug}`} date={scheduledFor} />
         </div>
       ) : null}
       {saved?.status === "published" && saved.permalink ? (

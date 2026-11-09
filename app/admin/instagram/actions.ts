@@ -43,25 +43,16 @@ export async function publishPost(_state: FormState, formData: FormData): Promis
   }
 }
 
-export async function updateScheduleDate(
-  _state: FormState,
-  formData: FormData
-): Promise<FormState> {
-  if (!(await isAdmin())) return { error: "Accesso scaduto. Entra di nuovo." };
+export async function updateScheduleDate(formData: FormData) {
+  if (!(await isAdmin())) return;
   const id = String(formData.get("id") ?? "");
   const date = String(formData.get("date") ?? "");
   const [category, slug] = id.split("/");
-  if (!category || !slug) return { error: "Guida non valida" };
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Data non valida" };
+  if (!category || !slug) return;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
 
-  try {
-    const lib = await igLib();
-    await lib.updateScheduledFor(id, date);
-    revalidatePath("/admin/instagram");
-    revalidatePath(`/admin/instagram/${category}/${slug}`);
-    return { error: undefined };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Salvataggio non riuscito";
-    return { error: message };
-  }
+  const lib = await igLib();
+  await lib.updateScheduledFor(id, date);
+  revalidatePath("/admin/instagram");
+  revalidatePath(`/admin/instagram/${category}/${slug}`);
 }
