@@ -24,6 +24,41 @@ const LABELS: Record<string, string> = {
   utilities: "Utilità",
 };
 
+function StatusLabel({
+  item,
+  today,
+}: {
+  item: IgDraft | undefined;
+  today: string;
+}) {
+  if (!item) return <span className="text-xs text-slate/60">senza data</span>;
+  if (item.status === "published" && item.publishedAt) {
+    return (
+      <span className="text-xs text-slate/60">
+        {formatPublishedAt(item.publishedAt)} · pubblicato
+      </span>
+    );
+  }
+  if (item.status === "published") {
+    return <span className="text-xs text-slate/60">pubblicato</span>;
+  }
+  if (!item.scheduledFor) {
+    return <span className="text-xs text-slate/60">senza data</span>;
+  }
+  const when =
+    item.scheduledFor < today
+      ? "in ritardo"
+      : item.scheduledFor === today
+        ? "oggi"
+        : "";
+  return (
+    <span className="text-xs text-slate/60">
+      {formatPublishWhen(item.scheduledFor)}
+      {when ? ` · ${when}` : ""}
+    </span>
+  );
+}
+
 export default async function InstagramAdminPage() {
   if (!adminSecret()) {
     return (
@@ -50,10 +85,14 @@ export default async function InstagramAdminPage() {
   const byId = new Map(queue.items.map((item: IgDraft) => [item.id, item]));
   const calendar = queue.items
     .filter((item: IgDraft) => item.scheduledFor)
-    .sort((a: IgDraft, b: IgDraft) => (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? ""));
+    .sort((a: IgDraft, b: IgDraft) =>
+      (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? "")
+    );
   const groups = ["isole", "attivita", "guida", "utilities"];
   const today = romeToday();
-  const titleById = new Map(guides.map((guide) => [`${guide.category}/${guide.slug}`, guide.title]));
+  const titleById = new Map(
+    guides.map((guide) => [`${guide.category}/${guide.slug}`, guide.title])
+  );
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -62,43 +101,33 @@ export default async function InstagramAdminPage() {
         <LogoutButton />
       </div>
       <p className="mt-2 text-sm text-slate/70">
-        Orario di riferimento 19:00. Apri la bozza, controlla, poi pubblica. Puoi spostare le
-        date dei post non ancora pubblicati.
+        Cambia la data nel campo, poi premi <strong>Salva</strong>. Orario di riferimento 19:00.
       </p>
+
       <section className="mt-8">
         <h2 className="font-serif text-2xl text-mare">Calendario</h2>
         <ul className="mt-3 divide-y divide-slate/10 border-y border-slate/10">
           {calendar.map((item: IgDraft) => {
             const title = titleById.get(item.id) ?? item.slug;
-            const isPublished = item.status === "published";
             const date = item.scheduledFor ?? "";
-            const when = isPublished
-              ? "pubblicato"
-              : date < today
-                ? "in ritardo"
-                : date === today
-                  ? "oggi"
-                  : "";
             return (
-              <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+              <li
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-3 py-3"
+              >
                 <Link href={`/admin/instagram/${item.id}`} className="min-w-0 hover:underline">
                   {title}
                 </Link>
                 <div className="flex flex-wrap items-center gap-2">
                   <ScheduleDateForm id={item.id} date={date} />
-                  <span className="text-xs text-slate/60">
-                    {isPublished && item.publishedAt
-                      ? `${formatPublishedAt(item.publishedAt)} · pubblicato`
-                      : when
-                        ? `${formatPublishWhen(date)} · ${when}`
-                        : formatPublishWhen(date)}
-                  </span>
+                  <StatusLabel item={item} today={today} />
                 </div>
               </li>
             );
           })}
         </ul>
       </section>
+
       <div className="mt-10 space-y-8">
         {groups.map((category) => (
           <section key={category}>
@@ -109,24 +138,21 @@ export default async function InstagramAdminPage() {
                 .map((guide) => {
                   const id = `${guide.category}/${guide.slug}`;
                   const row = byId.get(id);
-                  const isPublished = row?.status === "published";
                   return (
-                    <li key={id} className="flex items-center justify-between gap-4 py-3">
+                    <li
+                      key={id}
+                      className="flex flex-wrap items-center justify-between gap-3 py-3"
+                    >
                       <Link
                         href={`/admin/instagram/${guide.category}/${guide.slug}`}
-                        className="hover:underline"
+                        className="min-w-0 hover:underline"
                       >
                         {guide.title}
                       </Link>
-                      <span className="shrink-0 text-xs text-slate/60">
-                        {isPublished && row?.publishedAt
-                          ? `${formatPublishedAt(row.publishedAt)} · pubblicato`
-                          : isPublished
-                            ? "pubblicato"
-                            : row?.scheduledFor
-                              ? formatPublishWhen(row.scheduledFor)
-                              : "senza data"}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <ScheduleDateForm id={id} date={row?.scheduledFor ?? ""} />
+                        <StatusLabel item={row} today={today} />
+                      </div>
                     </li>
                   );
                 })}

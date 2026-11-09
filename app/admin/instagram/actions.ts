@@ -44,15 +44,19 @@ export async function publishPost(_state: FormState, formData: FormData): Promis
 }
 
 export async function updateScheduleDate(formData: FormData) {
-  if (!(await isAdmin())) return;
+  if (!(await isAdmin())) {
+    redirect("/admin/instagram");
+  }
   const id = String(formData.get("id") ?? "");
   const date = String(formData.get("date") ?? "");
   const [category, slug] = id.split("/");
-  if (!category || !slug) return;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+  if (!category || !slug || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    redirect("/admin/instagram");
+  }
 
   const lib = await igLib();
   await lib.updateScheduledFor(id, date);
   revalidatePath("/admin/instagram");
   revalidatePath(`/admin/instagram/${category}/${slug}`);
+  redirect("/admin/instagram");
 }
