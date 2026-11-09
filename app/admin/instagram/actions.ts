@@ -56,15 +56,10 @@ export async function updateScheduleDate(
 
   try {
     const lib = await igLib();
-    const queue = await lib.readQueue();
-    const existing = queue.items.find((item) => item.id === id);
-    if (existing?.status === "published") {
-      return { error: "Post già pubblicato: la data pianificata non si modifica" };
-    }
     await lib.updateScheduledFor(id, date);
     revalidatePath("/admin/instagram");
     revalidatePath(`/admin/instagram/${category}/${slug}`);
-    return null;
+    return { error: undefined };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Salvataggio non riuscito";
     return { error: message };

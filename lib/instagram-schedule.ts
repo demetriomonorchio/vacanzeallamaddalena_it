@@ -6,19 +6,28 @@ export const PUBLISH_TIME = "19:00";
  * solo se la riga non ha ancora una data.
  */
 export const instagramSchedule = [
+  // già pubblicati (storico)
   { date: "2026-10-31", category: "guida", slug: "quando-venire" },
   { date: "2026-11-03", category: "isole", slug: "caprera" },
   { date: "2026-11-07", category: "utilities", slug: "come-arrivare" },
   { date: "2026-11-10", category: "isole", slug: "spiagge-budelli-spargi" },
   { date: "2026-11-14", category: "guida", slug: "venti" },
   { date: "2026-11-17", category: "isole", slug: "isole-minori" },
-  { date: "2026-11-21", category: "guida", slug: "spiagge" },
-  { date: "2026-11-24", category: "attivita", slug: "tour-barca" },
-  { date: "2026-11-28", category: "utilities", slug: "parco-nazionale" },
-  { date: "2026-12-01", category: "attivita", slug: "trekking" },
-  { date: "2026-12-05", category: "attivita", slug: "vela" },
-  { date: "2026-12-08", category: "guida", slug: "luce-fotografia" },
-  { date: "2026-12-12", category: "utilities", slug: "vivere-il-borgo" },
+  // da pubblicare nov–dic 2026
+  { date: "2026-11-15", category: "guida", slug: "spiagge" },
+  { date: "2026-11-18", category: "attivita", slug: "tour-barca" },
+  { date: "2026-11-22", category: "utilities", slug: "parco-nazionale" },
+  { date: "2026-11-25", category: "attivita", slug: "trekking" },
+  { date: "2026-11-29", category: "guida", slug: "luce-fotografia" },
+  { date: "2026-12-02", category: "utilities", slug: "vivere-il-borgo" },
+  { date: "2026-12-06", category: "guida", slug: "food" },
+  { date: "2026-12-09", category: "utilities", slug: "ecologia" },
+  { date: "2026-12-13", category: "utilities", slug: "servizi" },
+  // febbraio 2027 (blocco mare / primavera)
+  { date: "2027-02-10", category: "attivita", slug: "vela" },
+  { date: "2027-02-14", category: "attivita", slug: "diving-snorkeling" },
+  { date: "2027-02-17", category: "attivita", slug: "kayak-sport-acquatici" },
+  { date: "2027-02-21", category: "attivita", slug: "puntiimmersione" },
 ] as const;
 
 export type ScheduledPost = (typeof instagramSchedule)[number];

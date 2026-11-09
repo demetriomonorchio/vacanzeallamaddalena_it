@@ -72,12 +72,19 @@ export default async function InstagramPreviewPage({
       {saved?.status === "published" && saved.publishedAt ? (
         <p className="mt-3 text-sm text-slate/70">
           Pubblicato {formatPublishedAt(saved.publishedAt)}
-          {scheduledFor ? ` · in programma era ${formatPublishLong(scheduledFor)}` : ""}
+          {scheduledFor ? ` · in calendario era ${formatPublishLong(scheduledFor)}` : ""}
         </p>
-      ) : scheduledFor ? (
+      ) : null}
+      {scheduledFor ? (
         <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate/70">
-          <span>In programma {formatPublishLong(scheduledFor)}</span>
-          <ScheduleDateForm id={`${category}/${slug}`} date={scheduledFor} />
+          {saved?.status === "published" ? null : (
+            <span>In programma {formatPublishLong(scheduledFor)}</span>
+          )}
+          <ScheduleDateForm
+            key={`${category}/${slug}-${scheduledFor}`}
+            id={`${category}/${slug}`}
+            date={scheduledFor}
+          />
         </div>
       ) : null}
       {saved?.status === "published" && saved.permalink ? (

@@ -80,24 +80,19 @@ export default async function InstagramAdminPage() {
                   : "";
             return (
               <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-                <Link href={`/admin/instagram/${item.id}`} className="hover:underline">
+                <Link href={`/admin/instagram/${item.id}`} className="min-w-0 hover:underline">
                   {title}
                 </Link>
-                {isPublished ? (
-                  <span className="shrink-0 text-xs text-slate/60">
-                    {item.publishedAt
+                <div className="flex flex-wrap items-center gap-2">
+                  <ScheduleDateForm key={`${item.id}-${date}`} id={item.id} date={date} />
+                  <span className="text-xs text-slate/60">
+                    {isPublished && item.publishedAt
                       ? `${formatPublishedAt(item.publishedAt)} · pubblicato`
-                      : "pubblicato"}
+                      : when
+                        ? `${formatPublishWhen(date)} · ${when}`
+                        : formatPublishWhen(date)}
                   </span>
-                ) : (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <ScheduleDateForm id={item.id} date={date} />
-                    <span className="text-xs text-slate/60">
-                      {formatPublishWhen(date)}
-                      {when ? ` · ${when}` : ""}
-                    </span>
-                  </div>
-                )}
+                </div>
               </li>
             );
           })}
