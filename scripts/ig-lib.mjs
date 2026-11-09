@@ -1,11 +1,71 @@
 import fs from "fs";
 import path from "path";
+import { neon } from "@neondatabase/serverless";
 import imageRels from "../data/image-index.json" with { type: "json" };
 
 const IMAGE_RELS = new Set(imageRels);
 
 export const SITE = "https://vacanzeallamaddalena.it";
 export const QUEUE_PATH = path.join(process.cwd(), "data", "instagram-queue.json");
+
+let sqlClient = null;
+let tableReady = false;
+
+function getSql() {
+  if (!sqlClient) sqlClient = neon(readEnv("DATABASE_URL"));
+  return sqlClient;
+}
+
+async function readyDb() {
+  if (tableReady) return;
+  await ensureInstagramTable();
+  tableReady = true;
+}
+
+function rowToItem(row) {
+  return {
+    id: row.id,
+    category: row.category,
+    slug: row.slug,
+    status: row.status,
+    imageUrl: row.image_url || "",
+    pageUrl: row.page_url || "",
+    author: row.author || "",
+    authorLink: row.author_link || "",
+    hashtags: Array.isArray(row.hashtags) ? row.hashtags : [],
+    caption: row.caption || "",
+    permalink: row.permalink || undefined,
+    facebookPermalink: row.facebook_permalink || undefined,
+    publishedAt: row.published_at
+      ? new Date(row.published_at).toISOString()
+      : undefined,
+    updatedAt: row.updated_at
+      ? new Date(row.updated_at).toISOString()
+      : undefined,
+  };
+}
+
+export async function ensureInstagramTable() {
+  const sql = getSql();
+  await sql`
+    CREATE TABLE IF NOT EXISTS instagram_posts (
+      id TEXT PRIMARY KEY,
+      category TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'draft',
+      image_url TEXT,
+      page_url TEXT,
+      author TEXT,
+      author_link TEXT,
+      hashtags JSONB NOT NULL DEFAULT '[]'::jsonb,
+      caption TEXT,
+      permalink TEXT,
+      facebook_permalink TEXT,
+      published_at TIMESTAMPTZ,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+}
 
 const CATEGORY_TAG = {
   isole: "#ArcipelagoDiLaMaddalena",
@@ -237,14 +297,64 @@ export function buildCaption({ title, paragraph, pageUrl, author, authorLink, ha
   return lines.join("\n");
 }
 
-export function readQueue() {
-  if (!fs.existsSync(QUEUE_PATH)) return { items: [] };
-  return JSON.parse(fs.readFileSync(QUEUE_PATH, "utf8"));
+export async function readQueue() {
+  await readyDb();
+  const sql = getSql();
+  const rows = await sql`
+    SELECT
+      id, category, slug, status, image_url, page_url, author, author_link,
+      hashtags, caption, permalink, facebook_permalink, published_at, updated_at
+    FROM instagram_posts
+    ORDER BY COALESCE(published_at, updated_at) DESC NULLS LAST
+  `;
+  return { items: rows.map(rowToItem) };
 }
 
-export function writeQueue(queue) {
-  fs.mkdirSync(path.dirname(QUEUE_PATH), { recursive: true });
-  fs.writeFileSync(QUEUE_PATH, `${JSON.stringify(queue, null, 2)}\n`);
+export async function writeQueue(queue) {
+  for (const item of queue.items || []) {
+    await saveQueueItem(item);
+  }
+}
+
+export async function saveQueueItem(item) {
+  await readyDb();
+  const sql = getSql();
+  const hashtags = JSON.stringify(item.hashtags || []);
+  await sql`
+    INSERT INTO instagram_posts (
+      id, category, slug, status, image_url, page_url, author, author_link,
+      hashtags, caption, permalink, facebook_permalink, published_at, updated_at
+    ) VALUES (
+      ${item.id},
+      ${item.category},
+      ${item.slug},
+      ${item.status || "draft"},
+      ${item.imageUrl || null},
+      ${item.pageUrl || null},
+      ${item.author || null},
+      ${item.authorLink || null},
+      ${hashtags}::jsonb,
+      ${item.caption || null},
+      ${item.permalink || null},
+      ${item.facebookPermalink || null},
+      ${item.publishedAt ? new Date(item.publishedAt) : null},
+      ${item.updatedAt ? new Date(item.updatedAt) : new Date()}
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      category = EXCLUDED.category,
+      slug = EXCLUDED.slug,
+      status = EXCLUDED.status,
+      image_url = EXCLUDED.image_url,
+      page_url = EXCLUDED.page_url,
+      author = EXCLUDED.author,
+      author_link = EXCLUDED.author_link,
+      hashtags = EXCLUDED.hashtags,
+      caption = EXCLUDED.caption,
+      permalink = EXCLUDED.permalink,
+      facebook_permalink = EXCLUDED.facebook_permalink,
+      published_at = EXCLUDED.published_at,
+      updated_at = EXCLUDED.updated_at
+  `;
 }
 
 export function readEnv(name) {
@@ -312,6 +422,32 @@ export function buildDraft(guide) {
 function apiError(payload) {
   if (!payload?.error) return "errore Instagram";
   return [payload.error.code, payload.error.message].filter(Boolean).join(" | ");
+}
+
+async function findInstagramPermalink(pageUrl) {
+  const token = readEnv("INSTAGRAM_ACCESS_TOKEN");
+  const userId = readEnv("INSTAGRAM_USER_ID");
+  const res = await fetch(
+    `https://graph.instagram.com/v21.0/${userId}/media?fields=caption,permalink&limit=25`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const json = await res.json();
+  if (json.error) return "";
+  const hit = (json.data || []).find((row) => (row.caption || "").includes(pageUrl));
+  return hit?.permalink || "";
+}
+
+async function findFacebookPermalink(pageUrl) {
+  const pageId = readEnv("FACEBOOK_PAGE_ID");
+  const token = readEnv("FACEBOOK_PAGE_ACCESS_TOKEN");
+  const res = await fetch(
+    `https://graph.facebook.com/v21.0/${pageId}/published_posts?fields=message,permalink_url&limit=15`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const json = await res.json();
+  if (json.error) return "";
+  const hit = (json.data || []).find((row) => (row.message || "").includes(pageUrl));
+  return hit?.permalink_url || "";
 }
 
 async function publishInstagram(item) {
@@ -397,15 +533,50 @@ async function publishFacebook(item) {
   return facebookPostUrl(json.post_id);
 }
 
-function saveQueueItem(queue, item) {
-  const index = queue.items.findIndex((row) => row.id === item.id);
-  if (index === -1) queue.items.push(item);
-  else queue.items[index] = item;
-  writeQueue(queue);
+/** Segna come pubblicati i post già presenti su IG/FB ma assenti/incompleti nel DB. */
+export async function syncPublishedFromNetworks(guides) {
+  const queue = await readQueue();
+  const byId = new Map(queue.items.map((item) => [item.id, item]));
+  const synced = [];
+
+  for (const guide of guides) {
+    const id = `${guide.category}/${guide.slug}`;
+    const existing = byId.get(id);
+    if (existing?.status === "published" && existing.permalink && existing.facebookPermalink) {
+      continue;
+    }
+    const pageUrl = existing?.pageUrl || `${SITE}/it/${guide.category}/${guide.slug}`;
+    let permalink = existing?.permalink || "";
+    let facebookPermalink = existing?.facebookPermalink || "";
+    if (!permalink) permalink = await findInstagramPermalink(pageUrl);
+    if (!facebookPermalink) facebookPermalink = await findFacebookPermalink(pageUrl);
+    if (!permalink && !facebookPermalink) continue;
+
+    const publishedAt = existing?.publishedAt || new Date().toISOString();
+    await saveQueueItem({
+      id,
+      category: guide.category,
+      slug: guide.slug,
+      status: "published",
+      imageUrl: existing?.imageUrl || "",
+      pageUrl,
+      author: existing?.author || "",
+      authorLink: existing?.authorLink || "",
+      hashtags: existing?.hashtags || [],
+      caption: existing?.caption || "",
+      permalink: permalink || existing?.permalink || "",
+      facebookPermalink: facebookPermalink || existing?.facebookPermalink || "",
+      publishedAt,
+      updatedAt: new Date().toISOString(),
+    });
+    synced.push(id);
+  }
+
+  return synced;
 }
 
 export async function publishDraft(item) {
-  const queue = readQueue();
+  const queue = await readQueue();
   const existing = queue.items.find((row) => row.id === item.id);
   if (existing?.status === "published" && existing.facebookPermalink) {
     throw new Error(`Già pubblicato: ${existing.permalink || existing.id}`);
@@ -414,15 +585,31 @@ export async function publishDraft(item) {
   let permalink = existing?.status === "published" ? existing.permalink || "" : "";
   let facebookPermalink = existing?.facebookPermalink || "";
   const publishedAt = existing?.publishedAt || new Date().toISOString();
+  const updatedAt = new Date().toISOString();
 
-  if (!permalink) {
-    permalink = await publishInstagram(item);
-    saveQueueItem(queue, {
+  if (!permalink && item.pageUrl) permalink = await findInstagramPermalink(item.pageUrl);
+  if (!facebookPermalink && item.pageUrl) facebookPermalink = await findFacebookPermalink(item.pageUrl);
+  if (permalink && facebookPermalink) {
+    await saveQueueItem({
       ...item,
       status: "published",
       permalink,
       facebookPermalink,
       publishedAt,
+      updatedAt,
+    });
+    return { permalink, facebookPermalink };
+  }
+
+  if (!permalink) {
+    permalink = await publishInstagram(item);
+    await saveQueueItem({
+      ...item,
+      status: "published",
+      permalink,
+      facebookPermalink,
+      publishedAt,
+      updatedAt,
     });
   }
 
@@ -433,12 +620,13 @@ export async function publishDraft(item) {
       const message = error instanceof Error ? error.message : "errore Facebook";
       throw new Error(`Instagram pubblicato. Facebook: ${message}`);
     }
-    saveQueueItem(queue, {
+    await saveQueueItem({
       ...item,
       status: "published",
       permalink,
       facebookPermalink,
       publishedAt,
+      updatedAt,
     });
   }
 

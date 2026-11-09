@@ -31,7 +31,7 @@ export type IgDraft = {
 type IgLib = {
   loadGuides: () => IgGuide[];
   buildDraft: (guide: IgGuide) => IgDraft;
-  readQueue: () => { items: IgDraft[] };
+  readQueue: () => Promise<{ items: IgDraft[] }>;
   publishDraft: (item: IgDraft) => Promise<{ permalink: string; facebookPermalink: string }>;
 };
 

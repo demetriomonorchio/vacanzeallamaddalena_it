@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { adminSecret, igLib, isAdmin, type IgDraft } from "@/lib/instagram-admin";
 import {
+  formatPublishedAt,
   formatPublishWhen,
   instagramSchedule,
   romeToday,
@@ -44,11 +45,17 @@ export default async function InstagramAdminPage() {
 
   const lib = await igLib();
   const guides = lib.loadGuides();
+  const queue = await lib.readQueue();
   const published = new Map(
-    lib
-      .readQueue()
-      .items.filter((item: IgDraft) => item.status === "published")
-      .map((item: IgDraft) => [item.id, item.permalink ?? ""])
+    queue.items
+      .filter((item: IgDraft) => item.status === "published")
+      .map((item: IgDraft) => [
+        item.id,
+        {
+          permalink: item.permalink ?? "",
+          publishedAt: item.publishedAt,
+        },
+      ])
   );
   const groups = ["isole", "attivita", "guida", "utilities"];
   const today = romeToday();
@@ -69,16 +76,24 @@ export default async function InstagramAdminPage() {
           {instagramSchedule.map((slot) => {
             const id = `${slot.category}/${slot.slug}`;
             const title = titleById.get(id) ?? slot.slug;
-            const isPublished = published.has(id);
-            const when =
-              isPublished ? "pubblicato" : slot.date < today ? "in ritardo" : slot.date === today ? "oggi" : "";
+            const done = published.get(id);
+            const when = done
+              ? "pubblicato"
+              : slot.date < today
+                ? "in ritardo"
+                : slot.date === today
+                  ? "oggi"
+                  : "";
+            const whenLabel = done?.publishedAt
+              ? formatPublishedAt(done.publishedAt)
+              : formatPublishWhen(slot.date);
             return (
               <li key={id} className="flex items-center justify-between gap-4 py-3">
                 <Link href={`/admin/instagram/${id}`} className="hover:underline">
                   {title}
                 </Link>
                 <span className="shrink-0 text-xs text-slate/60">
-                  {formatPublishWhen(slot.date)}
+                  {whenLabel}
                   {when ? ` · ${when}` : ""}
                 </span>
               </li>
@@ -95,7 +110,7 @@ export default async function InstagramAdminPage() {
                 .filter((guide) => guide.category === category)
                 .map((guide) => {
                   const id = `${guide.category}/${guide.slug}`;
-                  const link = published.get(id);
+                  const done = published.get(id);
                   const slot = scheduleFor(guide.category, guide.slug);
                   return (
                     <li key={id} className="flex items-center justify-between gap-4 py-3">
@@ -103,7 +118,13 @@ export default async function InstagramAdminPage() {
                         {guide.title}
                       </Link>
                       <span className="shrink-0 text-xs text-slate/60">
-                        {link ? "pubblicato" : slot ? formatPublishWhen(slot.date) : "senza data"}
+                        {done?.publishedAt
+                          ? `${formatPublishedAt(done.publishedAt)} · pubblicato`
+                          : done
+                            ? "pubblicato"
+                            : slot
+                              ? formatPublishWhen(slot.date)
+                              : "senza data"}
                       </span>
                     </li>
                   );

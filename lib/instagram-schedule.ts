@@ -43,6 +43,18 @@ export function formatPublishWhen(iso: string) {
   return `${label} · ${PUBLISH_TIME}`;
 }
 
+/** Data/ora reale di pubblicazione (fuso di Roma). */
+export function formatPublishedAt(iso: string) {
+  return new Intl.DateTimeFormat("it-IT", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Rome",
+  }).format(new Date(iso));
+}
+
 export function formatPublishLong(iso: string) {
   const label = new Intl.DateTimeFormat("it-IT", {
     weekday: "long",

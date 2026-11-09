@@ -8,9 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "ig:bozza": "node scripts/ig-draft.mjs",
-    "ig:pubblica": "node scripts/ig-publish.mjs"
+    "ig:pubblica": "node scripts/ig-publish.mjs",
+    "ig:db-setup": "node scripts/ig-db-setup.mjs",
+    "ig:db-sync": "node scripts/ig-db-sync.mjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
     "@vercel/analytics": "^2.0.1",
     "lucide-react": "^0.468.0",
     "mapbox-gl": "^3.21.0",

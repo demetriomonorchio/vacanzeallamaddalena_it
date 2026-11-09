@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { adminSecret, igLib, isAdmin } from "@/lib/instagram-admin";
-import { formatPublishLong, scheduleFor } from "@/lib/instagram-schedule";
+import {
+  formatPublishedAt,
+  formatPublishLong,
+  scheduleFor,
+} from "@/lib/instagram-schedule";
 import { LoginForm, LogoutButton, PublishForm } from "../../forms";
 
 export const metadata: Metadata = {
@@ -42,7 +46,8 @@ export default async function InstagramPreviewPage({
   const guide = lib.loadGuides().find((item) => item.category === category && item.slug === slug);
   if (!guide) notFound();
 
-  const saved = lib.readQueue().items.find((item) => item.id === `${category}/${slug}`);
+  const queue = await lib.readQueue();
+  const saved = queue.items.find((item) => item.id === `${category}/${slug}`);
   let draftError = "";
   let draft: ReturnType<typeof lib.buildDraft> | null = null;
   try {
@@ -63,7 +68,12 @@ export default async function InstagramPreviewPage({
         <LogoutButton />
       </div>
       <h1 className="mt-6 font-serif text-4xl text-mare">{guide.title}</h1>
-      {slot ? (
+      {saved?.status === "published" && saved.publishedAt ? (
+        <p className="mt-3 text-sm text-slate/70">
+          Pubblicato {formatPublishedAt(saved.publishedAt)}
+          {slot ? ` · in programma era ${formatPublishLong(slot.date)}` : ""}
+        </p>
+      ) : slot ? (
         <p className="mt-3 text-sm text-slate/70">In programma {formatPublishLong(slot.date)}</p>
       ) : null}
       {saved?.status === "published" && saved.permalink ? (
