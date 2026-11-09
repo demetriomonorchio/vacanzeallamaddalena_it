@@ -6,7 +6,6 @@ import imageRels from "../data/image-index.json" with { type: "json" };
 const IMAGE_RELS = new Set(imageRels);
 
 export const SITE = "https://vacanzeallamaddalena.it";
-export const QUEUE_PATH = path.join(process.cwd(), "data", "instagram-queue.json");
 
 let sqlClient = null;
 let tableReady = false;

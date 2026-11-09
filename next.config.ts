@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
-    "/admin/instagram": ["./content/it/**/*.md", "./data/instagram-queue.json"],
-    "/admin/instagram/[category]/[slug]": ["./content/it/**/*.md", "./data/instagram-queue.json"],
+    "/admin/instagram": ["./content/it/**/*.md"],
+    "/admin/instagram/[category]/[slug]": ["./content/it/**/*.md"],
   },
   images: {
     formats: ["image/avif", "image/webp"],
