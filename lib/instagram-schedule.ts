@@ -1,6 +1,10 @@
 export const PUBLISH_TIME = "19:00";
 
-/** Martedì luogo o attività, sabato guida pratica. Ore 19:00, fuso di Roma. */
+/**
+ * Seed iniziale del calendario (scelta editoriale mar/sab 19:00).
+ * La sorgente operativa è Neon (`scheduled_for`); queste date si applicano
+ * solo se la riga non ha ancora una data.
+ */
 export const instagramSchedule = [
   { date: "2026-10-31", category: "guida", slug: "quando-venire" },
   { date: "2026-11-03", category: "isole", slug: "caprera" },

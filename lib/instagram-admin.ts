@@ -24,15 +24,20 @@ export type IgDraft = {
   caption: string;
   permalink?: string;
   facebookPermalink?: string;
+  scheduledFor?: string;
   updatedAt?: string;
   publishedAt?: string;
 };
+
+type ScheduleSlot = { date: string; category: string; slug: string };
 
 type IgLib = {
   loadGuides: () => IgGuide[];
   buildDraft: (guide: IgGuide) => IgDraft;
   readQueue: () => Promise<{ items: IgDraft[] }>;
   publishDraft: (item: IgDraft) => Promise<{ permalink: string; facebookPermalink: string }>;
+  ensureScheduleSeeded: (slots: readonly ScheduleSlot[]) => Promise<void>;
+  updateScheduledFor: (id: string, date: string) => Promise<void>;
 };
 
 export function adminSecret() {

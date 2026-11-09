@@ -5,9 +5,9 @@ import { adminSecret, igLib, isAdmin } from "@/lib/instagram-admin";
 import {
   formatPublishedAt,
   formatPublishLong,
-  scheduleFor,
+  instagramSchedule,
 } from "@/lib/instagram-schedule";
-import { LoginForm, LogoutButton, PublishForm } from "../../forms";
+import { LoginForm, LogoutButton, PublishForm, ScheduleDateForm } from "../../forms";
 
 export const metadata: Metadata = {
   title: "Anteprima post",
@@ -43,6 +43,7 @@ export default async function InstagramPreviewPage({
   if (!CATEGORIES.has(category)) notFound();
 
   const lib = await igLib();
+  await lib.ensureScheduleSeeded(instagramSchedule);
   const guide = lib.loadGuides().find((item) => item.category === category && item.slug === slug);
   if (!guide) notFound();
 
@@ -57,7 +58,7 @@ export default async function InstagramPreviewPage({
   }
 
   const imageSrc = draft?.imageUrl.replace("https://vacanzeallamaddalena.it", "") ?? "";
-  const slot = scheduleFor(category, slug);
+  const scheduledFor = saved?.scheduledFor;
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -71,10 +72,13 @@ export default async function InstagramPreviewPage({
       {saved?.status === "published" && saved.publishedAt ? (
         <p className="mt-3 text-sm text-slate/70">
           Pubblicato {formatPublishedAt(saved.publishedAt)}
-          {slot ? ` · in programma era ${formatPublishLong(slot.date)}` : ""}
+          {scheduledFor ? ` · in programma era ${formatPublishLong(scheduledFor)}` : ""}
         </p>
-      ) : slot ? (
-        <p className="mt-3 text-sm text-slate/70">In programma {formatPublishLong(slot.date)}</p>
+      ) : scheduledFor ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate/70">
+          <span>In programma {formatPublishLong(scheduledFor)}</span>
+          <ScheduleDateForm id={`${category}/${slug}`} date={scheduledFor} />
+        </div>
       ) : null}
       {saved?.status === "published" && saved.permalink ? (
         <p className="mt-3 text-sm">

@@ -21,6 +21,21 @@ async function readyDb() {
   tableReady = true;
 }
 
+function toDateOnly(value) {
+  if (!value) return undefined;
+  if (typeof value === "string") {
+    const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    return match ? match[1] : undefined;
+  }
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, "0");
+    const d = String(value.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  return undefined;
+}
+
 function rowToItem(row) {
   return {
     id: row.id,
@@ -35,6 +50,7 @@ function rowToItem(row) {
     caption: row.caption || "",
     permalink: row.permalink || undefined,
     facebookPermalink: row.facebook_permalink || undefined,
+    scheduledFor: toDateOnly(row.scheduled_for),
     publishedAt: row.published_at
       ? new Date(row.published_at).toISOString()
       : undefined,
@@ -60,10 +76,12 @@ export async function ensureInstagramTable() {
       caption TEXT,
       permalink TEXT,
       facebook_permalink TEXT,
+      scheduled_for DATE,
       published_at TIMESTAMPTZ,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
+  await sql`ALTER TABLE instagram_posts ADD COLUMN IF NOT EXISTS scheduled_for DATE`;
 }
 
 const CATEGORY_TAG = {
@@ -302,9 +320,10 @@ export async function readQueue() {
   const rows = await sql`
     SELECT
       id, category, slug, status, image_url, page_url, author, author_link,
-      hashtags, caption, permalink, facebook_permalink, published_at, updated_at
+      hashtags, caption, permalink, facebook_permalink, scheduled_for,
+      published_at, updated_at
     FROM instagram_posts
-    ORDER BY COALESCE(published_at, updated_at) DESC NULLS LAST
+    ORDER BY scheduled_for ASC NULLS LAST, COALESCE(published_at, updated_at) DESC
   `;
   return { items: rows.map(rowToItem) };
 }
@@ -322,7 +341,8 @@ export async function saveQueueItem(item) {
   await sql`
     INSERT INTO instagram_posts (
       id, category, slug, status, image_url, page_url, author, author_link,
-      hashtags, caption, permalink, facebook_permalink, published_at, updated_at
+      hashtags, caption, permalink, facebook_permalink, scheduled_for,
+      published_at, updated_at
     ) VALUES (
       ${item.id},
       ${item.category},
@@ -336,6 +356,7 @@ export async function saveQueueItem(item) {
       ${item.caption || null},
       ${item.permalink || null},
       ${item.facebookPermalink || null},
+      ${item.scheduledFor || null},
       ${item.publishedAt ? new Date(item.publishedAt) : null},
       ${item.updatedAt ? new Date(item.updatedAt) : new Date()}
     )
@@ -351,9 +372,62 @@ export async function saveQueueItem(item) {
       caption = EXCLUDED.caption,
       permalink = EXCLUDED.permalink,
       facebook_permalink = EXCLUDED.facebook_permalink,
+      scheduled_for = COALESCE(EXCLUDED.scheduled_for, instagram_posts.scheduled_for),
       published_at = EXCLUDED.published_at,
       updated_at = EXCLUDED.updated_at
   `;
+}
+
+/** Imposta/aggiorna solo la data pianificata. */
+export async function updateScheduledFor(id, date) {
+  await readyDb();
+  const [category, slug] = String(id).split("/");
+  if (!category || !slug) throw new Error(`Id non valido: ${id}`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`Data non valida: ${date}`);
+
+  const sql = getSql();
+  await sql`
+    INSERT INTO instagram_posts (id, category, slug, status, scheduled_for, updated_at)
+    VALUES (${id}, ${category}, ${slug}, 'draft', ${date}, NOW())
+    ON CONFLICT (id) DO UPDATE SET
+      scheduled_for = EXCLUDED.scheduled_for,
+      updated_at = NOW()
+  `;
+}
+
+/**
+ * Seed una tantum: crea bozze / completa scheduled_for dalle date legacy
+ * senza sovrascrivere date già presenti in DB.
+ */
+export async function ensureScheduleSeeded(slots) {
+  const queue = await readQueue();
+  const byId = new Map(queue.items.map((item) => [item.id, item]));
+
+  for (const slot of slots) {
+    const id = `${slot.category}/${slot.slug}`;
+    const existing = byId.get(id);
+    if (existing?.scheduledFor) continue;
+
+    if (existing) {
+      await updateScheduledFor(id, slot.date);
+      continue;
+    }
+
+    await saveQueueItem({
+      id,
+      category: slot.category,
+      slug: slot.slug,
+      status: "draft",
+      scheduledFor: slot.date,
+      imageUrl: "",
+      pageUrl: `${SITE}/it/${slot.category}/${slot.slug}`,
+      author: "",
+      authorLink: "",
+      hashtags: [],
+      caption: "",
+      updatedAt: new Date().toISOString(),
+    });
+  }
 }
 
 export function readEnv(name) {
@@ -585,12 +659,16 @@ export async function publishDraft(item) {
   let facebookPermalink = existing?.facebookPermalink || "";
   const publishedAt = existing?.publishedAt || new Date().toISOString();
   const updatedAt = new Date().toISOString();
+  const base = {
+    ...item,
+    scheduledFor: item.scheduledFor || existing?.scheduledFor,
+  };
 
   if (!permalink && item.pageUrl) permalink = await findInstagramPermalink(item.pageUrl);
   if (!facebookPermalink && item.pageUrl) facebookPermalink = await findFacebookPermalink(item.pageUrl);
   if (permalink && facebookPermalink) {
     await saveQueueItem({
-      ...item,
+      ...base,
       status: "published",
       permalink,
       facebookPermalink,
@@ -603,7 +681,7 @@ export async function publishDraft(item) {
   if (!permalink) {
     permalink = await publishInstagram(item);
     await saveQueueItem({
-      ...item,
+      ...base,
       status: "published",
       permalink,
       facebookPermalink,
@@ -620,7 +698,7 @@ export async function publishDraft(item) {
       throw new Error(`Instagram pubblicato. Facebook: ${message}`);
     }
     await saveQueueItem({
-      ...item,
+      ...base,
       status: "published",
       permalink,
       facebookPermalink,
